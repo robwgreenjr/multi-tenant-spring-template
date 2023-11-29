@@ -11,11 +11,11 @@ import java.time.format.DateTimeFormatter;
 
 @Mapper(componentModel = "spring")
 public interface TenantEmailConfirmationMapper {
-    TenantEmailConfirmation toTenantEmailConfirmationModel(
-        TenantEmailConfirmationEntity tenantEmailConfirmation);
+    TenantEmailConfirmation entityToObject(
+        TenantEmailConfirmationEntity tenantEmailConfirmationEntity);
 
-    TenantEmailConfirmationEntity tenantEmailConfirmationModelToTenantEmailConfirmation(
-        TenantEmailConfirmation tenantModelEmailConfirmationModel);
+    TenantEmailConfirmationEntity toEntity(
+        TenantEmailConfirmation tenantModelEmailConfirmation);
 
     default LocalDateTime map(String string) {
         if (string == null) return null;

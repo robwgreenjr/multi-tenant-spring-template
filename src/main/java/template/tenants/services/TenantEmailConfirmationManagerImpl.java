@@ -15,32 +15,37 @@ import java.util.UUID;
 
 @Service
 @Transactional
-public class TenantEmailConfirmationManagerImpl implements TenantEmailConfirmationManager {
+public class TenantEmailConfirmationManagerImpl
+    implements TenantEmailConfirmationManager {
     private final TenantEmailConfirmationMapper tenantEmailConfirmationMapper;
-    private final TenantEmailConfirmationRepository tenantEmailConfirmationRepository;
-    private final TenantEmailConfirmationEventPublisher tenantEmailConfirmationEventPublisher;
+    private final TenantEmailConfirmationRepository
+        tenantEmailConfirmationRepository;
+    private final TenantEmailConfirmationEventPublisher
+        tenantEmailConfirmationEventPublisher;
 
     public TenantEmailConfirmationManagerImpl(
         TenantEmailConfirmationMapper tenantEmailConfirmationMapper,
         TenantEmailConfirmationRepository tenantEmailConfirmationRepository,
         TenantEmailConfirmationEventPublisher tenantEmailConfirmationEventPublisher) {
         this.tenantEmailConfirmationMapper = tenantEmailConfirmationMapper;
-        this.tenantEmailConfirmationRepository = tenantEmailConfirmationRepository;
-        this.tenantEmailConfirmationEventPublisher = tenantEmailConfirmationEventPublisher;
+        this.tenantEmailConfirmationRepository =
+            tenantEmailConfirmationRepository;
+        this.tenantEmailConfirmationEventPublisher =
+            tenantEmailConfirmationEventPublisher;
     }
 
     @Override
     public TenantEmailConfirmation create(
-        TenantEmailConfirmation tenantEmailConfirmationModel) {
-        TenantEmailConfirmationEntity tenantEmailConfirmation =
-            tenantEmailConfirmationMapper.tenantEmailConfirmationModelToTenantEmailConfirmation(
-                tenantEmailConfirmationModel);
+        TenantEmailConfirmation tenantEmailConfirmation) {
+        TenantEmailConfirmationEntity tenantEmailConfirmationEntity =
+            tenantEmailConfirmationMapper.toEntity(
+                tenantEmailConfirmation);
 
-        tenantEmailConfirmationRepository.save(tenantEmailConfirmation);
+        tenantEmailConfirmationRepository.save(tenantEmailConfirmationEntity);
 
         TenantEmailConfirmation newTenantEmailConfirmation =
-            tenantEmailConfirmationMapper.toTenantEmailConfirmationModel(
-                tenantEmailConfirmation);
+            tenantEmailConfirmationMapper.entityToObject(
+                tenantEmailConfirmationEntity);
 
         tenantEmailConfirmationEventPublisher.publishTenantEmailConfirmationCreatedEvent(
             newTenantEmailConfirmation);
@@ -54,17 +59,19 @@ public class TenantEmailConfirmationManagerImpl implements TenantEmailConfirmati
         try {
             uuid = UUID.fromString(token);
         } catch (Exception exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid token provided.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Invalid token provided.");
         }
 
-        Optional<TenantEmailConfirmationEntity> tenantEmailConfirmation =
+        Optional<TenantEmailConfirmationEntity> tenantEmailConfirmationEntity =
             tenantEmailConfirmationRepository.getByToken(uuid);
 
-        if (tenantEmailConfirmation.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Token not found.");
+        if (tenantEmailConfirmationEntity.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Token not found.");
         }
 
-        return tenantEmailConfirmationMapper.toTenantEmailConfirmationModel(
-            tenantEmailConfirmation.get());
+        return tenantEmailConfirmationMapper.entityToObject(
+            tenantEmailConfirmationEntity.get());
     }
 }
