@@ -1,10 +1,8 @@
 package template.tenants.services;
 
-import com.zaxxer.hikari.HikariDataSource;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import template.database.services.DatabaseConnection;
 import template.global.services.StringEncoder;
 import template.tenants.entities.TenantDatabaseEntity;
 import template.tenants.events.publishers.TenantDatabaseEventPublisher;
@@ -22,7 +20,6 @@ public class TenantDatabaseManagerImpl implements TenantDatabaseManager {
     private final TenantDatabaseRepository tenantDatabaseRepository;
     private final TenantDatabaseMapper tenantDatabaseMapper;
     private final TenantMapper tenantMapper;
-    private final DatabaseConnection databaseConnection;
     private final StringEncoder cryptoEncoder;
     private final TenantDatabaseEventPublisher tenantDatabaseEventPublisher;
 
@@ -30,36 +27,28 @@ public class TenantDatabaseManagerImpl implements TenantDatabaseManager {
         TenantDatabaseRepository tenantDatabaseRepository,
         TenantDatabaseMapper tenantDatabaseMapper,
         TenantMapper tenantMapper,
-        DatabaseConnection databaseConnection,
         @Qualifier("CryptoEncoder")
         StringEncoder cryptoEncoder,
         TenantDatabaseEventPublisher tenantDatabaseEventPublisher) {
         this.tenantDatabaseRepository = tenantDatabaseRepository;
         this.tenantDatabaseMapper = tenantDatabaseMapper;
         this.tenantMapper = tenantMapper;
-        this.databaseConnection = databaseConnection;
         this.cryptoEncoder = cryptoEncoder;
         this.tenantDatabaseEventPublisher = tenantDatabaseEventPublisher;
     }
 
     @Override
-    public TenantDatabase create(Tenant tenantModel) {
+    public TenantDatabase create(Tenant tenant) {
         TenantDatabaseEntity tenantDatabase = new TenantDatabaseEntity();
-        tenantDatabase.setTenant(tenantMapper.tenantModelToTenant(tenantModel));
+        tenantDatabase.setTenant(tenantMapper.toEntity(tenant));
         tenantDatabase.setUsername(
             cryptoEncoder.encode(UUID.randomUUID().toString()));
         tenantDatabase.setPassword(
             cryptoEncoder.encode(UUID.randomUUID().toString()));
 
-        HikariDataSource dataSource = databaseConnection.getDefault();
-
-        String url = dataSource.getJdbcUrl()
-            .replace("main", tenantModel.getId().toString());
-        if (dataSource.getJdbcUrl().contains("test")) {
-            url = dataSource.getJdbcUrl()
-                .replace("test", tenantModel.getId().toString());
-        }
-        tenantDatabase.setUrl(url);
+        // TODO: Will need to create whole new database URL from AWS (out of scope for template)
+        // TODO: Use Pulumi for this?
+        tenantDatabase.setUrl("out of scope");
 
         tenantDatabaseRepository.save(tenantDatabase);
 
@@ -71,10 +60,9 @@ public class TenantDatabaseManagerImpl implements TenantDatabaseManager {
     }
 
     @Override
-    public TenantDatabase getByTenant(Tenant tenantModel) {
+    public TenantDatabase getByTenant(Tenant tenant) {
         TenantDatabaseEntity tenantDatabase =
-            tenantDatabaseRepository.getByTenant(
-                tenantMapper.tenantModelToTenant(tenantModel));
+            tenantDatabaseRepository.getByTenant(tenantMapper.toEntity(tenant));
 
         return tenantDatabaseMapper.toTenantDatabase(tenantDatabase);
     }

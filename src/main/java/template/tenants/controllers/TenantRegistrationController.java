@@ -9,28 +9,21 @@ import template.tenants.dtos.TenantDto;
 import template.tenants.dtos.TenantEmailConfirmationDto;
 import template.tenants.mappers.TenantMapper;
 import template.tenants.models.Tenant;
-import template.tenants.services.TenantRegistration;
-
-import java.sql.SQLException;
 
 @RestController
 public class TenantRegistrationController {
 
     private final TenantMapper tenantMapper;
-    private final TenantRegistration tenantRegistration;
 
-    public TenantRegistrationController(TenantMapper tenantMapper,
-                                        TenantRegistration tenantRegistration) {
+    public TenantRegistrationController(TenantMapper tenantMapper) {
         this.tenantMapper = tenantMapper;
-        this.tenantRegistration = tenantRegistration;
     }
 
     @PostMapping("tenant/registration")
     public ResponseEntity<Void> registration(@RequestBody TenantDto tenantDto) {
-        Tenant tenantModel =
-            tenantMapper.tenantDtoToTenantModel(tenantDto);
+        Tenant tenantModel = tenantMapper.dtoToObject(tenantDto);
 
-        tenantRegistration.register(tenantModel);
+//        tenantRegistration.register(tenantModel);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -38,8 +31,7 @@ public class TenantRegistrationController {
     @PostMapping("tenant/registration/confirmation")
     public void registrationConfirmation(
         @RequestBody
-        TenantEmailConfirmationDto tenantEmailConfirmationDto)
-        throws SQLException {
-        tenantRegistration.buildNewTenant(tenantEmailConfirmationDto.token);
+        TenantEmailConfirmationDto tenantEmailConfirmationDto) {
+//        tenantRegistration.buildNewTenant(tenantEmailConfirmationDto.token);
     }
 }

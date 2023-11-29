@@ -11,24 +11,28 @@ import template.tenants.models.Tenant;
 public class TenantEventPublisher {
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TenantEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+    public TenantEventPublisher(
+        ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public void publishTenantCreatedEvent(Tenant tenantModel) {
-        TenantCreatedEvent tenantCreatedEvent = new TenantCreatedEvent(this, tenantModel);
+    public void publishTenantCreatedEvent(Tenant tenant) {
+        TenantCreatedEvent tenantCreatedEvent =
+            new TenantCreatedEvent(this, tenant);
 
         applicationEventPublisher.publishEvent(tenantCreatedEvent);
     }
 
-    public void publishTenantUpdatedEvent(Tenant tenantModel) {
-        TenantUpdatedEvent tenantUpdatedEvent = new TenantUpdatedEvent(this, tenantModel);
+    public void publishTenantUpdatedEvent(Tenant tenant) {
+        TenantUpdatedEvent tenantUpdatedEvent =
+            new TenantUpdatedEvent(this, tenant);
 
         applicationEventPublisher.publishEvent(tenantUpdatedEvent);
     }
 
-    public void publishTenantDeletedEvent(Tenant tenantModel) {
-        TenantDeletedEvent tenantDeletedEvent = new TenantDeletedEvent(this, tenantModel);
+    public void publishTenantDeletedEvent(Tenant tenant) {
+        TenantDeletedEvent tenantDeletedEvent =
+            new TenantDeletedEvent(this, tenant);
 
         applicationEventPublisher.publishEvent(tenantDeletedEvent);
     }

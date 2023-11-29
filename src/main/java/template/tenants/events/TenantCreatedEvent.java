@@ -4,14 +4,14 @@ import org.springframework.context.ApplicationEvent;
 import template.tenants.models.Tenant;
 
 public class TenantCreatedEvent extends ApplicationEvent {
-    private final Tenant tenantModel;
+    private final Tenant tenant;
 
-    public TenantCreatedEvent(Object source, Tenant tenantModel) {
+    public TenantCreatedEvent(Object source, Tenant tenant) {
         super(source);
-        this.tenantModel = tenantModel;
+        this.tenant = tenant;
     }
 
     public Tenant getTenant() {
-        return tenantModel;
+        return tenant;
     }
 }

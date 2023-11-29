@@ -27,27 +27,27 @@ public class TenantModelTest {
 
     @Test
     public void givenNoEmail_whenCheckIfValidEmail_shouldReturnFalse() {
-        Tenant model = new Tenant();
+        Tenant tenant = new Tenant();
 
-        boolean actual = model.checkIfValidEmail();
+        boolean actual = tenant.checkIfValidEmail();
 
         Assertions.assertFalse(actual);
     }
 
     @Test
     public void givenInvalidEmail_whenCheckIfValidEmail_shouldReturnFalse() {
-        Tenant model = new Tenant();
-        model.setEmail("testing");
-        boolean actual = model.checkIfValidEmail();
+        Tenant tenant = new Tenant();
+        tenant.setEmail("testing");
+        boolean actual = tenant.checkIfValidEmail();
 
         Assertions.assertFalse(actual);
     }
 
     @Test
     public void givenValidEmail_whenCheckIfValidEmail_shouldReturnFalse() {
-        Tenant model = new Tenant();
-        model.setEmail("testing@gmail.com");
-        boolean actual = model.checkIfValidEmail();
+        Tenant tenant = new Tenant();
+        tenant.setEmail("testing@gmail.com");
+        boolean actual = tenant.checkIfValidEmail();
 
         Assertions.assertTrue(actual);
     }

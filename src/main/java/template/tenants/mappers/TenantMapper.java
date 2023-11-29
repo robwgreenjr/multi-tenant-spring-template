@@ -16,22 +16,21 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface TenantMapper {
-    List<Tenant> toTenantModelList(List<TenantEntity> tenantList);
+    List<Tenant> entityToList(List<TenantEntity> tenantEntityList);
 
-    Tenant toTenantModel(TenantEntity tenant);
+    Tenant entityToObject(TenantEntity tenantEntity);
 
-    TenantEntity tenantModelToTenant(Tenant tenantModel);
+    TenantEntity toEntity(Tenant tenant);
 
-    TenantDto tenantModelToTenantDto(Tenant tenantModel);
+    TenantDto toDto(Tenant tenant);
 
-    Tenant tenantDtoToTenantModel(TenantDto tenantDto);
+    Tenant dtoToObject(TenantDto tenantDto);
 
-    List<TenantDto> tenantModelListToTenantDtoList(
-        List<Tenant> tenantModelList);
+    List<TenantDto> toDtoList(List<Tenant> tenantList);
 
     @BeanMapping(
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void update(@MappingTarget TenantEntity tenant, Tenant tenantModel);
+    void update(@MappingTarget TenantEntity tenantEntity, Tenant tenant);
 
     default LocalDateTime map(String string) {
         if (string == null) return null;

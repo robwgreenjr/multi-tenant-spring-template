@@ -8,7 +8,6 @@ import template.database.models.Query;
 import template.database.models.QueryResult;
 import template.global.utilities.ParameterProcessor;
 import template.tenants.dtos.TenantDto;
-import template.tenants.entities.TenantEntity;
 import template.tenants.mappers.TenantMapper;
 import template.tenants.models.Tenant;
 import template.tenants.services.TenantManager;
@@ -39,8 +38,7 @@ public class TenantController {
         QueryResult<Tenant> result = tenantManager.getList(query);
 
         QueryResult<TenantDto> response = new QueryResult<>();
-        response.setData(
-            tenantMapper.tenantModelListToTenantDtoList(result.getData()));
+        response.setData(tenantMapper.toDtoList(result.getData()));
         response.setMeta(result.getMeta());
 
         return response;
@@ -56,45 +54,44 @@ public class TenantController {
         QueryResult<Tenant> result = tenantManager.getSingle(query);
 
         QueryResult<TenantDto> response = new QueryResult<>();
-        response.setData(
-            tenantMapper.tenantModelListToTenantDtoList(result.getData()));
+        response.setData(tenantMapper.toDtoList(result.getData()));
         response.setMeta(result.getMeta());
 
         return response;
     }
 
     @PostMapping("tenant")
-    public ResponseEntity<TenantDto> save(@RequestBody TenantEntity tenant)
+    public ResponseEntity<TenantDto> save(@RequestBody TenantDto tenant)
         throws Exception {
-        Tenant tenantModel = tenantMapper.toTenantModel(tenant);
+        Tenant tenantModel = tenantMapper.dtoToObject(tenant);
 
         tenantModel = tenantManager.create(tenantModel);
 
-        TenantDto tenantDto = tenantMapper.tenantModelToTenantDto(tenantModel);
+        TenantDto tenantDto = tenantMapper.toDto(tenantModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(tenantDto);
     }
 
     @PutMapping("tenant/{id}")
-    public ResponseEntity<TenantDto> update(@RequestBody TenantEntity tenant,
+    public ResponseEntity<TenantDto> update(@RequestBody TenantDto tenant,
                                             @PathVariable UUID id)
         throws Exception {
-        Tenant tenantModel = tenantMapper.toTenantModel(tenant);
+        Tenant tenantModel = tenantMapper.dtoToObject(tenant);
 
         tenantModel = tenantManager.update(id, tenantModel);
 
-        TenantDto tenantDto = tenantMapper.tenantModelToTenantDto(tenantModel);
+        TenantDto tenantDto = tenantMapper.toDto(tenantModel);
         return ResponseEntity.status(HttpStatus.OK).body(tenantDto);
     }
 
     @PatchMapping("tenant/{id}")
     public ResponseEntity<TenantDto> updatePartial(
-        @RequestBody TenantEntity tenant,
+        @RequestBody TenantDto tenant,
         @PathVariable UUID id)
         throws Exception {
-        Tenant tenantModel = tenantMapper.toTenantModel(tenant);
+        Tenant tenantModel = tenantMapper.dtoToObject(tenant);
         tenantModel = tenantManager.updatePartial(id, tenantModel);
 
-        TenantDto tenantDto = tenantMapper.tenantModelToTenantDto(tenantModel);
+        TenantDto tenantDto = tenantMapper.toDto(tenantModel);
         return ResponseEntity.status(HttpStatus.OK).body(tenantDto);
     }
 

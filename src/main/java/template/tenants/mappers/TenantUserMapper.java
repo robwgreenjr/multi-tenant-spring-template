@@ -12,29 +12,24 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface TenantUserMapper {
-    List<TenantUser> dtoToList(
-        List<TenantUserDto> tenantDtoList);
+    List<TenantUser> dtoToList(List<TenantUserDto> tenantUserDtoList);
 
-    TenantUser dtoToObject(TenantUserDto tenantDto);
+    TenantUser dtoToObject(TenantUserDto tenantUserDto);
 
-    List<TenantUser> entityToList(
-        List<TenantUserEntity> tenantEntityList);
+    List<TenantUser> entityToList(List<TenantUserEntity> tenantUserEntityList);
 
-    TenantUser entityToObject(
-        TenantUserEntity tenantEntity);
+    TenantUser entityToObject(TenantUserEntity tenantUserEntity);
 
-    TenantUserDto toDto(TenantUser tenant);
+    TenantUserDto toDto(TenantUser tenantUser);
 
-    List<TenantUserDto> toDtoList(
-        List<TenantUser> tenantList);
+    List<TenantUserDto> toDtoList(List<TenantUser> tenantUserList);
 
-    TenantUserEntity toEntity(TenantUser tenant);
+    TenantUserEntity toEntity(TenantUser tenantUser);
 
-    List<TenantUserEntity> toEntityList(
-        List<TenantUser> tenantList);
+    List<TenantUserEntity> toEntityList(List<TenantUser> tenantUserList);
 
     @BeanMapping(
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void update(@MappingTarget TenantUserEntity tenantEntity,
-                TenantUser tenant);
+    void update(@MappingTarget TenantUserEntity tenantUserEntity,
+                TenantUser tenantUser);
 }

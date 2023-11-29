@@ -40,7 +40,7 @@ public class TenantManagerImpl implements TenantManager {
             tenantRepository.getList(validquery);
 
         QueryResult<Tenant> result = new QueryResult<>();
-        result.setData(tenantMapper.toTenantModelList(tenantList));
+        result.setData(tenantMapper.entityToList(tenantList));
         result.getMeta().setPageCount(tenantList.size());
 
         if (query.getLimit() != null) {
@@ -60,7 +60,7 @@ public class TenantManagerImpl implements TenantManager {
             throw new TenantNotFoundException();
         }
 
-        return tenantMapper.toTenantModel(tenant.get());
+        return tenantMapper.entityToObject(tenant.get());
     }
 
     @Override
@@ -71,7 +71,7 @@ public class TenantManagerImpl implements TenantManager {
             throw new TenantNotFoundException();
         }
 
-        return tenantMapper.toTenantModel(tenant.get());
+        return tenantMapper.entityToObject(tenant.get());
     }
 
     @Override
@@ -83,7 +83,7 @@ public class TenantManagerImpl implements TenantManager {
             throw new TenantNotFoundException();
         }
 
-        return tenantMapper.toTenantModel(tenant.get());
+        return tenantMapper.entityToObject(tenant.get());
     }
 
     @Override
@@ -99,7 +99,7 @@ public class TenantManagerImpl implements TenantManager {
 
         QueryResult<Tenant> result = new QueryResult<>();
         List<Tenant> data = new ArrayList<>();
-        data.add(tenantMapper.toTenantModel(tenant.get()));
+        data.add(tenantMapper.entityToObject(tenant.get()));
         result.setData(data);
         result.getMeta().setCount(1);
         result.getMeta().setPageCount(1);
@@ -112,38 +112,38 @@ public class TenantManagerImpl implements TenantManager {
     }
 
     @Override
-    public Tenant create(Tenant tenantModel) {
-        if (!tenantModel.checkIfValidEmail()) {
+    public Tenant create(Tenant tenant) {
+        if (!tenant.checkIfValidEmail()) {
             throw new InvalidTenantEmailException();
         }
 
-        tenantModel.setSubdomainFromEmail();
+        tenant.setSubdomainFromEmail();
 
-        TenantEntity newTenant = tenantMapper.tenantModelToTenant(tenantModel);
+        TenantEntity newTenant = tenantMapper.toEntity(tenant);
 
         tenantRepository.save(newTenant);
 
-        tenantModel.setId(newTenant.getId());
+        tenant.setId(newTenant.getId());
 
-        tenantEventPublisher.publishTenantCreatedEvent(tenantModel);
+        tenantEventPublisher.publishTenantCreatedEvent(tenant);
 
-        return tenantMapper.toTenantModel(newTenant);
+        return tenantMapper.entityToObject(newTenant);
     }
 
     @Override
-    public Tenant update(UUID id, Tenant tenantModel) {
-        TenantEntity entity = tenantMapper.tenantModelToTenant(tenantModel);
+    public Tenant update(UUID id, Tenant tenant) {
+        TenantEntity entity = tenantMapper.toEntity(tenant);
         entity.setId(id);
 
         tenantRepository.save(entity);
 
-        tenantEventPublisher.publishTenantUpdatedEvent(tenantModel);
+        tenantEventPublisher.publishTenantUpdatedEvent(tenant);
 
-        return tenantModel;
+        return tenant;
     }
 
     @Override
-    public Tenant updatePartial(UUID id, Tenant tenantModel) {
+    public Tenant updatePartial(UUID id, Tenant tenant) {
         Optional<TenantEntity> getEntity = tenantRepository.getById(id);
 
         if (getEntity.isEmpty()) {
@@ -151,15 +151,15 @@ public class TenantManagerImpl implements TenantManager {
         }
 
         TenantEntity foundEntity = getEntity.get();
-        tenantModel.setId(foundEntity.getId());
+        tenant.setId(foundEntity.getId());
 
-        tenantMapper.update(foundEntity, tenantModel);
+        tenantMapper.update(foundEntity, tenant);
         tenantRepository.save(foundEntity);
 
-        tenantModel = tenantMapper.toTenantModel(foundEntity);
-        tenantEventPublisher.publishTenantUpdatedEvent(tenantModel);
+        tenant = tenantMapper.entityToObject(foundEntity);
+        tenantEventPublisher.publishTenantUpdatedEvent(tenant);
 
-        return tenantModel;
+        return tenant;
     }
 
     @Override
@@ -172,8 +172,8 @@ public class TenantManagerImpl implements TenantManager {
 
         tenantRepository.delete(getEntity.get());
 
-        Tenant tenantModel = tenantMapper.toTenantModel(getEntity.get());
+        Tenant tenant = tenantMapper.entityToObject(getEntity.get());
 
-        tenantEventPublisher.publishTenantDeletedEvent(tenantModel);
+        tenantEventPublisher.publishTenantDeletedEvent(tenant);
     }
 }

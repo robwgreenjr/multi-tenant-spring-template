@@ -4,15 +4,15 @@ import org.springframework.context.ApplicationEvent;
 import template.tenants.models.TenantEmailConfirmation;
 
 public class TenantEmailConfirmationCreatedEvent extends ApplicationEvent {
-    private final TenantEmailConfirmation tenantEmailConfirmationModel;
+    private final TenantEmailConfirmation tenantEmailConfirmation;
 
     public TenantEmailConfirmationCreatedEvent(Object source,
-                                               TenantEmailConfirmation tenantEmailConfirmationModel) {
+                                               TenantEmailConfirmation tenantEmailConfirmation) {
         super(source);
-        this.tenantEmailConfirmationModel = tenantEmailConfirmationModel;
+        this.tenantEmailConfirmation = tenantEmailConfirmation;
     }
 
     public TenantEmailConfirmation getTenant() {
-        return tenantEmailConfirmationModel;
+        return tenantEmailConfirmation;
     }
 }
