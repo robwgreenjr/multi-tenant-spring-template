@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+#  spring-template:
+#    build: ./docker
+#    container_name: spring-template
+#    ports:
+#      - "127.0.0.100:80:80"
+#      - "127.0.0.100:443:443"
+#      - "127.0.0.100:5005:5005"
+#      - "127.0.0.100:35729:35729"
+#    volumes:
+#      - .:/opt/api
+#      - /target
+#    networks:
+#      - spring-template
+  spring-template-pg:
+    image: postgres
+    container_name: spring-template-pg
+    ports:
+      - "127.0.0.234:5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=main
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - spring-template
+networks:
+  spring-template:
+    external:
+      name: spring-template
+volumes:
+  pg-data:

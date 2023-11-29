@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+    <!--
+        SCHEMA
+    -->
+    <changeSet id="schema_generation" author="Rob Green">
+        <sqlFile encoding="utf8"
+                 path="db/changelog/main/schema_generation.sql"/>
+    </changeSet>
+
+    <!--
+        DDL
+    -->
+    <!--  MAIN  -->
+    <changeSet id="configuration" author="Rob Green">
+        <sqlFile encoding="utf8" path="db/changelog/main/configuration.sql"/>
+    </changeSet>
+    <changeSet id="tenant" author="Rob Green">
+        <sqlFile encoding="utf8" path="db/changelog/main/tenant.sql"/>
+    </changeSet>
+    <changeSet id="users" author="Rob Green">
+        <sqlFile encoding="utf8" path="db/changelog/main/user.sql"/>
+    </changeSet>
+    <changeSet id="authorization" author="Rob Green">
+        <sqlFile encoding="utf8" path="db/changelog/main/authorization.sql"/>
+    </changeSet>
+    <changeSet id="authentication" author="Rob Green">
+        <sqlFile encoding="utf8" path="db/changelog/main/authentication.sql"/>
+    </changeSet>
+    <!--  TENANT -->
+    <changeSet id="tenant_user" author="Rob Green">
+        <sqlFile encoding="utf8" path="db/changelog/tenant/user.sql"/>
+    </changeSet>
+    <changeSet id="tenant_authentication" author="Rob Green">
+        <sqlFile encoding="utf8" path="db/changelog/tenant/authentication.sql"/>
+    </changeSet>
+    <changeSet id="tenant_authorization" author="Rob Green">
+        <sqlFile encoding="utf8" path="db/changelog/tenant/authorization.sql"/>
+    </changeSet>
+
+    <!--
+        SEEDERS
+    -->
+</databaseChangeLog>

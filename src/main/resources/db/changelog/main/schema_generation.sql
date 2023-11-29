@@ -1,0 +1,2 @@
+CREATE SCHEMA internal;
+CREATE SCHEMA tenant;
