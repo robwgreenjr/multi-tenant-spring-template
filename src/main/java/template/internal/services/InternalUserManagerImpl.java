@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import template.database.models.Query;
 import template.database.models.QueryResult;
 import template.internal.entities.InternalUserEntity;
+import template.internal.events.publishers.InternalUserEventPublisher;
 import template.internal.exceptions.InternalUserNotFoundException;
 import template.internal.mappers.InternalUserMapper;
 import template.internal.models.InternalUser;
@@ -17,12 +18,15 @@ import java.util.Optional;
 public class InternalUserManagerImpl implements InternalUserManager {
     private final InternalUserRepository userRepository;
     private final InternalUserMapper userMapper;
+    private final InternalUserEventPublisher internalUserEventPublisher;
 
     public InternalUserManagerImpl(
         InternalUserRepository userRepository,
-        InternalUserMapper userMapper) {
+        InternalUserMapper userMapper,
+        InternalUserEventPublisher internalUserEventPublisher) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.internalUserEventPublisher = internalUserEventPublisher;
     }
 
     @Override
@@ -31,7 +35,10 @@ public class InternalUserManagerImpl implements InternalUserManager {
 
         userRepository.save(newEntity);
 
-        return userMapper.entityToObject(newEntity);
+        InternalUser newUser = userMapper.entityToObject(newEntity);
+        internalUserEventPublisher.publishInternalUserCreatedEvent(newUser);
+
+        return newUser;
     }
 
     @Override
@@ -41,7 +48,12 @@ public class InternalUserManagerImpl implements InternalUserManager {
 
         userRepository.saveList(newEntityList);
 
-        return userMapper.entityToList(newEntityList);
+        List<InternalUser> newUsers = userMapper.entityToList(newEntityList);
+        for (InternalUser newUser : newUsers) {
+            internalUserEventPublisher.publishInternalUserCreatedEvent(newUser);
+        }
+
+        return newUsers;
     }
 
     @Override
@@ -54,6 +66,9 @@ public class InternalUserManagerImpl implements InternalUserManager {
         }
 
         userRepository.delete(findEntity.get());
+
+        internalUserEventPublisher.publishInternalUserDeletedEvent(
+            userMapper.entityToObject(findEntity.get()));
     }
 
     @Override
@@ -102,7 +117,10 @@ public class InternalUserManagerImpl implements InternalUserManager {
 
         userRepository.save(entity);
 
-        return user;
+        InternalUser updatedUser = userMapper.entityToObject(entity);
+        internalUserEventPublisher.publishInternalUserUpdatedEvent(updatedUser);
+
+        return updatedUser;
     }
 
     @Override
@@ -112,7 +130,13 @@ public class InternalUserManagerImpl implements InternalUserManager {
 
         userRepository.saveList(entityList);
 
-        return userMapper.entityToList(entityList);
+        List<InternalUser> updatedUsers = userMapper.entityToList(entityList);
+        for (InternalUser updatedUser : updatedUsers) {
+            internalUserEventPublisher.publishInternalUserUpdatedEvent(
+                updatedUser);
+        }
+
+        return updatedUsers;
     }
 
     @Override
@@ -130,8 +154,9 @@ public class InternalUserManagerImpl implements InternalUserManager {
         userMapper.update(foundEntity, user);
         userRepository.save(foundEntity);
 
-        user = userMapper.entityToObject(foundEntity);
+        InternalUser updatedUser = userMapper.entityToObject(foundEntity);
+        internalUserEventPublisher.publishInternalUserUpdatedEvent(updatedUser);
 
-        return user;
+        return updatedUser;
     }
 }
