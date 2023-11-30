@@ -2,6 +2,7 @@ package template.authorization.services;
 
 import org.springframework.stereotype.Service;
 import template.authorization.entities.TenantRoleEntity;
+import template.authorization.events.publishers.TenantRoleEventPublisher;
 import template.authorization.exceptions.RoleNotFoundException;
 import template.authorization.mappers.TenantRoleMapper;
 import template.authorization.models.TenantRole;
@@ -17,12 +18,14 @@ import java.util.Optional;
 public class TenantRoleManagerImpl implements TenantRoleManager {
     private final TenantRoleRepository roleRepository;
     private final TenantRoleMapper roleMapper;
-
+    private final TenantRoleEventPublisher tenantRoleEventPublisher;
 
     public TenantRoleManagerImpl(TenantRoleRepository roleRepository,
-                                 TenantRoleMapper roleMapper) {
+                                 TenantRoleMapper roleMapper,
+                                 TenantRoleEventPublisher tenantRoleEventPublisher) {
         this.roleRepository = roleRepository;
         this.roleMapper = roleMapper;
+        this.tenantRoleEventPublisher = tenantRoleEventPublisher;
     }
 
     @Override

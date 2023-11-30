@@ -2,6 +2,7 @@ package template.authorization.services;
 
 import org.springframework.stereotype.Service;
 import template.authorization.entities.InternalRoleEntity;
+import template.authorization.events.publishers.InternalRoleEventPublisher;
 import template.authorization.exceptions.RoleNotFoundException;
 import template.authorization.mappers.InternalRoleMapper;
 import template.authorization.models.InternalRole;
@@ -17,12 +18,14 @@ import java.util.Optional;
 public class InternalRoleManagerImpl implements InternalRoleManager {
     private final InternalRoleRepository roleRepository;
     private final InternalRoleMapper roleMapper;
-
+    private final InternalRoleEventPublisher internalRoleEventPublisher;
 
     public InternalRoleManagerImpl(InternalRoleRepository roleRepository,
-                                   InternalRoleMapper roleMapper) {
+                                   InternalRoleMapper roleMapper,
+                                   InternalRoleEventPublisher internalRoleEventPublisher) {
         this.roleRepository = roleRepository;
         this.roleMapper = roleMapper;
+        this.internalRoleEventPublisher = internalRoleEventPublisher;
     }
 
     @Override

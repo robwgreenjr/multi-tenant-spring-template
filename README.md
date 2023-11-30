@@ -77,6 +77,8 @@ sudo update-ca-certificates
     - Redesign tenant database with tenant_id with all tables, using 2 schemas
         - Setup Internal and Tenant stuff...
             - Add events and needed tests
+                - authorization
+                - authentication
             - Internal Auth
             - Tenant Auth
             - Allow auth middleware to handle separate internal/tenant auth properly

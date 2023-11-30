@@ -2,6 +2,7 @@ package template.authorization.services;
 
 import org.springframework.stereotype.Service;
 import template.authorization.entities.TenantPermissionEntity;
+import template.authorization.events.publishers.TenantPermissionEventPublisher;
 import template.authorization.exceptions.PermissionNotFoundException;
 import template.authorization.mappers.TenantPermissionMapper;
 import template.authorization.models.TenantPermission;
@@ -18,12 +19,15 @@ public class TenantPermissionManagerImpl
     implements TenantPermissionManager {
     private final TenantPermissionRepository permissionRepository;
     private final TenantPermissionMapper permissionMapper;
+    private final TenantPermissionEventPublisher tenantPermissionEventPublisher;
 
     public TenantPermissionManagerImpl(
         TenantPermissionRepository permissionRepository,
-        TenantPermissionMapper permissionMapper) {
+        TenantPermissionMapper permissionMapper,
+        TenantPermissionEventPublisher tenantPermissionEventPublisher) {
         this.permissionRepository = permissionRepository;
         this.permissionMapper = permissionMapper;
+        this.tenantPermissionEventPublisher = tenantPermissionEventPublisher;
     }
 
     @Override

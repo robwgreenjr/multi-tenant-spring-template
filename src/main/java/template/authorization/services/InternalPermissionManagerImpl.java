@@ -2,6 +2,7 @@ package template.authorization.services;
 
 import org.springframework.stereotype.Service;
 import template.authorization.entities.InternalPermissionEntity;
+import template.authorization.events.publishers.InternalPermissionEventPublisher;
 import template.authorization.exceptions.PermissionNotFoundException;
 import template.authorization.mappers.InternalPermissionMapper;
 import template.authorization.models.InternalPermission;
@@ -18,12 +19,17 @@ public class InternalPermissionManagerImpl
     implements InternalPermissionManager {
     private final InternalPermissionRepository permissionRepository;
     private final InternalPermissionMapper permissionMapper;
+    private final InternalPermissionEventPublisher
+        internalPermissionEventPublisher;
 
     public InternalPermissionManagerImpl(
         InternalPermissionRepository permissionRepository,
-        InternalPermissionMapper permissionMapper) {
+        InternalPermissionMapper permissionMapper,
+        InternalPermissionEventPublisher internalPermissionEventPublisher) {
         this.permissionRepository = permissionRepository;
         this.permissionMapper = permissionMapper;
+        this.internalPermissionEventPublisher =
+            internalPermissionEventPublisher;
     }
 
     @Override
@@ -32,18 +38,30 @@ public class InternalPermissionManagerImpl
             permissionMapper.toEntity(permission);
         permissionRepository.save(newEntity);
 
-        return permissionMapper.entityToObject(newEntity);
+        InternalPermission newPermission =
+            permissionMapper.entityToObject(newEntity);
+        internalPermissionEventPublisher.publishInternalPermissionCreatedEvent(
+            newPermission);
+
+        return newPermission;
     }
 
     @Override
     public List<InternalPermission> createAll(
         List<InternalPermission> permissionList) {
-        List<InternalPermissionEntity> entityList =
+        List<InternalPermissionEntity> newEntityList =
             permissionMapper.toEntityList(permissionList);
 
-        permissionRepository.saveList(entityList);
+        permissionRepository.saveList(newEntityList);
 
-        return permissionMapper.entityToList(entityList);
+        List<InternalPermission> newPermissions =
+            permissionMapper.entityToList(newEntityList);
+        for (InternalPermission newPermission : newPermissions) {
+            internalPermissionEventPublisher.publishInternalPermissionCreatedEvent(
+                newPermission);
+        }
+
+        return newPermissions;
     }
 
     @Override
@@ -56,6 +74,9 @@ public class InternalPermissionManagerImpl
         }
 
         permissionRepository.delete(findEntity.get());
+
+        internalPermissionEventPublisher.publishInternalPermissionDeletedEvent(
+            permissionMapper.entityToObject(findEntity.get()));
     }
 
     @Override
@@ -125,7 +146,12 @@ public class InternalPermissionManagerImpl
 
         permissionRepository.save(entity);
 
-        return permission;
+        InternalPermission updatedPermission =
+            permissionMapper.entityToObject(entity);
+        internalPermissionEventPublisher.publishInternalPermissionUpdatedEvent(
+            updatedPermission);
+
+        return updatedPermission;
     }
 
     @Override
@@ -136,7 +162,14 @@ public class InternalPermissionManagerImpl
 
         permissionRepository.saveList(entityList);
 
-        return permissionMapper.entityToList(entityList);
+        List<InternalPermission> updatedPermissions =
+            permissionMapper.entityToList(entityList);
+        for (InternalPermission updatedPermission : updatedPermissions) {
+            internalPermissionEventPublisher.publishInternalPermissionUpdatedEvent(
+                updatedPermission);
+        }
+
+        return updatedPermissions;
     }
 
     @Override
@@ -155,6 +188,11 @@ public class InternalPermissionManagerImpl
         permissionMapper.update(foundEntity, permission);
         permissionRepository.save(foundEntity);
 
-        return permissionMapper.entityToObject(foundEntity);
+        InternalPermission updatedPermission =
+            permissionMapper.entityToObject(foundEntity);
+        internalPermissionEventPublisher.publishInternalPermissionUpdatedEvent(
+            updatedPermission);
+
+        return updatedPermission;
     }
 }
