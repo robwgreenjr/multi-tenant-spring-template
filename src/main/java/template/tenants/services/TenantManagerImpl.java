@@ -33,34 +33,37 @@ public class TenantManagerImpl implements TenantManager {
     }
 
     @Override
-    public QueryResult<Tenant> getList(Query<UUID> query) {
-        Query<UUID> validquery = new Query<>(query);
-
-        List<TenantEntity> tenantList =
-            tenantRepository.getList(validquery);
-
-        QueryResult<Tenant> result = new QueryResult<>();
-        result.setData(tenantMapper.entityToList(tenantList));
-        result.getMeta().setPageCount(tenantList.size());
-
-        if (query.getLimit() != null) {
-            result.getMeta().setLimit(query.getLimit());
+    public Tenant create(Tenant tenant) {
+        if (!tenant.checkIfValidEmail()) {
+            throw new InvalidTenantEmailException();
         }
 
-        result.getMeta().setCount(tenantRepository.count(validquery));
+        tenant.setSubdomainFromEmail();
 
-        return result;
+        TenantEntity newTenant = tenantMapper.toEntity(tenant);
+
+        tenantRepository.save(newTenant);
+
+        tenant.setId(newTenant.getId());
+
+        tenantEventPublisher.publishTenantCreatedEvent(tenant);
+
+        return tenantMapper.entityToObject(newTenant);
     }
 
     @Override
-    public Tenant getById(UUID id) {
-        Optional<TenantEntity> tenant = tenantRepository.getById(id);
+    public void delete(UUID id) {
+        Optional<TenantEntity> getEntity = tenantRepository.getById(id);
 
-        if (tenant.isEmpty()) {
+        if (getEntity.isEmpty()) {
             throw new TenantNotFoundException();
         }
 
-        return tenantMapper.entityToObject(tenant.get());
+        tenantRepository.delete(getEntity.get());
+
+        Tenant tenant = tenantMapper.entityToObject(getEntity.get());
+
+        tenantEventPublisher.publishTenantDeletedEvent(tenant);
     }
 
     @Override
@@ -75,9 +78,8 @@ public class TenantManagerImpl implements TenantManager {
     }
 
     @Override
-    public Tenant getBySubdomain(String subdomain) {
-        Optional<TenantEntity> tenant =
-            tenantRepository.getBySubdomain(subdomain);
+    public Tenant getById(UUID id) {
+        Optional<TenantEntity> tenant = tenantRepository.getById(id);
 
         if (tenant.isEmpty()) {
             throw new TenantNotFoundException();
@@ -112,22 +114,35 @@ public class TenantManagerImpl implements TenantManager {
     }
 
     @Override
-    public Tenant create(Tenant tenant) {
-        if (!tenant.checkIfValidEmail()) {
-            throw new InvalidTenantEmailException();
+    public Tenant getBySubdomain(String subdomain) {
+        Optional<TenantEntity> tenant =
+            tenantRepository.getBySubdomain(subdomain);
+
+        if (tenant.isEmpty()) {
+            throw new TenantNotFoundException();
         }
 
-        tenant.setSubdomainFromEmail();
+        return tenantMapper.entityToObject(tenant.get());
+    }
 
-        TenantEntity newTenant = tenantMapper.toEntity(tenant);
+    @Override
+    public QueryResult<Tenant> getList(Query<UUID> query) {
+        Query<UUID> validquery = new Query<>(query);
 
-        tenantRepository.save(newTenant);
+        List<TenantEntity> tenantList =
+            tenantRepository.getList(validquery);
 
-        tenant.setId(newTenant.getId());
+        QueryResult<Tenant> result = new QueryResult<>();
+        result.setData(tenantMapper.entityToList(tenantList));
+        result.getMeta().setPageCount(tenantList.size());
 
-        tenantEventPublisher.publishTenantCreatedEvent(tenant);
+        if (query.getLimit() != null) {
+            result.getMeta().setLimit(query.getLimit());
+        }
 
-        return tenantMapper.entityToObject(newTenant);
+        result.getMeta().setCount(tenantRepository.count(validquery));
+
+        return result;
     }
 
     @Override
@@ -160,20 +175,5 @@ public class TenantManagerImpl implements TenantManager {
         tenantEventPublisher.publishTenantUpdatedEvent(tenant);
 
         return tenant;
-    }
-
-    @Override
-    public void delete(UUID id) {
-        Optional<TenantEntity> getEntity = tenantRepository.getById(id);
-
-        if (getEntity.isEmpty()) {
-            throw new TenantNotFoundException();
-        }
-
-        tenantRepository.delete(getEntity.get());
-
-        Tenant tenant = tenantMapper.entityToObject(getEntity.get());
-
-        tenantEventPublisher.publishTenantDeletedEvent(tenant);
     }
 }
