@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import template.database.models.Query;
 import template.database.models.QueryResult;
 import template.tenants.entities.TenantUserEntity;
+import template.tenants.events.publishers.TenantUserEventPublisher;
 import template.tenants.exceptions.TenantUserNotFoundException;
 import template.tenants.mappers.TenantUserMapper;
 import template.tenants.models.TenantUser;
@@ -17,12 +18,15 @@ import java.util.Optional;
 public class TenantUserManagerImpl implements TenantUserManager {
     private final TenantUserRepository userRepository;
     private final TenantUserMapper userMapper;
+    private final TenantUserEventPublisher tenantUserEventPublisher;
 
     public TenantUserManagerImpl(
         TenantUserRepository userRepository,
-        TenantUserMapper userMapper) {
+        TenantUserMapper userMapper,
+        TenantUserEventPublisher tenantUserEventPublisher) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.tenantUserEventPublisher = tenantUserEventPublisher;
     }
 
     @Override
@@ -31,7 +35,10 @@ public class TenantUserManagerImpl implements TenantUserManager {
 
         userRepository.save(newEntity);
 
-        return userMapper.entityToObject(newEntity);
+        TenantUser newUser = userMapper.entityToObject(newEntity);
+        tenantUserEventPublisher.publishTenantUserCreatedEvent(newUser);
+
+        return newUser;
     }
 
     @Override
@@ -41,7 +48,12 @@ public class TenantUserManagerImpl implements TenantUserManager {
 
         userRepository.saveList(newEntityList);
 
-        return userMapper.entityToList(newEntityList);
+        List<TenantUser> newUsers = userMapper.entityToList(newEntityList);
+        for (TenantUser newUser : newUsers) {
+            tenantUserEventPublisher.publishTenantUserCreatedEvent(newUser);
+        }
+
+        return newUsers;
     }
 
     @Override
@@ -54,6 +66,9 @@ public class TenantUserManagerImpl implements TenantUserManager {
         }
 
         userRepository.delete(findEntity.get());
+
+        tenantUserEventPublisher.publishTenantUserDeletedEvent(
+            userMapper.entityToObject(findEntity.get()));
     }
 
     @Override
@@ -102,7 +117,10 @@ public class TenantUserManagerImpl implements TenantUserManager {
 
         userRepository.save(entity);
 
-        return user;
+        TenantUser updatedUser = userMapper.entityToObject(entity);
+        tenantUserEventPublisher.publishTenantUserUpdatedEvent(updatedUser);
+
+        return updatedUser;
     }
 
     @Override
@@ -112,7 +130,12 @@ public class TenantUserManagerImpl implements TenantUserManager {
 
         userRepository.saveList(entityList);
 
-        return userMapper.entityToList(entityList);
+        List<TenantUser> updatedUsers = userMapper.entityToList(entityList);
+        for (TenantUser updatedUser : updatedUsers) {
+            tenantUserEventPublisher.publishTenantUserUpdatedEvent(updatedUser);
+        }
+
+        return updatedUsers;
     }
 
     @Override
@@ -130,8 +153,9 @@ public class TenantUserManagerImpl implements TenantUserManager {
         userMapper.update(foundEntity, user);
         userRepository.save(foundEntity);
 
-        user = userMapper.entityToObject(foundEntity);
+        TenantUser updatedUser = userMapper.entityToObject(foundEntity);
+        tenantUserEventPublisher.publishTenantUserUpdatedEvent(updatedUser);
 
-        return user;
+        return updatedUser;
     }
 }
