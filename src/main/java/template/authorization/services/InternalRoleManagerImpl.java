@@ -29,6 +29,80 @@ public class InternalRoleManagerImpl implements InternalRoleManager {
     }
 
     @Override
+    public InternalRole create(InternalRole role) {
+        InternalRoleEntity newEntity = roleMapper.toEntity(role);
+
+        roleRepository.save(newEntity);
+
+        InternalRole newRole =
+            roleMapper.entityToObject(newEntity);
+        internalRoleEventPublisher.publishInternalRoleCreatedEvent(
+            newRole);
+
+        return newRole;
+    }
+
+    @Override
+    public List<InternalRole> createAll(List<InternalRole> roleList) {
+        List<InternalRoleEntity> newEntityList =
+            roleMapper.toEntityList(roleList);
+
+        roleRepository.saveList(newEntityList);
+
+        List<InternalRole> newRoles =
+            roleMapper.entityToList(newEntityList);
+        for (InternalRole newRole : newRoles) {
+            internalRoleEventPublisher.publishInternalRoleCreatedEvent(
+                newRole);
+        }
+
+        return newRoles;
+    }
+
+    @Override
+    public void delete(Integer id) {
+        Optional<InternalRoleEntity> findEntity = roleRepository.getById(id);
+
+        if (findEntity.isEmpty()) {
+            throw new RoleNotFoundException();
+        }
+
+        roleRepository.delete(findEntity.get());
+
+        internalRoleEventPublisher.publishInternalRoleDeletedEvent(
+            roleMapper.entityToObject(findEntity.get()));
+    }
+
+    @Override
+    public InternalRole getById(Integer id) {
+        Optional<InternalRoleEntity> entity = roleRepository.getById(id);
+
+        if (entity.isEmpty()) {
+            throw new RoleNotFoundException();
+        }
+
+        return roleMapper.entityToObject(entity.get());
+    }
+
+    @Override
+    public List<InternalRole> getByIdList(List<Integer> ids) {
+        List<InternalRoleEntity> entityList = roleRepository.getByIdList(ids);
+
+        return roleMapper.entityToList(entityList);
+    }
+
+    @Override
+    public InternalRole getByName(String name) {
+        Optional<InternalRoleEntity> entity = roleRepository.getByName(name);
+
+        if (entity.isEmpty()) {
+            throw new RoleNotFoundException();
+        }
+
+        return roleMapper.entityToObject(entity.get());
+    }
+
+    @Override
     public QueryResult<InternalRole> getList(Query<Integer> query) {
         List<InternalRoleEntity> entityList =
             roleRepository.getList(query);
@@ -55,36 +129,6 @@ public class InternalRoleManagerImpl implements InternalRoleManager {
     }
 
     @Override
-    public InternalRole getByName(String name) {
-        Optional<InternalRoleEntity> entity = roleRepository.getByName(name);
-
-        if (entity.isEmpty()) {
-            throw new RoleNotFoundException();
-        }
-
-        return roleMapper.entityToObject(entity.get());
-    }
-
-    @Override
-    public List<InternalRole> getByIdList(List<Integer> ids) {
-        List<InternalRoleEntity> entityList = roleRepository.getByIdList(ids);
-
-        return roleMapper.entityToList(entityList);
-    }
-
-
-    @Override
-    public InternalRole getById(Integer id) {
-        Optional<InternalRoleEntity> entity = roleRepository.getById(id);
-
-        if (entity.isEmpty()) {
-            throw new RoleNotFoundException();
-        }
-
-        return roleMapper.entityToObject(entity.get());
-    }
-
-    @Override
     public QueryResult<InternalRole> getSingle(Query<Integer> query) {
         Optional<InternalRoleEntity> entity =
             roleRepository.getSingle(query);
@@ -108,42 +152,18 @@ public class InternalRoleManagerImpl implements InternalRoleManager {
     }
 
     @Override
-    public InternalRole create(InternalRole role) {
-        InternalRoleEntity newEntity = roleMapper.toEntity(role);
-
-        roleRepository.save(newEntity);
-
-        return roleMapper.entityToObject(newEntity);
-    }
-
-    @Override
-    public List<InternalRole> createAll(List<InternalRole> roleList) {
-        List<InternalRoleEntity> entityList = roleMapper.toEntityList(roleList);
-
-        roleRepository.saveList(entityList);
-
-        return roleMapper.entityToList(entityList);
-    }
-
-    @Override
-    public void delete(Integer id) {
-        Optional<InternalRoleEntity> findEntity = roleRepository.getById(id);
-
-        if (findEntity.isEmpty()) {
-            throw new RoleNotFoundException();
-        }
-
-        roleRepository.delete(findEntity.get());
-    }
-
-    @Override
     public InternalRole update(Integer id, InternalRole role) {
         InternalRoleEntity entity = roleMapper.toEntity(role);
         entity.setId(id);
 
         roleRepository.save(entity);
 
-        return role;
+        InternalRole updatedRole =
+            roleMapper.entityToObject(entity);
+        internalRoleEventPublisher.publishInternalRoleUpdatedEvent(
+            updatedRole);
+
+        return updatedRole;
     }
 
     @Override
@@ -152,9 +172,13 @@ public class InternalRoleManagerImpl implements InternalRoleManager {
 
         roleRepository.saveList(entityList);
 
-        List<InternalRole> result = roleMapper.entityToList(entityList);
+        List<InternalRole> updatedRoles = roleMapper.entityToList(entityList);
+        for (InternalRole updatedRole : updatedRoles) {
+            internalRoleEventPublisher.publishInternalRoleUpdatedEvent(
+                updatedRole);
+        }
 
-        return roleMapper.entityToList(entityList);
+        return updatedRoles;
     }
 
     @Override
@@ -171,6 +195,11 @@ public class InternalRoleManagerImpl implements InternalRoleManager {
         roleMapper.update(foundEntity, role);
         roleRepository.save(foundEntity);
 
-        return roleMapper.entityToObject(foundEntity);
+        InternalRole updatedRole =
+            roleMapper.entityToObject(foundEntity);
+        internalRoleEventPublisher.publishInternalRoleUpdatedEvent(
+            updatedRole);
+
+        return updatedRole;
     }
 }

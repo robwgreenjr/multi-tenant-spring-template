@@ -7,7 +7,7 @@ import template.authentication.exceptions.ResetPasswordTokenCreateIncompleteExce
 import template.authentication.exceptions.ResetPasswordTokenNotFoundException;
 import template.authentication.mappers.ResetPasswordTokenMapper;
 import template.authentication.models.InternalResetPasswordToken;
-import template.authentication.repositories.ResetPasswordTokenRepository;
+import template.authentication.repositories.InternalResetPasswordTokenRepository;
 import template.database.exceptions.NotNullColumnDataException;
 import template.global.exceptions.UnknownServerException;
 
@@ -16,15 +16,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class ResetPasswordTokenManagerImpl
-    implements ResetPasswordTokenManager {
-    private final ResetPasswordTokenRepository resetPasswordTokenRepository;
+public class InternalResetPasswordTokenManagerImpl
+    implements ResetPasswordTokenManager<InternalResetPasswordToken> {
+    private final InternalResetPasswordTokenRepository
+        resetPasswordTokenRepository;
     private final ResetPasswordTokenMapper resetPasswordTokenMapper;
     private final InternalResetPasswordTokenEventPublisher
         resetPasswordTokenEventPublisher;
 
-    public ResetPasswordTokenManagerImpl(
-        ResetPasswordTokenRepository resetPasswordTokenRepository,
+    public InternalResetPasswordTokenManagerImpl(
+        InternalResetPasswordTokenRepository resetPasswordTokenRepository,
         ResetPasswordTokenMapper resetPasswordTokenMapper,
         InternalResetPasswordTokenEventPublisher resetPasswordTokenEventPublisher) {
         this.resetPasswordTokenRepository = resetPasswordTokenRepository;

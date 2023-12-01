@@ -2,7 +2,6 @@ package template.authentication.services;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
 import template.authentication.helpers.SimpleJwtSpecialist;
 import template.helpers.IntegrationTest;
 
@@ -14,8 +13,6 @@ public class JwtDecipherTest extends IntegrationTest {
     private SimpleJwtSpecialist simpleJwtSpecialist;
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql",
-        "classpath:sql/global/configuration/create.sql"})
     public void givenToken_whenValidate_shouldSetUserId() {
 //        UserModel userModel = new UserModel();
 //        userModel.setId(1);

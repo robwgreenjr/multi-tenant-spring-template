@@ -5,6 +5,7 @@ import template.authentication.entities.InternalUserPasswordEntity;
 
 import java.util.Optional;
 
-public interface IUserPasswordRepository extends JpaRepository<InternalUserPasswordEntity, Integer> {
+public interface IInternalUserPasswordRepository
+    extends JpaRepository<InternalUserPasswordEntity, Integer> {
     Optional<InternalUserPasswordEntity> getByUserEmail(String email);
 }

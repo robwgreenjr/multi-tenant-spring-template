@@ -2,22 +2,22 @@ package template.authentication.services;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import template.authentication.exceptions.PasswordIncorrectException;
-import template.authentication.exceptions.UserPasswordNotFoundException;
 import template.authentication.models.InternalResetPasswordToken;
 import template.authentication.models.InternalUserPassword;
 import template.global.services.StringEncoder;
 
 @Service
-public class PasswordManagementImpl implements PasswordManagement {
+public class InternalPasswordManagementImpl
+    implements PasswordManagement<InternalUserPassword> {
     private final UserPasswordManager userPasswordManager;
     private final StringEncoder bCryptEncoder;
     private final ResetPasswordTokenManager resetPasswordTokenManager;
 
-    public PasswordManagementImpl(UserPasswordManager userPasswordManager,
-                                  @Qualifier("BCryptEncoder")
-                                  StringEncoder bCryptEncoder,
-                                  ResetPasswordTokenManager resetPasswordTokenManager) {
+    public InternalPasswordManagementImpl(
+        UserPasswordManager userPasswordManager,
+        @Qualifier("BCryptEncoder")
+        StringEncoder bCryptEncoder,
+        ResetPasswordTokenManager resetPasswordTokenManager) {
         this.userPasswordManager = userPasswordManager;
         this.bCryptEncoder = bCryptEncoder;
         this.resetPasswordTokenManager = resetPasswordTokenManager;
@@ -28,16 +28,16 @@ public class PasswordManagementImpl implements PasswordManagement {
         throws Exception {
         userPasswordModel.validatePassword();
 
-        InternalUserPassword foundUserPasswordModel =
-            userPasswordManager.findByUserEmail(
-                userPasswordModel.getEmailConfirmation());
-
-        if (!bCryptEncoder.verify(userPasswordModel.getCurrentPassword(),
-            foundUserPasswordModel.getPassword())) {
-            throw new PasswordIncorrectException();
-        }
-
-        setNewUserPassword(userPasswordModel, foundUserPasswordModel);
+//        InternalUserPassword foundUserPasswordModel =
+//            userPasswordManager.findByUserEmail(
+//                userPasswordModel.getEmailConfirmation());
+//
+//        if (!bCryptEncoder.verify(userPasswordModel.getCurrentPassword(),
+//            foundUserPasswordModel.getPassword())) {
+//            throw new PasswordIncorrectException();
+//        }
+//
+//        setNewUserPassword(userPasswordModel, foundUserPasswordModel);
 
         updatePassword(userPasswordModel);
     }
@@ -67,21 +67,21 @@ public class PasswordManagementImpl implements PasswordManagement {
     public void reset(InternalUserPassword userPasswordModel) throws Exception {
         userPasswordModel.validatePassword();
 
-        InternalResetPasswordToken resetPasswordTokenModel =
-            resetPasswordTokenManager.findByToken(
-                userPasswordModel.getToken());
-
-        InternalUserPassword foundUserPasswordModel;
-        try {
+//        InternalResetPasswordToken resetPasswordTokenModel =
+//            resetPasswordTokenManager.findByToken(
+//                userPasswordModel.getToken());
+//
+//        InternalUserPassword foundUserPasswordModel;
+//        try {
+////            foundUserPasswordModel =
+////                userPasswordManager.findByUserEmail(
+////                    resetPasswordTokenModel.getUser().getEmail());
+//        } catch (UserPasswordNotFoundException userPasswordNotFoundException) {
+//            userPasswordModel.setUser(resetPasswordTokenModel.getUser());
+//
 //            foundUserPasswordModel =
-//                userPasswordManager.findByUserEmail(
-//                    resetPasswordTokenModel.getUser().getEmail());
-        } catch (UserPasswordNotFoundException userPasswordNotFoundException) {
-            userPasswordModel.setUser(resetPasswordTokenModel.getUser());
-
-            foundUserPasswordModel =
-                userPasswordManager.create(userPasswordModel);
-        }
+//                userPasswordManager.create(userPasswordModel);
+//        }
 
 //        setNewUserPassword(userPasswordModel, foundUserPasswordModel);
 

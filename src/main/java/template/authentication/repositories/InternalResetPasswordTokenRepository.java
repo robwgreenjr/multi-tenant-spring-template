@@ -5,7 +5,7 @@ import template.authentication.entities.InternalResetPasswordTokenEntity;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ResetPasswordTokenRepository {
+public interface InternalResetPasswordTokenRepository {
     Optional<InternalResetPasswordTokenEntity> getByToken(UUID token);
 
     Optional<InternalResetPasswordTokenEntity> getByUserEmail(String email);

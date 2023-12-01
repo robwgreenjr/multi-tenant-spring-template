@@ -6,11 +6,12 @@ import template.authentication.entities.InternalUserPasswordEntity;
 import java.util.Optional;
 
 @Service
-public class UserPasswordRepositoryImpl implements UserPasswordRepository {
-    private final IUserPasswordRepository userPasswordRepository;
+public class InternalUserPasswordRepositoryImpl implements
+    InternalUserPasswordRepository {
+    private final IInternalUserPasswordRepository userPasswordRepository;
 
-    public UserPasswordRepositoryImpl(
-        IUserPasswordRepository userPasswordRepository) {
+    public InternalUserPasswordRepositoryImpl(
+        IInternalUserPasswordRepository userPasswordRepository) {
         this.userPasswordRepository = userPasswordRepository;
     }
 

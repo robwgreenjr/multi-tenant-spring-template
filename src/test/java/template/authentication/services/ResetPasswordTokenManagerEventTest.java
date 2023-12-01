@@ -7,7 +7,7 @@ import template.authentication.entities.InternalResetPasswordTokenEntity;
 import template.authentication.events.publishers.InternalResetPasswordTokenEventPublisher;
 import template.authentication.mappers.ResetPasswordTokenMapper;
 import template.authentication.models.InternalResetPasswordToken;
-import template.authentication.repositories.ResetPasswordTokenRepository;
+import template.authentication.repositories.InternalResetPasswordTokenRepository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -15,20 +15,22 @@ import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 public class ResetPasswordTokenManagerEventTest {
-    private final ResetPasswordTokenRepository resetPasswordTokenRepository =
-        Mockito.mock(ResetPasswordTokenRepository.class);
+    private final InternalResetPasswordTokenRepository
+        resetPasswordTokenRepository =
+        Mockito.mock(InternalResetPasswordTokenRepository.class);
     private final ResetPasswordTokenMapper resetPasswordTokenMapper =
         Mockito.mock(ResetPasswordTokenMapper.class);
     private final InternalResetPasswordTokenEventPublisher
         resetPasswordTokenEventPublisher = Mockito.mock(
         InternalResetPasswordTokenEventPublisher.class);
 
-    private ResetPasswordTokenManagerImpl resetPasswordTokenManager;
+    private InternalResetPasswordTokenManagerImpl resetPasswordTokenManager;
 
     @BeforeEach
     void initUseCase() {
         resetPasswordTokenManager =
-            new ResetPasswordTokenManagerImpl(resetPasswordTokenRepository,
+            new InternalResetPasswordTokenManagerImpl(
+                resetPasswordTokenRepository,
                 resetPasswordTokenMapper,
                 resetPasswordTokenEventPublisher);
     }

@@ -1,18 +1,13 @@
 package template.authentication.services;
 
-import template.authentication.models.InternalUserPassword;
+public interface UserPasswordManager<T> {
+    T findByUserEmail(String email);
 
-public interface UserPasswordManager {
-    InternalUserPassword findByUserEmail(String email);
+    T create(T userPassword);
 
-    InternalUserPassword create(InternalUserPassword userPasswordModel);
+    T update(Integer id, T userPassword) throws Exception;
 
-    InternalUserPassword update(Integer id,
-                                InternalUserPassword userPasswordModel)
-        throws Exception;
-
-    InternalUserPassword updatePartial(Integer id,
-                                       InternalUserPassword userPasswordModel);
+    T updatePartial(Integer id, T userPassword);
 
     void delete(Integer id);
 }

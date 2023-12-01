@@ -2,15 +2,11 @@ package template.authentication.services;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import template.authentication.exceptions.PasswordIncorrectException;
-import template.authentication.exceptions.PasswordNotSetException;
-import template.authentication.exceptions.UserPasswordNotFoundException;
 import template.authentication.helpers.JwtSpecialist;
 import template.authentication.models.InternalUserPassword;
 import template.authentication.models.Jwt;
 import template.authorization.models.InternalRole;
 import template.authorization.services.InternalRoleManager;
-import template.global.exceptions.UnknownServerException;
 import template.global.services.StringEncoder;
 
 import java.util.List;
@@ -49,27 +45,27 @@ public class SimpleUserLogin implements UserLoginHandler {
 
     @Override
     public InternalUserPassword login(String identifier, String password) {
-        InternalUserPassword userPassword;
-        try {
-            userPassword = userPasswordManager.findByUserEmail(identifier);
-        } catch (UserPasswordNotFoundException exception) {
-            throw new PasswordNotSetException();
-        }
+        InternalUserPassword userPassword = new InternalUserPassword();
+//        try {
+//            userPassword = userPasswordManager.findByUserEmail(identifier);
+//        } catch (UserPasswordNotFoundException exception) {
+//            throw new PasswordNotSetException();
+//        }
 
-        Boolean isVerified;
-        try {
-            isVerified =
-                bCryptEncoder.verify(password, userPassword.getPassword());
-        } catch (NullPointerException nullPointerException) {
-            throw new PasswordNotSetException();
-        } catch (Exception exception) {
-            throw new UnknownServerException(
-                "Error occurred while verifying password.");
-        }
+//        Boolean isVerified;
+//        try {
+//            isVerified =
+//                bCryptEncoder.verify(password, userPassword.getPassword());
+//        } catch (NullPointerException nullPointerException) {
+//            throw new PasswordNotSetException();
+//        } catch (Exception exception) {
+//            throw new UnknownServerException(
+//                "Error occurred while verifying password.");
+//        }
 
-        if (!isVerified) {
-            throw new PasswordIncorrectException();
-        }
+//        if (!isVerified) {
+//            throw new PasswordIncorrectException();
+//        }
 
         return userPassword;
     }

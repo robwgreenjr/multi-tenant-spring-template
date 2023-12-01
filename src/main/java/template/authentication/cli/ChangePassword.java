@@ -46,8 +46,8 @@ public class ChangePassword {
 
         InternalUserPassword userPasswordModel;
         try {
-            userPasswordModel = userPasswordManager.findByUserEmail(
-                args.getOptionValues("email").get(0));
+//            userPasswordModel = userPasswordManager.findByUserEmail(
+//                args.getOptionValues("email").get(0));
         } catch (Exception exception) {
 //            UserModel userModel;
 //            try {
@@ -64,13 +64,13 @@ public class ChangePassword {
 //            userPasswordModel.setUser(userModel);
         }
 
-        userPasswordModel.setPassword(password);
+//        userPasswordModel.setPassword(password);
 
-        try {
-            passwordManagement.changeFORCE(userPasswordModel);
-        } catch (Exception exception) {
-            System.out.println("Error updating your password.");
-        }
+//        try {
+//            passwordManagement.changeFORCE(userPasswordModel);
+//        } catch (Exception exception) {
+//            System.out.println("Error updating your password.");
+//        }
 
         CliRunner.shutdown(context);
     }

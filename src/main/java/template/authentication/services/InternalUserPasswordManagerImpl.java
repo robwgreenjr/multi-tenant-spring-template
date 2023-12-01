@@ -8,19 +8,20 @@ import template.authentication.exceptions.UserPasswordNotFoundException;
 import template.authentication.exceptions.UserPasswordUpdateIncompleteException;
 import template.authentication.mappers.UserPasswordMapper;
 import template.authentication.models.InternalUserPassword;
-import template.authentication.repositories.UserPasswordRepository;
+import template.authentication.repositories.InternalUserPasswordRepository;
 
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class UserPasswordManagerImpl implements UserPasswordManager {
-    private final UserPasswordRepository userPasswordRepository;
+public class InternalUserPasswordManagerImpl
+    implements UserPasswordManager<InternalUserPassword> {
+    private final InternalUserPasswordRepository userPasswordRepository;
     private final UserPasswordMapper userPasswordMapper;
     private final InternalUserPasswordEventPublisher userPasswordEventPublisher;
 
-    public UserPasswordManagerImpl(
-        UserPasswordRepository userPasswordRepository,
+    public InternalUserPasswordManagerImpl(
+        InternalUserPasswordRepository userPasswordRepository,
         UserPasswordMapper userPasswordMapper,
         InternalUserPasswordEventPublisher userPasswordEventPublisher) {
         this.userPasswordRepository = userPasswordRepository;

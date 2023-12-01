@@ -36,18 +36,30 @@ public class TenantPermissionManagerImpl
             permissionMapper.toEntity(permission);
         permissionRepository.save(newEntity);
 
-        return permissionMapper.entityToObject(newEntity);
+        TenantPermission newPermission =
+            permissionMapper.entityToObject(newEntity);
+        tenantPermissionEventPublisher.publishTenantPermissionCreatedEvent(
+            newPermission);
+
+        return newPermission;
     }
 
     @Override
     public List<TenantPermission> createAll(
         List<TenantPermission> permissionList) {
-        List<TenantPermissionEntity> entityList =
+        List<TenantPermissionEntity> newEntityList =
             permissionMapper.toEntityList(permissionList);
 
-        permissionRepository.saveList(entityList);
+        permissionRepository.saveList(newEntityList);
 
-        return permissionMapper.entityToList(entityList);
+        List<TenantPermission> newPermissions =
+            permissionMapper.entityToList(newEntityList);
+        for (TenantPermission newPermission : newPermissions) {
+            tenantPermissionEventPublisher.publishTenantPermissionCreatedEvent(
+                newPermission);
+        }
+
+        return newPermissions;
     }
 
     @Override
@@ -60,6 +72,9 @@ public class TenantPermissionManagerImpl
         }
 
         permissionRepository.delete(findEntity.get());
+
+        tenantPermissionEventPublisher.publishTenantPermissionDeletedEvent(
+            permissionMapper.entityToObject(findEntity.get()));
     }
 
     @Override
@@ -129,7 +144,12 @@ public class TenantPermissionManagerImpl
 
         permissionRepository.save(entity);
 
-        return permission;
+        TenantPermission updatedPermission =
+            permissionMapper.entityToObject(entity);
+        tenantPermissionEventPublisher.publishTenantPermissionUpdatedEvent(
+            updatedPermission);
+
+        return updatedPermission;
     }
 
     @Override
@@ -140,7 +160,14 @@ public class TenantPermissionManagerImpl
 
         permissionRepository.saveList(entityList);
 
-        return permissionMapper.entityToList(entityList);
+        List<TenantPermission> updatedPermissions =
+            permissionMapper.entityToList(entityList);
+        for (TenantPermission updatedPermission : updatedPermissions) {
+            tenantPermissionEventPublisher.publishTenantPermissionUpdatedEvent(
+                updatedPermission);
+        }
+
+        return updatedPermissions;
     }
 
     @Override
@@ -159,6 +186,11 @@ public class TenantPermissionManagerImpl
         permissionMapper.update(foundEntity, permission);
         permissionRepository.save(foundEntity);
 
-        return permissionMapper.entityToObject(foundEntity);
+        TenantPermission updatedPermission =
+            permissionMapper.entityToObject(foundEntity);
+        tenantPermissionEventPublisher.publishTenantPermissionUpdatedEvent(
+            updatedPermission);
+
+        return updatedPermission;
     }
 }

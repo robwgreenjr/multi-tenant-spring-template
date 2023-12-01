@@ -24,8 +24,6 @@ public class SimpleUserLoginTest extends IntegrationTest {
     private UserPasswordManager userPasswordManager;
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql",
-        "classpath:sql/global/configuration/create.sql"})
     public void givenUserPasswordExists_whenJwtProvider_shouldReturnJwtToken() {
         List<Map<String, Object>> userList = jdbcTemplate.queryForList(
             "SELECT * FROM internal.user WHERE email = 'testing1@gmail.com'");

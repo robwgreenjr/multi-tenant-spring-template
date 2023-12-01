@@ -8,12 +8,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class ResetPasswordTokenRepositoryImpl
-    implements ResetPasswordTokenRepository {
-    private final IResetPasswordTokenRepository resetPasswordTokenRepository;
+public class InternalResetPasswordTokenRepositoryImpl
+    implements InternalResetPasswordTokenRepository {
+    private final IInternalResetPasswordTokenRepository
+        resetPasswordTokenRepository;
 
-    public ResetPasswordTokenRepositoryImpl(
-        IResetPasswordTokenRepository resetPasswordTokenRepository) {
+    public InternalResetPasswordTokenRepositoryImpl(
+        IInternalResetPasswordTokenRepository resetPasswordTokenRepository) {
         this.resetPasswordTokenRepository = resetPasswordTokenRepository;
     }
 
@@ -23,7 +24,8 @@ public class ResetPasswordTokenRepositoryImpl
     }
 
     @Override
-    public Optional<InternalResetPasswordTokenEntity> getByUserEmail(String email) {
+    public Optional<InternalResetPasswordTokenEntity> getByUserEmail(
+        String email) {
         return resetPasswordTokenRepository.getByUserEmail(email);
     }
 
@@ -36,7 +38,8 @@ public class ResetPasswordTokenRepositoryImpl
             throw new NotNullColumnDataException("You must provide a user.");
         }
 
-        Optional<InternalResetPasswordTokenEntity> existingEntity = getByUserEmail(email);
+        Optional<InternalResetPasswordTokenEntity> existingEntity =
+            getByUserEmail(email);
 
         existingEntity.ifPresent(this::delete);
 

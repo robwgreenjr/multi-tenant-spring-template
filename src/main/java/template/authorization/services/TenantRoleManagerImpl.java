@@ -29,6 +29,80 @@ public class TenantRoleManagerImpl implements TenantRoleManager {
     }
 
     @Override
+    public TenantRole create(TenantRole role) {
+        TenantRoleEntity newEntity = roleMapper.toEntity(role);
+
+        roleRepository.save(newEntity);
+
+        TenantRole newRole =
+            roleMapper.entityToObject(newEntity);
+        tenantRoleEventPublisher.publishTenantRoleCreatedEvent(
+            newRole);
+
+        return newRole;
+    }
+
+    @Override
+    public List<TenantRole> createAll(List<TenantRole> roleList) {
+        List<TenantRoleEntity> newEntityList =
+            roleMapper.toEntityList(roleList);
+
+        roleRepository.saveList(newEntityList);
+
+        List<TenantRole> newRoles =
+            roleMapper.entityToList(newEntityList);
+        for (TenantRole newRole : newRoles) {
+            tenantRoleEventPublisher.publishTenantRoleCreatedEvent(
+                newRole);
+        }
+
+        return newRoles;
+    }
+
+    @Override
+    public void delete(Integer id) {
+        Optional<TenantRoleEntity> findEntity = roleRepository.getById(id);
+
+        if (findEntity.isEmpty()) {
+            throw new RoleNotFoundException();
+        }
+
+        roleRepository.delete(findEntity.get());
+
+        tenantRoleEventPublisher.publishTenantRoleDeletedEvent(
+            roleMapper.entityToObject(findEntity.get()));
+    }
+
+    @Override
+    public TenantRole getById(Integer id) {
+        Optional<TenantRoleEntity> entity = roleRepository.getById(id);
+
+        if (entity.isEmpty()) {
+            throw new RoleNotFoundException();
+        }
+
+        return roleMapper.entityToObject(entity.get());
+    }
+
+    @Override
+    public List<TenantRole> getByIdList(List<Integer> ids) {
+        List<TenantRoleEntity> entityList = roleRepository.getByIdList(ids);
+
+        return roleMapper.entityToList(entityList);
+    }
+
+    @Override
+    public TenantRole getByName(String name) {
+        Optional<TenantRoleEntity> entity = roleRepository.getByName(name);
+
+        if (entity.isEmpty()) {
+            throw new RoleNotFoundException();
+        }
+
+        return roleMapper.entityToObject(entity.get());
+    }
+
+    @Override
     public QueryResult<TenantRole> getList(Query<Integer> query) {
         List<TenantRoleEntity> entityList =
             roleRepository.getList(query);
@@ -55,36 +129,6 @@ public class TenantRoleManagerImpl implements TenantRoleManager {
     }
 
     @Override
-    public TenantRole getByName(String name) {
-        Optional<TenantRoleEntity> entity = roleRepository.getByName(name);
-
-        if (entity.isEmpty()) {
-            throw new RoleNotFoundException();
-        }
-
-        return roleMapper.entityToObject(entity.get());
-    }
-
-    @Override
-    public List<TenantRole> getByIdList(List<Integer> ids) {
-        List<TenantRoleEntity> entityList = roleRepository.getByIdList(ids);
-
-        return roleMapper.entityToList(entityList);
-    }
-
-
-    @Override
-    public TenantRole getById(Integer id) {
-        Optional<TenantRoleEntity> entity = roleRepository.getById(id);
-
-        if (entity.isEmpty()) {
-            throw new RoleNotFoundException();
-        }
-
-        return roleMapper.entityToObject(entity.get());
-    }
-
-    @Override
     public QueryResult<TenantRole> getSingle(Query<Integer> query) {
         Optional<TenantRoleEntity> entity =
             roleRepository.getSingle(query);
@@ -108,42 +152,18 @@ public class TenantRoleManagerImpl implements TenantRoleManager {
     }
 
     @Override
-    public TenantRole create(TenantRole role) {
-        TenantRoleEntity newEntity = roleMapper.toEntity(role);
-
-        roleRepository.save(newEntity);
-
-        return roleMapper.entityToObject(newEntity);
-    }
-
-    @Override
-    public List<TenantRole> createAll(List<TenantRole> roleList) {
-        List<TenantRoleEntity> entityList = roleMapper.toEntityList(roleList);
-
-        roleRepository.saveList(entityList);
-
-        return roleMapper.entityToList(entityList);
-    }
-
-    @Override
-    public void delete(Integer id) {
-        Optional<TenantRoleEntity> findEntity = roleRepository.getById(id);
-
-        if (findEntity.isEmpty()) {
-            throw new RoleNotFoundException();
-        }
-
-        roleRepository.delete(findEntity.get());
-    }
-
-    @Override
     public TenantRole update(Integer id, TenantRole role) {
         TenantRoleEntity entity = roleMapper.toEntity(role);
         entity.setId(id);
 
         roleRepository.save(entity);
 
-        return role;
+        TenantRole updatedRole =
+            roleMapper.entityToObject(entity);
+        tenantRoleEventPublisher.publishTenantRoleUpdatedEvent(
+            updatedRole);
+
+        return updatedRole;
     }
 
     @Override
@@ -154,7 +174,13 @@ public class TenantRoleManagerImpl implements TenantRoleManager {
 
         List<TenantRole> result = roleMapper.entityToList(entityList);
 
-        return roleMapper.entityToList(entityList);
+        List<TenantRole> updatedRoles = roleMapper.entityToList(entityList);
+        for (TenantRole updatedRole : updatedRoles) {
+            tenantRoleEventPublisher.publishTenantRoleUpdatedEvent(
+                updatedRole);
+        }
+
+        return updatedRoles;
     }
 
     @Override
@@ -171,6 +197,11 @@ public class TenantRoleManagerImpl implements TenantRoleManager {
         roleMapper.update(foundEntity, role);
         roleRepository.save(foundEntity);
 
-        return roleMapper.entityToObject(foundEntity);
+        TenantRole updatedRole =
+            roleMapper.entityToObject(foundEntity);
+        tenantRoleEventPublisher.publishTenantRoleUpdatedEvent(
+            updatedRole);
+
+        return updatedRole;
     }
 }

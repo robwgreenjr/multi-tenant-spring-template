@@ -7,15 +7,15 @@ import template.authentication.entities.InternalUserPasswordEntity;
 import template.authentication.events.publishers.InternalUserPasswordEventPublisher;
 import template.authentication.mappers.UserPasswordMapper;
 import template.authentication.models.InternalUserPassword;
-import template.authentication.repositories.UserPasswordRepository;
+import template.authentication.repositories.InternalUserPasswordRepository;
 
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
 public class UserPasswordManagerEventTest {
-    private final UserPasswordRepository userPasswordRepository =
-        Mockito.mock(UserPasswordRepository.class);
+    private final InternalUserPasswordRepository userPasswordRepository =
+        Mockito.mock(InternalUserPasswordRepository.class);
     private final UserPasswordMapper userPasswordMapper =
         Mockito.mock(UserPasswordMapper.class);
     private final InternalUserPasswordEventPublisher
@@ -23,12 +23,12 @@ public class UserPasswordManagerEventTest {
         Mockito.mock(
             InternalUserPasswordEventPublisher.class);
 
-    private UserPasswordManagerImpl userPasswordManager;
+    private InternalUserPasswordManagerImpl userPasswordManager;
 
     @BeforeEach
     void initUseCase() {
         userPasswordManager =
-            new UserPasswordManagerImpl(userPasswordRepository,
+            new InternalUserPasswordManagerImpl(userPasswordRepository,
                 userPasswordMapper,
                 userPasswordEventPublisher);
     }

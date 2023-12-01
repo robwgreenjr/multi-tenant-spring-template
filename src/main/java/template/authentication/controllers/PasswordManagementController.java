@@ -14,8 +14,9 @@ public class PasswordManagementController {
     private final PasswordManagement passwordManagement;
     private final UserPasswordMapper userPasswordMapper;
 
-    public PasswordManagementController(PasswordManagement passwordManagement,
-                                        UserPasswordMapper userPasswordMapper) {
+    public PasswordManagementController(
+        PasswordManagement passwordManagement,
+        UserPasswordMapper userPasswordMapper) {
         this.passwordManagement = passwordManagement;
         this.userPasswordMapper = userPasswordMapper;
     }

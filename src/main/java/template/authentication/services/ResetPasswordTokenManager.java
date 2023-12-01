@@ -1,16 +1,13 @@
 package template.authentication.services;
 
-import template.authentication.models.InternalResetPasswordToken;
-
 import java.util.UUID;
 
-public interface ResetPasswordTokenManager {
-    InternalResetPasswordToken findByUserEmail(String email);
+public interface ResetPasswordTokenManager<T> {
+    T findByUserEmail(String email);
 
-    InternalResetPasswordToken findByToken(UUID token);
+    T findByToken(UUID token);
 
-    InternalResetPasswordToken create(
-        InternalResetPasswordToken resetPasswordTokenModel);
+    T create(T resetPasswordToken);
 
     void delete(UUID token);
 }

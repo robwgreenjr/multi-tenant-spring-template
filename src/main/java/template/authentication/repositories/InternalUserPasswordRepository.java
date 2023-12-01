@@ -4,7 +4,7 @@ import template.authentication.entities.InternalUserPasswordEntity;
 
 import java.util.Optional;
 
-public interface UserPasswordRepository {
+public interface InternalUserPasswordRepository {
     Optional<InternalUserPasswordEntity> getById(Integer id);
 
     Optional<InternalUserPasswordEntity> getByUserEmail(String email);
