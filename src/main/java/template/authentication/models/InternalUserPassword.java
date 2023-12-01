@@ -98,4 +98,19 @@ public class InternalUserPassword {
     public void validatePassword() {
         confirmMatchingPasswords();
     }
+
+    @Override
+    public String toString() {
+        return "InternalUserPassword{" +
+            "id=" + id +
+            ", user=" + user +
+            ", password='" + password + '\'' +
+            ", passwordConfirmation='" + passwordConfirmation + '\'' +
+            ", previousPassword='" + previousPassword + '\'' +
+            ", currentPassword='" + currentPassword + '\'' +
+            ", token=" + token +
+            ", createdOn=" + createdOn +
+            ", emailConfirmation='" + emailConfirmation + '\'' +
+            '}';
+    }
 }

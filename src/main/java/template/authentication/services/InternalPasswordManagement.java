@@ -7,13 +7,13 @@ import template.authentication.models.InternalUserPassword;
 import template.global.services.StringEncoder;
 
 @Service
-public class InternalPasswordManagementImpl
+public class InternalPasswordManagement
     implements PasswordManagement<InternalUserPassword> {
     private final UserPasswordManager userPasswordManager;
     private final StringEncoder bCryptEncoder;
     private final ResetPasswordTokenManager resetPasswordTokenManager;
 
-    public InternalPasswordManagementImpl(
+    public InternalPasswordManagement(
         UserPasswordManager userPasswordManager,
         @Qualifier("BCryptEncoder")
         StringEncoder bCryptEncoder,

@@ -12,8 +12,8 @@ import org.springframework.test.context.jdbc.Sql;
 import template.authentication.dtos.ChangePasswordDto;
 import template.authentication.dtos.ForgotPasswordDto;
 import template.authentication.models.InternalUserPassword;
+import template.authentication.services.InternalUserLogin;
 import template.authentication.services.ResetPasswordTokenManager;
-import template.authentication.services.SimpleUserLogin;
 import template.authentication.services.UserPasswordManager;
 import template.helpers.IntegrationTest;
 
@@ -31,7 +31,7 @@ public class PasswordManagementControllerTest extends IntegrationTest {
     @Autowired
     private UserPasswordManager userPasswordManager;
     @Autowired
-    private SimpleUserLogin simpleUserLogin;
+    private InternalUserLogin simpleUserLogin;
     @Autowired
     private ResetPasswordTokenManager resetPasswordTokenManager;
 

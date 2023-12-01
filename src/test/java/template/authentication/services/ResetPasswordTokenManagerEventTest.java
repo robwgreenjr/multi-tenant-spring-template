@@ -24,12 +24,12 @@ public class ResetPasswordTokenManagerEventTest {
         resetPasswordTokenEventPublisher = Mockito.mock(
         InternalResetPasswordTokenEventPublisher.class);
 
-    private InternalResetPasswordTokenManagerImpl resetPasswordTokenManager;
+    private InternalResetPasswordTokenManager resetPasswordTokenManager;
 
     @BeforeEach
     void initUseCase() {
         resetPasswordTokenManager =
-            new InternalResetPasswordTokenManagerImpl(
+            new InternalResetPasswordTokenManager(
                 resetPasswordTokenRepository,
                 resetPasswordTokenMapper,
                 resetPasswordTokenEventPublisher);

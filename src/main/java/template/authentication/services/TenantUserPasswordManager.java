@@ -14,13 +14,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class InternalUserPasswordManagerImpl
+public class TenantUserPasswordManager
     implements UserPasswordManager<InternalUserPassword> {
     private final InternalUserPasswordRepository userPasswordRepository;
     private final UserPasswordMapper userPasswordMapper;
     private final InternalUserPasswordEventPublisher userPasswordEventPublisher;
 
-    public InternalUserPasswordManagerImpl(
+    public TenantUserPasswordManager(
         InternalUserPasswordRepository userPasswordRepository,
         UserPasswordMapper userPasswordMapper,
         InternalUserPasswordEventPublisher userPasswordEventPublisher) {

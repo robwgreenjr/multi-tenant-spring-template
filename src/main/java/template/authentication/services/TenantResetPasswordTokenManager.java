@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class InternalResetPasswordTokenManagerImpl
+public class TenantResetPasswordTokenManager
     implements ResetPasswordTokenManager<InternalResetPasswordToken> {
     private final InternalResetPasswordTokenRepository
         resetPasswordTokenRepository;
@@ -24,7 +24,7 @@ public class InternalResetPasswordTokenManagerImpl
     private final InternalResetPasswordTokenEventPublisher
         resetPasswordTokenEventPublisher;
 
-    public InternalResetPasswordTokenManagerImpl(
+    public TenantResetPasswordTokenManager(
         InternalResetPasswordTokenRepository resetPasswordTokenRepository,
         ResetPasswordTokenMapper resetPasswordTokenMapper,
         InternalResetPasswordTokenEventPublisher resetPasswordTokenEventPublisher) {

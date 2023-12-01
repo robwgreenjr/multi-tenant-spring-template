@@ -1,24 +1,24 @@
 package template.authentication.models;
 
 
-import template.internal.models.InternalUser;
+import template.tenants.models.TenantUser;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-public class InternalResetPasswordToken {
-    private InternalUser user;
+public class TenantResetPasswordToken {
+    private TenantUser user;
     private UUID token;
     private LocalDateTime createdOn;
     private String password;
     private String passwordConfirmation;
 
-    public InternalUser getUser() {
+    public TenantUser getUser() {
         return user;
     }
 
-    public void setUser(InternalUser user) {
+    public void setUser(TenantUser user) {
         this.user = user;
     }
 
@@ -57,20 +57,20 @@ public class InternalResetPasswordToken {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof InternalResetPasswordToken that)) return false;
-        return Objects.equals(getUser(), that.getUser()) &&
-            Objects.equals(getToken(), that.getToken()) &&
-            Objects.equals(getCreatedOn(), that.getCreatedOn()) &&
-            Objects.equals(getPassword(), that.getPassword()) &&
-            Objects.equals(getPasswordConfirmation(),
-                that.getPasswordConfirmation());
+        if (o == null || getClass() != o.getClass()) return false;
+        TenantResetPasswordToken that = (TenantResetPasswordToken) o;
+        return Objects.equals(user, that.user) &&
+            Objects.equals(token, that.token) &&
+            Objects.equals(createdOn, that.createdOn) &&
+            Objects.equals(password, that.password) &&
+            Objects.equals(passwordConfirmation,
+                that.passwordConfirmation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUser(), getToken(), getCreatedOn(),
-            getPassword(),
-            getPasswordConfirmation());
+        return Objects.hash(user, token, createdOn, password,
+            passwordConfirmation);
     }
 
     public String getCreatePasswordUri() {
@@ -79,7 +79,7 @@ public class InternalResetPasswordToken {
 
     @Override
     public String toString() {
-        return "InternalResetPasswordToken{" +
+        return "TenantResetPasswordToken{" +
             "user=" + user +
             ", token=" + token +
             ", createdOn=" + createdOn +

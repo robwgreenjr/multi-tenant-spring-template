@@ -23,12 +23,12 @@ public class UserPasswordManagerEventTest {
         Mockito.mock(
             InternalUserPasswordEventPublisher.class);
 
-    private InternalUserPasswordManagerImpl userPasswordManager;
+    private InternalUserPasswordManager userPasswordManager;
 
     @BeforeEach
     void initUseCase() {
         userPasswordManager =
-            new InternalUserPasswordManagerImpl(userPasswordRepository,
+            new InternalUserPasswordManager(userPasswordRepository,
                 userPasswordMapper,
                 userPasswordEventPublisher);
     }

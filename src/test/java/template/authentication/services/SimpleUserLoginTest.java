@@ -17,7 +17,7 @@ import static org.junit.Assert.assertNotNull;
 public class SimpleUserLoginTest extends IntegrationTest {
 
     @Autowired
-    private SimpleUserLogin simpleUserLogin;
+    private InternalUserLogin simpleUserLogin;
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired

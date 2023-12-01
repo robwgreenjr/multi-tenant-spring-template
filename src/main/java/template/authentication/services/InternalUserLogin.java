@@ -12,17 +12,19 @@ import template.global.services.StringEncoder;
 import java.util.List;
 
 @Service
-public class SimpleUserLogin implements UserLoginHandler {
-    private final UserPasswordManager userPasswordManager;
+public class InternalUserLogin
+    implements UserLoginHandler<InternalUserPassword> {
+    private final UserPasswordManager<InternalUserPassword> userPasswordManager;
     private final JwtSpecialist simpleJwtSpecialist;
     private final StringEncoder bCryptEncoder;
     private final InternalRoleManager roleManager;
 
-    public SimpleUserLogin(UserPasswordManager userPasswordManager,
-                           JwtSpecialist simpleJwtSpecialist,
-                           @Qualifier("BCryptEncoder")
-                           StringEncoder bCryptEncoder,
-                           InternalRoleManager roleManager) {
+    public InternalUserLogin(
+        UserPasswordManager<InternalUserPassword> userPasswordManager,
+        JwtSpecialist simpleJwtSpecialist,
+        @Qualifier("BCryptEncoder")
+        StringEncoder bCryptEncoder,
+        InternalRoleManager roleManager) {
         this.userPasswordManager = userPasswordManager;
         this.simpleJwtSpecialist = simpleJwtSpecialist;
         this.bCryptEncoder = bCryptEncoder;

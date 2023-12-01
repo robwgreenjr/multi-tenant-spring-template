@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.UUID;
 
 @Service
-public class JwtDecipher implements AuthenticationProcessor {
+public class TenantJwtDecipher implements AuthenticationProcessor {
     private final JwtSpecialist simpleJwtSpecialist;
     private final HttpHeaderParser simpleHttpHeaderParser;
     private final TenantManager tenantManager;
@@ -32,14 +32,14 @@ public class JwtDecipher implements AuthenticationProcessor {
     private final StringEncoder cryptoEncoder;
     private final TenantIdentifierResolver currentTenant;
 
-    public JwtDecipher(JwtSpecialist simpleJwtSpecialist,
-                       HttpHeaderParser simpleHttpHeaderParser,
-                       TenantManager tenantManager,
-                       TenantDatabaseManager tenantDatabaseManager,
-                       Environment env,
-                       @Qualifier("CryptoEncoder")
+    public TenantJwtDecipher(JwtSpecialist simpleJwtSpecialist,
+                             HttpHeaderParser simpleHttpHeaderParser,
+                             TenantManager tenantManager,
+                             TenantDatabaseManager tenantDatabaseManager,
+                             Environment env,
+                             @Qualifier("CryptoEncoder")
                        StringEncoder cryptoEncoder,
-                       TenantIdentifierResolver currentTenant) {
+                             TenantIdentifierResolver currentTenant) {
         this.simpleJwtSpecialist = simpleJwtSpecialist;
         this.simpleHttpHeaderParser = simpleHttpHeaderParser;
         this.tenantManager = tenantManager;

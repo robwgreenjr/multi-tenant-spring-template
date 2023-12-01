@@ -90,12 +90,23 @@ public class TenantUserPassword {
         this.emailConfirmation = emailConfirmation;
     }
 
+    public void confirmMatchingPasswords() {
+        if (!this.password.equals(this.passwordConfirmation)) {
+            throw new PasswordMismatchException();
+        }
+    }
+
+    public void validatePassword() {
+        confirmMatchingPasswords();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TenantUserPassword that = (TenantUserPassword) o;
-        return Objects.equals(id, that.id) && Objects.equals(user, that.user) &&
+        return Objects.equals(id, that.id) &&
+            Objects.equals(user, that.user) &&
             Objects.equals(password, that.password) &&
             Objects.equals(passwordConfirmation,
                 that.passwordConfirmation) &&
@@ -109,17 +120,22 @@ public class TenantUserPassword {
     @Override
     public int hashCode() {
         return Objects.hash(id, user, password, passwordConfirmation,
-            previousPassword,
-            currentPassword, token, createdOn, emailConfirmation);
+            previousPassword, currentPassword, token, createdOn,
+            emailConfirmation);
     }
 
-    public void confirmMatchingPasswords() {
-        if (!this.password.equals(this.passwordConfirmation)) {
-            throw new PasswordMismatchException();
-        }
-    }
-
-    public void validatePassword() {
-        confirmMatchingPasswords();
+    @Override
+    public String toString() {
+        return "TenantUserPassword{" +
+            "id=" + id +
+            ", user=" + user +
+            ", password='" + password + '\'' +
+            ", passwordConfirmation='" + passwordConfirmation + '\'' +
+            ", previousPassword='" + previousPassword + '\'' +
+            ", currentPassword='" + currentPassword + '\'' +
+            ", token=" + token +
+            ", createdOn=" + createdOn +
+            ", emailConfirmation='" + emailConfirmation + '\'' +
+            '}';
     }
 }
