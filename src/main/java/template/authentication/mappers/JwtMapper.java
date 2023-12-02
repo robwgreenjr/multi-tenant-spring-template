@@ -6,5 +6,5 @@ import template.authentication.models.Jwt;
 
 @Mapper(componentModel = "spring")
 public interface JwtMapper {
-    JwtDto jwtModelToJwtDto(Jwt jwtModel);
+    JwtDto toDto(Jwt jwt);
 }

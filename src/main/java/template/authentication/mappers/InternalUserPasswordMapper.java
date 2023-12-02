@@ -12,27 +12,26 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @Mapper(componentModel = "spring")
-public interface UserPasswordMapper {
-    InternalUserPassword toUserPasswordModel(
-        InternalUserPasswordEntity userPassword);
-
-    InternalUserPasswordEntity userPasswordModelToUserPassword(
-        InternalUserPassword userPasswordModel);
-
-    InternalUserPassword changePasswordDtoToUserPasswordModel(
+public interface InternalUserPasswordMapper {
+    InternalUserPassword changePasswordDtoToObject(
         ChangePasswordDto changePasswordDto);
 
+    InternalUserPassword entityToObject(
+        InternalUserPasswordEntity userPasswordEntity);
+
     @Mapping(source = "email", target = "emailConfirmation")
-    InternalUserPassword forgotPasswordDtoToUserPasswordModel(
+    InternalUserPassword forgotPasswordDtoToObject(
         ForgotPasswordDto forgotPasswordDto);
 
-    InternalUserPassword resetPasswordDtoToUserPasswordModel(
+    InternalUserPassword resetPasswordDtoToObject(
         ResetPasswordTokenDto resetPasswordDto);
+
+    InternalUserPasswordEntity toEntity(InternalUserPassword userPassword);
 
     @BeanMapping(
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void update(@MappingTarget InternalUserPasswordEntity userPassword,
-                InternalUserPassword userPasswordModel);
+    void update(@MappingTarget InternalUserPasswordEntity userPasswordEntity,
+                InternalUserPassword userPassword);
 
     default LocalDateTime map(Instant instant) {
         return instant == null ? null : LocalDateTime.ofInstant(instant,

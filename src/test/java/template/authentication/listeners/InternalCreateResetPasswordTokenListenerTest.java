@@ -7,7 +7,8 @@ import template.authentication.events.publishers.InternalResetPasswordTokenEvent
 import template.aws.services.SESSender;
 import template.helpers.IntegrationTest;
 
-public class CreateResetPasswordTokenListenerTest extends IntegrationTest {
+public class InternalCreateResetPasswordTokenListenerTest
+    extends IntegrationTest {
     @Autowired
     private InternalResetPasswordTokenEventPublisher
         resetPasswordTokenEventPublisher;

@@ -1,13 +1,13 @@
 package template.authentication.services;
 
 import org.springframework.stereotype.Service;
-import template.authentication.entities.InternalResetPasswordTokenEntity;
-import template.authentication.events.publishers.InternalResetPasswordTokenEventPublisher;
+import template.authentication.entities.TenantResetPasswordTokenEntity;
+import template.authentication.events.publishers.TenantResetPasswordTokenEventPublisher;
 import template.authentication.exceptions.ResetPasswordTokenCreateIncompleteException;
 import template.authentication.exceptions.ResetPasswordTokenNotFoundException;
-import template.authentication.mappers.ResetPasswordTokenMapper;
-import template.authentication.models.InternalResetPasswordToken;
-import template.authentication.repositories.InternalResetPasswordTokenRepository;
+import template.authentication.mappers.TenantResetPasswordTokenMapper;
+import template.authentication.models.TenantResetPasswordToken;
+import template.authentication.repositories.TenantResetPasswordTokenRepository;
 import template.database.exceptions.NotNullColumnDataException;
 import template.global.exceptions.UnknownServerException;
 
@@ -15,19 +15,19 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
+@Service("TenantResetPasswordTokenManager")
 public class TenantResetPasswordTokenManager
-    implements ResetPasswordTokenManager<InternalResetPasswordToken> {
-    private final InternalResetPasswordTokenRepository
+    implements ResetPasswordTokenManager<TenantResetPasswordToken> {
+    private final TenantResetPasswordTokenRepository
         resetPasswordTokenRepository;
-    private final ResetPasswordTokenMapper resetPasswordTokenMapper;
-    private final InternalResetPasswordTokenEventPublisher
+    private final TenantResetPasswordTokenMapper resetPasswordTokenMapper;
+    private final TenantResetPasswordTokenEventPublisher
         resetPasswordTokenEventPublisher;
 
     public TenantResetPasswordTokenManager(
-        InternalResetPasswordTokenRepository resetPasswordTokenRepository,
-        ResetPasswordTokenMapper resetPasswordTokenMapper,
-        InternalResetPasswordTokenEventPublisher resetPasswordTokenEventPublisher) {
+        TenantResetPasswordTokenRepository resetPasswordTokenRepository,
+        TenantResetPasswordTokenMapper resetPasswordTokenMapper,
+        TenantResetPasswordTokenEventPublisher resetPasswordTokenEventPublisher) {
         this.resetPasswordTokenRepository = resetPasswordTokenRepository;
         this.resetPasswordTokenMapper = resetPasswordTokenMapper;
         this.resetPasswordTokenEventPublisher =
@@ -35,39 +35,38 @@ public class TenantResetPasswordTokenManager
     }
 
     @Override
-    public InternalResetPasswordToken findByUserEmail(String email) {
-        Optional<InternalResetPasswordTokenEntity> resetPasswordToken =
+    public Optional<TenantResetPasswordToken> findByUserEmail(String email) {
+        Optional<TenantResetPasswordTokenEntity> resetPasswordToken =
             resetPasswordTokenRepository.getByUserEmail(email);
 
         if (resetPasswordToken.isEmpty()) {
             throw new ResetPasswordTokenNotFoundException();
         }
 
-        return resetPasswordTokenMapper.toResetPasswordTokenModel(
-            resetPasswordToken.get());
+        return Optional.of(resetPasswordTokenMapper.entityToObject(
+            resetPasswordToken.get()));
     }
 
     @Override
-    public InternalResetPasswordToken findByToken(UUID token) {
-        Optional<InternalResetPasswordTokenEntity> resetPasswordToken =
+    public Optional<TenantResetPasswordToken> findByToken(UUID token) {
+        Optional<TenantResetPasswordTokenEntity> resetPasswordToken =
             resetPasswordTokenRepository.getByToken(token);
 
         if (resetPasswordToken.isEmpty()) {
             throw new ResetPasswordTokenNotFoundException();
         }
 
-        return resetPasswordTokenMapper.toResetPasswordTokenModel(
-            resetPasswordToken.get());
+        return Optional.of(resetPasswordTokenMapper.entityToObject(
+            resetPasswordToken.get()));
     }
 
     @Override
-    public InternalResetPasswordToken create(
-        InternalResetPasswordToken resetPasswordTokenModel) {
-        InternalResetPasswordTokenEntity newResetPasswordToken =
-            resetPasswordTokenMapper.resetPasswordTokenModelToResetPasswordToken(
-                resetPasswordTokenModel);
+    public TenantResetPasswordToken create(
+        TenantResetPasswordToken resetPasswordTokenModel) {
+        TenantResetPasswordTokenEntity newResetPasswordToken =
+            resetPasswordTokenMapper.toEntity(resetPasswordTokenModel);
 
-        newResetPasswordToken.setToken(UUID.randomUUID());
+//        newResetPasswordToken.setToken(UUID.randomUUID());
 
         try {
             resetPasswordTokenRepository.save(newResetPasswordToken);
@@ -82,8 +81,7 @@ public class TenantResetPasswordTokenManager
         }
 
         resetPasswordTokenModel =
-            resetPasswordTokenMapper.toResetPasswordTokenModel(
-                newResetPasswordToken);
+            resetPasswordTokenMapper.entityToObject(newResetPasswordToken);
         resetPasswordTokenEventPublisher.publishResetPasswordTokenCreatedEvent(
             resetPasswordTokenModel);
 
@@ -92,7 +90,7 @@ public class TenantResetPasswordTokenManager
 
     @Override
     public void delete(UUID token) {
-        Optional<InternalResetPasswordTokenEntity> findEntity =
+        Optional<TenantResetPasswordTokenEntity> findEntity =
             resetPasswordTokenRepository.getByToken(token);
 
         if (findEntity.isEmpty()) {
@@ -101,8 +99,8 @@ public class TenantResetPasswordTokenManager
 
         resetPasswordTokenRepository.delete(findEntity.get());
 
-        InternalResetPasswordToken resetPasswordTokenModel =
-            resetPasswordTokenMapper.toResetPasswordTokenModel(
+        TenantResetPasswordToken resetPasswordTokenModel =
+            resetPasswordTokenMapper.entityToObject(
                 findEntity.get());
         resetPasswordTokenEventPublisher.publishResetPasswordTokenDeletedEvent(
             resetPasswordTokenModel);

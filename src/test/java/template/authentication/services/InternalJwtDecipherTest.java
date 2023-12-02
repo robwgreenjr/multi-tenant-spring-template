@@ -2,15 +2,17 @@ package template.authentication.services;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import template.authentication.helpers.SimpleJwtSpecialist;
+import org.springframework.beans.factory.annotation.Qualifier;
+import template.authentication.helpers.InternalJwtSpecialist;
 import template.helpers.IntegrationTest;
 
-public class JwtDecipherTest extends IntegrationTest {
+public class InternalJwtDecipherTest extends IntegrationTest {
 
     @Autowired
+    @Qualifier("InternalJwtDecipher")
     private AuthenticationProcessor jwtDecipher;
     @Autowired
-    private SimpleJwtSpecialist simpleJwtSpecialist;
+    private InternalJwtSpecialist simpleJwtSpecialist;
 
     @Test
     public void givenToken_whenValidate_shouldSetUserId() {

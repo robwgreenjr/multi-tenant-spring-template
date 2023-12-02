@@ -9,12 +9,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @Mapper(componentModel = "spring")
-public interface ResetPasswordTokenMapper {
-    InternalResetPasswordTokenEntity resetPasswordTokenModelToResetPasswordToken(
-        InternalResetPasswordToken resetPasswordTokenModel);
-
-    InternalResetPasswordToken toResetPasswordTokenModel(
+public interface InternalResetPasswordTokenMapper {
+    InternalResetPasswordToken entityToObject(
         InternalResetPasswordTokenEntity resetPasswordToken);
+
+    InternalResetPasswordTokenEntity toEntity(
+        InternalResetPasswordToken resetPasswordToken);
 
     default LocalDateTime map(Instant instant) {
         return instant == null ? null : LocalDateTime.ofInstant(instant,

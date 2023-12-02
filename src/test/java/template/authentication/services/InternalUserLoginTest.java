@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import template.authentication.exceptions.PasswordIncorrectException;
 import template.authentication.exceptions.PasswordNotSetException;
+import template.authentication.models.InternalUserPassword;
 import template.authentication.models.Jwt;
 import template.helpers.IntegrationTest;
 
@@ -14,14 +15,14 @@ import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 
-public class SimpleUserLoginTest extends IntegrationTest {
+public class InternalUserLoginTest extends IntegrationTest {
 
     @Autowired
     private InternalUserLogin simpleUserLogin;
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private UserPasswordManager userPasswordManager;
+    private UserPasswordManager<InternalUserPassword> userPasswordManager;
 
     @Test
     public void givenUserPasswordExists_whenJwtProvider_shouldReturnJwtToken() {

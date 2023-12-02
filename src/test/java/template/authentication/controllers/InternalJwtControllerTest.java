@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
 import template.authentication.dtos.SimpleUserLoginDto;
 import template.authentication.models.Jwt;
 import template.authentication.services.UserLoginHandler;
@@ -26,7 +25,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class JwtControllerTest extends IntegrationTest {
+public class InternalJwtControllerTest extends IntegrationTest {
     @Autowired
     private UserLoginHandler simpleUserLogin;
     @Autowired
@@ -37,7 +36,6 @@ public class JwtControllerTest extends IntegrationTest {
     private UserPasswordManager userPasswordManager;
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql"})
     public void givenLoginDetails_whenGenerateCalled_shouldReturnToken()
         throws JSONException {
         List<Map<String, Object>> userList =
@@ -69,7 +67,6 @@ public class JwtControllerTest extends IntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql"})
     public void givenWrongLoginDetails_whenGenerateCalled_shouldReturn401() {
         List<Map<String, Object>> userList =
             jdbcTemplate.queryForList(
@@ -96,7 +93,6 @@ public class JwtControllerTest extends IntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql"})
     public void givenValidJWT_whenValidateCalled_shouldReturnClaims()
         throws JSONException {
         List<Map<String, Object>> userList =
@@ -129,7 +125,6 @@ public class JwtControllerTest extends IntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql"})
     public void givenInvalidJWT_whenValidateCalled_shouldReturn400()
         throws JSONException {
         HttpHeaders headers = new HttpHeaders();
@@ -143,8 +138,6 @@ public class JwtControllerTest extends IntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql",
-        "classpath:sql/global/configuration/create.sql"})
     public void givenExpiredJWT_whenValidateCalled_shouldReturn401() {
         LocalDateTime expiration = LocalDateTime.now().minusMinutes(150);
         String jwt = Jwts.builder().setSubject("testing1@gmail.com")

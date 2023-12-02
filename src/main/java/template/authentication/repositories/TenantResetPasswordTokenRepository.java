@@ -1,16 +1,16 @@
 package template.authentication.repositories;
 
-import template.authentication.entities.InternalResetPasswordTokenEntity;
+import template.authentication.entities.TenantResetPasswordTokenEntity;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public interface TenantResetPasswordTokenRepository {
-    Optional<InternalResetPasswordTokenEntity> getByToken(UUID token);
+    Optional<TenantResetPasswordTokenEntity> getByToken(UUID token);
 
-    Optional<InternalResetPasswordTokenEntity> getByUserEmail(String email);
+    Optional<TenantResetPasswordTokenEntity> getByUserEmail(String email);
 
-    void save(InternalResetPasswordTokenEntity resetPasswordToken);
+    void save(TenantResetPasswordTokenEntity resetPasswordToken);
 
-    void delete(InternalResetPasswordTokenEntity resetPasswordToken);
+    void delete(TenantResetPasswordTokenEntity resetPasswordToken);
 }

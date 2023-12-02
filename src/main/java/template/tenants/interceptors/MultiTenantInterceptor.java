@@ -15,6 +15,7 @@ import template.database.models.DatabaseConnectionContext;
 import template.global.constants.EnvironmentVariable;
 import template.global.constants.GlobalVariable;
 import template.global.services.StringEncoder;
+import template.internal.models.InternalUser;
 import template.tenants.models.Tenant;
 import template.tenants.models.TenantDatabase;
 import template.tenants.services.TenantDatabaseManager;
@@ -25,14 +26,15 @@ import java.util.UUID;
 public class MultiTenantInterceptor implements HandlerInterceptor {
     private final TenantManager tenantManager;
     private final TenantDatabaseManager tenantDatabaseManager;
-    private final JwtSpecialist simpleJwtSpecialist;
+    private final JwtSpecialist<InternalUser> simpleJwtSpecialist;
     private final HttpHeaderParser simpleHttpHeaderParser;
     private final StringEncoder cryptoEncoder;
     private final Environment environment;
 
     public MultiTenantInterceptor(TenantManager tenantManager,
                                   TenantDatabaseManager tenantDatabaseManager,
-                                  JwtSpecialist simpleJwtSpecialist,
+                                  @Qualifier("InternalJwtSpecialist")
+                                  JwtSpecialist<InternalUser> simpleJwtSpecialist,
                                   HttpHeaderParser simpleHttpHeaderParser,
                                   @Qualifier("CryptoEncoder")
                                   StringEncoder cryptoEncoder,

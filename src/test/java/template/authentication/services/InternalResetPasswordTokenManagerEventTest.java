@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import template.authentication.entities.InternalResetPasswordTokenEntity;
 import template.authentication.events.publishers.InternalResetPasswordTokenEventPublisher;
-import template.authentication.mappers.ResetPasswordTokenMapper;
+import template.authentication.mappers.InternalResetPasswordTokenMapper;
 import template.authentication.models.InternalResetPasswordToken;
 import template.authentication.repositories.InternalResetPasswordTokenRepository;
 
@@ -14,12 +14,12 @@ import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
-public class ResetPasswordTokenManagerEventTest {
+public class InternalResetPasswordTokenManagerEventTest {
     private final InternalResetPasswordTokenRepository
         resetPasswordTokenRepository =
         Mockito.mock(InternalResetPasswordTokenRepository.class);
-    private final ResetPasswordTokenMapper resetPasswordTokenMapper =
-        Mockito.mock(ResetPasswordTokenMapper.class);
+    private final InternalResetPasswordTokenMapper resetPasswordTokenMapper =
+        Mockito.mock(InternalResetPasswordTokenMapper.class);
     private final InternalResetPasswordTokenEventPublisher
         resetPasswordTokenEventPublisher = Mockito.mock(
         InternalResetPasswordTokenEventPublisher.class);
@@ -37,47 +37,48 @@ public class ResetPasswordTokenManagerEventTest {
 
     @Test
     public void givenUser_whenCreated_shouldTriggerCreateEvent() {
-        InternalResetPasswordToken resetPasswordTokenModel =
+        InternalResetPasswordToken resetPasswordToken =
             new InternalResetPasswordToken();
-        InternalResetPasswordTokenEntity resetPasswordToken =
+        InternalResetPasswordTokenEntity resetPasswordTokenEntity =
             new InternalResetPasswordTokenEntity();
         when(
-            resetPasswordTokenMapper.resetPasswordTokenModelToResetPasswordToken(
-                resetPasswordTokenModel)).thenReturn(
+            resetPasswordTokenMapper.toEntity(
+                resetPasswordToken)).thenReturn(
+            resetPasswordTokenEntity);
+        when(resetPasswordTokenMapper.entityToObject(
+            resetPasswordTokenEntity)).thenReturn(
             resetPasswordToken);
-        when(resetPasswordTokenMapper.toResetPasswordTokenModel(
-            resetPasswordToken)).thenReturn(
-            resetPasswordTokenModel);
 
-        doNothing().when(resetPasswordTokenRepository).save(resetPasswordToken);
+        doNothing().when(resetPasswordTokenRepository)
+            .save(resetPasswordTokenEntity);
 
-        resetPasswordTokenManager.create(resetPasswordTokenModel);
+        resetPasswordTokenManager.create(resetPasswordToken);
 
         verify(resetPasswordTokenEventPublisher,
             times(1)).publishResetPasswordTokenCreatedEvent(
-            resetPasswordTokenModel);
+            resetPasswordToken);
     }
 
     @Test
     public void givenUserId_whenDeleted_shouldTriggerDeletedEvent() {
         UUID uuid = UUID.randomUUID();
 
-        InternalResetPasswordTokenEntity resetPasswordToken =
+        InternalResetPasswordTokenEntity resetPasswordTokenEntity =
             new InternalResetPasswordTokenEntity();
-        InternalResetPasswordToken resetPasswordTokenModel =
+        InternalResetPasswordToken resetPasswordToken =
             new InternalResetPasswordToken();
         doNothing().when(resetPasswordTokenRepository)
-            .delete(resetPasswordToken);
+            .delete(resetPasswordTokenEntity);
         when(resetPasswordTokenRepository.getByToken(uuid)).thenReturn(
-            Optional.of(resetPasswordToken));
-        when(resetPasswordTokenMapper.toResetPasswordTokenModel(
+            Optional.of(resetPasswordTokenEntity));
+        when(resetPasswordTokenMapper.toEntity(
             resetPasswordToken)).thenReturn(
-            resetPasswordTokenModel);
+            resetPasswordTokenEntity);
 
         resetPasswordTokenManager.delete(uuid);
 
         verify(resetPasswordTokenEventPublisher,
             times(1)).publishResetPasswordTokenDeletedEvent(
-            resetPasswordTokenModel);
+            resetPasswordToken);
     }
 }

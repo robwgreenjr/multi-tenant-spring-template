@@ -13,6 +13,7 @@ import template.database.models.DatabaseConnectionContext;
 import template.global.constants.EnvironmentVariable;
 import template.global.constants.GlobalVariable;
 import template.global.services.StringEncoder;
+import template.internal.models.InternalUser;
 import template.tenants.models.Tenant;
 import template.tenants.models.TenantDatabase;
 import template.tenants.resolvers.TenantIdentifierResolver;
@@ -22,9 +23,9 @@ import template.tenants.services.TenantManager;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
-@Service
+@Service("InternalJwtDecipher")
 public class InternalJwtDecipher implements AuthenticationProcessor {
-    private final JwtSpecialist simpleJwtSpecialist;
+    private final JwtSpecialist<InternalUser> simpleJwtSpecialist;
     private final HttpHeaderParser simpleHttpHeaderParser;
     private final TenantManager tenantManager;
     private final TenantDatabaseManager tenantDatabaseManager;
@@ -32,14 +33,16 @@ public class InternalJwtDecipher implements AuthenticationProcessor {
     private final StringEncoder cryptoEncoder;
     private final TenantIdentifierResolver currentTenant;
 
-    public InternalJwtDecipher(JwtSpecialist simpleJwtSpecialist,
-                               HttpHeaderParser simpleHttpHeaderParser,
-                               TenantManager tenantManager,
-                               TenantDatabaseManager tenantDatabaseManager,
-                               Environment env,
-                               @Qualifier("CryptoEncoder")
-                               StringEncoder cryptoEncoder,
-                               TenantIdentifierResolver currentTenant) {
+    public InternalJwtDecipher(
+        @Qualifier("InternalJwtSpecialist")
+        JwtSpecialist<InternalUser> simpleJwtSpecialist,
+        HttpHeaderParser simpleHttpHeaderParser,
+        TenantManager tenantManager,
+        TenantDatabaseManager tenantDatabaseManager,
+        Environment env,
+        @Qualifier("CryptoEncoder")
+        StringEncoder cryptoEncoder,
+        TenantIdentifierResolver currentTenant) {
         this.simpleJwtSpecialist = simpleJwtSpecialist;
         this.simpleHttpHeaderParser = simpleHttpHeaderParser;
         this.tenantManager = tenantManager;

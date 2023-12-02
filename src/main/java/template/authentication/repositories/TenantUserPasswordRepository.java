@@ -1,15 +1,15 @@
 package template.authentication.repositories;
 
-import template.authentication.entities.InternalUserPasswordEntity;
+import template.authentication.entities.TenantUserPasswordEntity;
 
 import java.util.Optional;
 
 public interface TenantUserPasswordRepository {
-    Optional<InternalUserPasswordEntity> getById(Integer id);
+    Optional<TenantUserPasswordEntity> getById(Integer id);
 
-    Optional<InternalUserPasswordEntity> getByUserEmail(String email);
+    Optional<TenantUserPasswordEntity> getByUserEmail(String email);
 
-    void save(InternalUserPasswordEntity userPassword);
+    void save(TenantUserPasswordEntity userPassword);
 
-    void delete(InternalUserPasswordEntity userPassword);
+    void delete(TenantUserPasswordEntity userPassword);
 }

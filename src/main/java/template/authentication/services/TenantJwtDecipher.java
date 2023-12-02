@@ -15,6 +15,7 @@ import template.global.constants.GlobalVariable;
 import template.global.services.StringEncoder;
 import template.tenants.models.Tenant;
 import template.tenants.models.TenantDatabase;
+import template.tenants.models.TenantUser;
 import template.tenants.resolvers.TenantIdentifierResolver;
 import template.tenants.services.TenantDatabaseManager;
 import template.tenants.services.TenantManager;
@@ -22,9 +23,9 @@ import template.tenants.services.TenantManager;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
-@Service
+@Service("TenantJwtDecipher")
 public class TenantJwtDecipher implements AuthenticationProcessor {
-    private final JwtSpecialist simpleJwtSpecialist;
+    private final JwtSpecialist<TenantUser> simpleJwtSpecialist;
     private final HttpHeaderParser simpleHttpHeaderParser;
     private final TenantManager tenantManager;
     private final TenantDatabaseManager tenantDatabaseManager;
@@ -32,14 +33,16 @@ public class TenantJwtDecipher implements AuthenticationProcessor {
     private final StringEncoder cryptoEncoder;
     private final TenantIdentifierResolver currentTenant;
 
-    public TenantJwtDecipher(JwtSpecialist simpleJwtSpecialist,
-                             HttpHeaderParser simpleHttpHeaderParser,
-                             TenantManager tenantManager,
-                             TenantDatabaseManager tenantDatabaseManager,
-                             Environment env,
-                             @Qualifier("CryptoEncoder")
-                       StringEncoder cryptoEncoder,
-                             TenantIdentifierResolver currentTenant) {
+    public TenantJwtDecipher(
+        @Qualifier("TenantJwtSpecialist")
+        JwtSpecialist<TenantUser> simpleJwtSpecialist,
+        HttpHeaderParser simpleHttpHeaderParser,
+        TenantManager tenantManager,
+        TenantDatabaseManager tenantDatabaseManager,
+        Environment env,
+        @Qualifier("CryptoEncoder")
+        StringEncoder cryptoEncoder,
+        TenantIdentifierResolver currentTenant) {
         this.simpleJwtSpecialist = simpleJwtSpecialist;
         this.simpleHttpHeaderParser = simpleHttpHeaderParser;
         this.tenantManager = tenantManager;

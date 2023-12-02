@@ -6,18 +6,19 @@ import template.authentication.models.InternalResetPasswordToken;
 import template.authentication.models.InternalUserPassword;
 import template.global.services.StringEncoder;
 
-@Service
+@Service("InternalPasswordManagement")
 public class InternalPasswordManagement
     implements PasswordManagement<InternalUserPassword> {
-    private final UserPasswordManager userPasswordManager;
+    private final UserPasswordManager<InternalUserPassword> userPasswordManager;
     private final StringEncoder bCryptEncoder;
-    private final ResetPasswordTokenManager resetPasswordTokenManager;
+    private final ResetPasswordTokenManager<InternalResetPasswordToken>
+        resetPasswordTokenManager;
 
     public InternalPasswordManagement(
-        UserPasswordManager userPasswordManager,
+        UserPasswordManager<InternalUserPassword> userPasswordManager,
         @Qualifier("BCryptEncoder")
         StringEncoder bCryptEncoder,
-        ResetPasswordTokenManager resetPasswordTokenManager) {
+        ResetPasswordTokenManager<InternalResetPasswordToken> resetPasswordTokenManager) {
         this.userPasswordManager = userPasswordManager;
         this.bCryptEncoder = bCryptEncoder;
         this.resetPasswordTokenManager = resetPasswordTokenManager;

@@ -23,7 +23,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class PasswordManagementControllerTest extends IntegrationTest {
+public class InternalPasswordManagementControllerTest extends IntegrationTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired

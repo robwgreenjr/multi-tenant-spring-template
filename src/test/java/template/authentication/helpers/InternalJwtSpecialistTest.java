@@ -6,9 +6,9 @@ import org.springframework.test.context.jdbc.Sql;
 import template.authentication.exceptions.InvalidJwtException;
 import template.helpers.IntegrationTest;
 
-public class SimpleJwtSpecialistTest extends IntegrationTest {
+public class InternalJwtSpecialistTest extends IntegrationTest {
     @Autowired
-    private SimpleJwtSpecialist simpleJwtSpecialist;
+    private InternalJwtSpecialist simpleJwtSpecialist;
 
     @Test
     @Sql(scripts = {"classpath:sql/global/configuration/create.sql"})

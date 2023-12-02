@@ -6,23 +6,23 @@ import template.authentication.events.publishers.InternalUserPasswordEventPublis
 import template.authentication.exceptions.UserPasswordCreateIncompleteException;
 import template.authentication.exceptions.UserPasswordNotFoundException;
 import template.authentication.exceptions.UserPasswordUpdateIncompleteException;
-import template.authentication.mappers.UserPasswordMapper;
+import template.authentication.mappers.InternalUserPasswordMapper;
 import template.authentication.models.InternalUserPassword;
 import template.authentication.repositories.InternalUserPasswordRepository;
 
 import java.util.Objects;
 import java.util.Optional;
 
-@Service
+@Service("InternalUserPasswordManager")
 public class InternalUserPasswordManager
     implements UserPasswordManager<InternalUserPassword> {
     private final InternalUserPasswordRepository userPasswordRepository;
-    private final UserPasswordMapper userPasswordMapper;
+    private final InternalUserPasswordMapper userPasswordMapper;
     private final InternalUserPasswordEventPublisher userPasswordEventPublisher;
 
     public InternalUserPasswordManager(
         InternalUserPasswordRepository userPasswordRepository,
-        UserPasswordMapper userPasswordMapper,
+        InternalUserPasswordMapper userPasswordMapper,
         InternalUserPasswordEventPublisher userPasswordEventPublisher) {
         this.userPasswordRepository = userPasswordRepository;
         this.userPasswordMapper = userPasswordMapper;
@@ -38,14 +38,13 @@ public class InternalUserPasswordManager
             throw new UserPasswordNotFoundException();
         }
 
-        return userPasswordMapper.toUserPasswordModel(userPassword.get());
+        return userPasswordMapper.entityToObject(userPassword.get());
     }
 
     @Override
     public InternalUserPassword create(InternalUserPassword userPasswordModel) {
         InternalUserPasswordEntity newUserPassword =
-            userPasswordMapper.userPasswordModelToUserPassword(
-                userPasswordModel);
+            userPasswordMapper.toEntity(userPasswordModel);
         try {
             userPasswordRepository.save(newUserPassword);
         } catch (Exception exception) {
@@ -57,7 +56,7 @@ public class InternalUserPasswordManager
         }
 
         userPasswordModel =
-            userPasswordMapper.toUserPasswordModel(newUserPassword);
+            userPasswordMapper.entityToObject(newUserPassword);
         userPasswordEventPublisher.publishUserPasswordCreatedEvent(
             userPasswordModel);
 
@@ -69,8 +68,7 @@ public class InternalUserPasswordManager
                                        InternalUserPassword userPasswordModel)
         throws Exception {
         InternalUserPasswordEntity entity =
-            userPasswordMapper.userPasswordModelToUserPassword(
-                userPasswordModel);
+            userPasswordMapper.toEntity(userPasswordModel);
 //        entity.setId(id);
 
         try {
@@ -83,7 +81,7 @@ public class InternalUserPasswordManager
             }
         }
 
-        userPasswordModel = userPasswordMapper.toUserPasswordModel(entity);
+        userPasswordModel = userPasswordMapper.entityToObject(entity);
         userPasswordEventPublisher.publishUserPasswordUpdatedEvent(
             userPasswordModel);
 
@@ -106,7 +104,7 @@ public class InternalUserPasswordManager
         userPasswordMapper.update(foundEntity, userPasswordModel);
         userPasswordRepository.save(foundEntity);
 
-        userPasswordModel = userPasswordMapper.toUserPasswordModel(foundEntity);
+        userPasswordModel = userPasswordMapper.entityToObject(foundEntity);
         userPasswordEventPublisher.publishUserPasswordUpdatedEvent(
             userPasswordModel);
 
@@ -125,7 +123,7 @@ public class InternalUserPasswordManager
         userPasswordRepository.delete(findEntity.get());
 
         InternalUserPassword userPasswordModel =
-            userPasswordMapper.toUserPasswordModel(findEntity.get());
+            userPasswordMapper.entityToObject(findEntity.get());
         userPasswordEventPublisher.publishUserPasswordDeletedEvent(
             userPasswordModel);
     }

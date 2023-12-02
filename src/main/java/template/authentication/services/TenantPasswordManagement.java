@@ -2,33 +2,36 @@ package template.authentication.services;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import template.authentication.models.InternalResetPasswordToken;
-import template.authentication.models.InternalUserPassword;
+import template.authentication.models.TenantResetPasswordToken;
+import template.authentication.models.TenantUserPassword;
 import template.global.services.StringEncoder;
 
-@Service
+@Service("TenantPasswordManagement")
 public class TenantPasswordManagement
-    implements PasswordManagement<InternalUserPassword> {
-    private final UserPasswordManager userPasswordManager;
+    implements PasswordManagement<TenantUserPassword> {
+    private final UserPasswordManager<TenantUserPassword> userPasswordManager;
     private final StringEncoder bCryptEncoder;
-    private final ResetPasswordTokenManager resetPasswordTokenManager;
+    private final ResetPasswordTokenManager<TenantResetPasswordToken>
+        resetPasswordTokenManager;
 
     public TenantPasswordManagement(
-        UserPasswordManager userPasswordManager,
+        @Qualifier("TenantUserPasswordManager")
+        UserPasswordManager<TenantUserPassword> userPasswordManager,
         @Qualifier("BCryptEncoder")
         StringEncoder bCryptEncoder,
-        ResetPasswordTokenManager resetPasswordTokenManager) {
+        @Qualifier("TenantResetPasswordTokenManager")
+        ResetPasswordTokenManager<TenantResetPasswordToken> resetPasswordTokenManager) {
         this.userPasswordManager = userPasswordManager;
         this.bCryptEncoder = bCryptEncoder;
         this.resetPasswordTokenManager = resetPasswordTokenManager;
     }
 
     @Override
-    public void change(InternalUserPassword userPasswordModel)
+    public void change(TenantUserPassword userPasswordModel)
         throws Exception {
         userPasswordModel.validatePassword();
 
-//        InternalUserPassword foundUserPasswordModel =
+//        TenantUserPassword foundUserPasswordModel =
 //            userPasswordManager.findByUserEmail(
 //                userPasswordModel.getEmailConfirmation());
 //
@@ -46,32 +49,32 @@ public class TenantPasswordManagement
      * Should only be used by CLI, not for end users
      */
     @Override
-    public void changeFORCE(InternalUserPassword userPasswordModel)
+    public void changeFORCE(TenantUserPassword userPasswordModel)
         throws Exception {
         updatePassword(userPasswordModel);
     }
 
     @Override
-    public void forgot(InternalUserPassword userPasswordModel) {
+    public void forgot(TenantUserPassword userPasswordModel) {
 //        UserModel userModel = userManager.getByEmail(
 //            userPasswordModel.getEmailConfirmation());
 
-        InternalResetPasswordToken resetPasswordTokenModel =
-            new InternalResetPasswordToken();
+        TenantResetPasswordToken resetPasswordTokenModel =
+            new TenantResetPasswordToken();
 //        resetPasswordTokenModel.setUser(userModel);
 
         resetPasswordTokenManager.create(resetPasswordTokenModel);
     }
 
     @Override
-    public void reset(InternalUserPassword userPasswordModel) throws Exception {
+    public void reset(TenantUserPassword userPasswordModel) throws Exception {
         userPasswordModel.validatePassword();
 
-//        InternalResetPasswordToken resetPasswordTokenModel =
+//        TenantResetPasswordToken resetPasswordTokenModel =
 //            resetPasswordTokenManager.findByToken(
 //                userPasswordModel.getToken());
 //
-//        InternalUserPassword foundUserPasswordModel;
+//        TenantUserPassword foundUserPasswordModel;
 //        try {
 ////            foundUserPasswordModel =
 ////                userPasswordManager.findByUserEmail(
@@ -90,7 +93,7 @@ public class TenantPasswordManagement
         resetPasswordTokenManager.delete(userPasswordModel.getToken());
     }
 
-    private void updatePassword(InternalUserPassword userPasswordModel)
+    private void updatePassword(TenantUserPassword userPasswordModel)
         throws Exception {
         userPasswordModel.setPreviousPassword(
             userPasswordModel.getCurrentPassword());
@@ -101,8 +104,8 @@ public class TenantPasswordManagement
             userPasswordModel);
     }
 
-    private void setNewUserPassword(InternalUserPassword userPasswordModel,
-                                    InternalUserPassword foundUserPasswordModel) {
+    private void setNewUserPassword(TenantUserPassword userPasswordModel,
+                                    TenantUserPassword foundUserPasswordModel) {
         userPasswordModel.setId(foundUserPasswordModel.getId());
         userPasswordModel.setUser(foundUserPasswordModel.getUser());
         userPasswordModel.setCurrentPassword(

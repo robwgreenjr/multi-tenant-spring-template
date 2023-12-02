@@ -1,22 +1,24 @@
 package template.authentication.controllers;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import template.authentication.dtos.ChangePasswordDto;
 import template.authentication.dtos.ForgotPasswordDto;
 import template.authentication.dtos.ResetPasswordTokenDto;
-import template.authentication.mappers.UserPasswordMapper;
+import template.authentication.mappers.InternalUserPasswordMapper;
 import template.authentication.models.InternalUserPassword;
 import template.authentication.services.PasswordManagement;
 
 @RestController
-@RequestMapping("authentication/password")
-public class PasswordManagementController {
-    private final PasswordManagement passwordManagement;
-    private final UserPasswordMapper userPasswordMapper;
+@RequestMapping("internal/authentication/password")
+public class InternalPasswordManagementController {
+    private final PasswordManagement<InternalUserPassword> passwordManagement;
+    private final InternalUserPasswordMapper userPasswordMapper;
 
-    public PasswordManagementController(
-        PasswordManagement passwordManagement,
-        UserPasswordMapper userPasswordMapper) {
+    public InternalPasswordManagementController(
+        @Qualifier("InternalPasswordManagement")
+        PasswordManagement<InternalUserPassword> passwordManagement,
+        InternalUserPasswordMapper userPasswordMapper) {
         this.passwordManagement = passwordManagement;
         this.userPasswordMapper = userPasswordMapper;
     }
@@ -24,8 +26,7 @@ public class PasswordManagementController {
     @PostMapping("forgot")
     public void forgot(@RequestBody ForgotPasswordDto forgotPasswordDto) {
         InternalUserPassword userPasswordModel =
-            userPasswordMapper.forgotPasswordDtoToUserPasswordModel(
-                forgotPasswordDto);
+            userPasswordMapper.forgotPasswordDtoToObject(forgotPasswordDto);
 
         passwordManagement.forgot(userPasswordModel);
     }
@@ -34,8 +35,7 @@ public class PasswordManagementController {
     public void reset(@RequestBody ResetPasswordTokenDto resetPasswordDto)
         throws Exception {
         InternalUserPassword userPasswordModel =
-            userPasswordMapper.resetPasswordDtoToUserPasswordModel(
-                resetPasswordDto);
+            userPasswordMapper.resetPasswordDtoToObject(resetPasswordDto);
 
         passwordManagement.reset(userPasswordModel);
     }
@@ -44,8 +44,7 @@ public class PasswordManagementController {
     public void change(@RequestBody ChangePasswordDto changePasswordDto)
         throws Exception {
         InternalUserPassword userPasswordModel =
-            userPasswordMapper.changePasswordDtoToUserPasswordModel(
-                changePasswordDto);
+            userPasswordMapper.changePasswordDtoToObject(changePasswordDto);
 
         passwordManagement.change(userPasswordModel);
     }

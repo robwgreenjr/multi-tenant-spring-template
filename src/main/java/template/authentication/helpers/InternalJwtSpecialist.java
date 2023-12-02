@@ -10,20 +10,19 @@ import template.global.exceptions.UnknownServerException;
 import template.global.models.ConfigurationModel;
 import template.global.services.ConfigurationManager;
 import template.internal.models.InternalUser;
-import template.tenants.models.TenantUser;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.UUID;
 
-@Service
-public class SimpleJwtSpecialist implements JwtSpecialist {
+@Service("InternalJwtSpecialist")
+public class InternalJwtSpecialist implements JwtSpecialist<InternalUser> {
     static Integer zoneOffSet = -5;
     private final ConfigurationManager authenticationConfigurationManager;
 //    private final UserMapper userMapper;
 
-    public SimpleJwtSpecialist(
+    public InternalJwtSpecialist(
         ConfigurationManager authenticationConfigurationManager) {
         this.authenticationConfigurationManager =
             authenticationConfigurationManager;
@@ -81,11 +80,6 @@ public class SimpleJwtSpecialist implements JwtSpecialist {
         }
 
         return jwt;
-    }
-
-    @Override
-    public String generate(TenantUser user, String scopeList) {
-        return null;
     }
 
     @Override

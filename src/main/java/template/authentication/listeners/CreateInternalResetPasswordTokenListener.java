@@ -1,5 +1,6 @@
 package template.authentication.listeners;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import template.authentication.events.InternalResetPasswordTokenCreatedEvent;
@@ -12,11 +13,12 @@ import template.authentication.services.UserPasswordManager;
 public class CreateInternalResetPasswordTokenListener
     implements ApplicationListener<InternalResetPasswordTokenCreatedEvent> {
     private final AuthenticationEmailProvider authenticationEmailProvider;
-    private final UserPasswordManager userPasswordManager;
+    private final UserPasswordManager<InternalUserPassword> userPasswordManager;
 
     public CreateInternalResetPasswordTokenListener(
         AuthenticationEmailProvider authenticationEmailProvider,
-        UserPasswordManager userPasswordManager) {
+        @Qualifier("InternalUserPasswordManager")
+        UserPasswordManager<InternalUserPassword> userPasswordManager) {
         this.authenticationEmailProvider = authenticationEmailProvider;
         this.userPasswordManager = userPasswordManager;
     }

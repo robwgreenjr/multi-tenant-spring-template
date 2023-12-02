@@ -12,12 +12,13 @@ import template.global.services.StringEncoder;
 public class CreateInternalUserPasswordListener
     implements ApplicationListener<InternalUserPasswordCreatedEvent> {
     private final StringEncoder bCryptEncoder;
-    private final UserPasswordManager userPasswordManager;
+    private final UserPasswordManager<InternalUserPassword> userPasswordManager;
 
     public CreateInternalUserPasswordListener(
         @Qualifier("BCryptEncoder")
         StringEncoder bCryptEncoder,
-        UserPasswordManager userPasswordManager) {
+        @Qualifier("InternalUserPasswordManager")
+        UserPasswordManager<InternalUserPassword> userPasswordManager) {
         this.bCryptEncoder = bCryptEncoder;
         this.userPasswordManager = userPasswordManager;
     }

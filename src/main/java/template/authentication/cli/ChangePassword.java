@@ -1,5 +1,6 @@
 package template.authentication.cli;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.context.ApplicationContext;
 import template.CliRunner;
@@ -10,14 +11,15 @@ import template.authentication.services.UserPasswordManager;
 @ChangePasswordCommand
 public class ChangePassword {
     private final ApplicationContext context;
-    private final UserPasswordManager userPasswordManager;
+    private final UserPasswordManager<InternalUserPassword> userPasswordManager;
     //    private final UserManager userManager;
-    private final PasswordManagement passwordManagement;
+    private final PasswordManagement<InternalUserPassword> passwordManagement;
 
     public ChangePassword(ApplicationContext context,
-                          UserPasswordManager userPasswordManager,
+                          UserPasswordManager<InternalUserPassword> userPasswordManager,
 //                          UserManager userManager,
-                          PasswordManagement passwordManagement) {
+                          @Qualifier("InternalPasswordManagement")
+                          PasswordManagement<InternalUserPassword> passwordManagement) {
         this.context = context;
         this.userPasswordManager = userPasswordManager;
 //        this.userManager = userManager;

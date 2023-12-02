@@ -8,20 +8,22 @@ import template.authentication.models.Jwt;
 import template.authorization.models.InternalRole;
 import template.authorization.services.InternalRoleManager;
 import template.global.services.StringEncoder;
+import template.internal.models.InternalUser;
 
 import java.util.List;
 
-@Service
+@Service("InternalUserLogin")
 public class InternalUserLogin
     implements UserLoginHandler<InternalUserPassword> {
     private final UserPasswordManager<InternalUserPassword> userPasswordManager;
-    private final JwtSpecialist simpleJwtSpecialist;
+    private final JwtSpecialist<InternalUser> simpleJwtSpecialist;
     private final StringEncoder bCryptEncoder;
     private final InternalRoleManager roleManager;
 
     public InternalUserLogin(
         UserPasswordManager<InternalUserPassword> userPasswordManager,
-        JwtSpecialist simpleJwtSpecialist,
+        @Qualifier("InternalJwtSpecialist")
+        JwtSpecialist<InternalUser> simpleJwtSpecialist,
         @Qualifier("BCryptEncoder")
         StringEncoder bCryptEncoder,
         InternalRoleManager roleManager) {

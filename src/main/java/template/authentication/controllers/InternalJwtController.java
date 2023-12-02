@@ -1,6 +1,7 @@
 package template.authentication.controllers;
 
 import io.jsonwebtoken.Claims;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,19 +11,24 @@ import template.authentication.dtos.SimpleUserLoginDto;
 import template.authentication.exceptions.InvalidJwtException;
 import template.authentication.helpers.JwtSpecialist;
 import template.authentication.mappers.JwtMapper;
+import template.authentication.models.InternalUserPassword;
 import template.authentication.models.Jwt;
 import template.authentication.services.UserLoginHandler;
+import template.internal.models.InternalUser;
 
 @RestController
-@RequestMapping("authentication/jwt")
-public class JwtController {
-    private final UserLoginHandler simpleUserLogin;
+@RequestMapping("internal/authentication/jwt")
+public class InternalJwtController {
+    private final UserLoginHandler<InternalUserPassword> simpleUserLogin;
     private final JwtMapper jwtMapper;
-    private final JwtSpecialist simpleJwtSpecialist;
+    private final JwtSpecialist<InternalUser> simpleJwtSpecialist;
 
-    public JwtController(UserLoginHandler simpleUserLogin,
-                         JwtMapper jwtMapper,
-                         JwtSpecialist simpleJwtSpecialist) {
+    public InternalJwtController(
+        @Qualifier("InternalUserLogin")
+        UserLoginHandler<InternalUserPassword> simpleUserLogin,
+        JwtMapper jwtMapper,
+        @Qualifier("InternalJwtSpecialist")
+        JwtSpecialist<InternalUser> simpleJwtSpecialist) {
         this.simpleUserLogin = simpleUserLogin;
         this.jwtMapper = jwtMapper;
         this.simpleJwtSpecialist = simpleJwtSpecialist;
@@ -31,11 +37,11 @@ public class JwtController {
     @PostMapping
     public ResponseEntity<JwtDto> generate(
         @RequestBody SimpleUserLoginDto simpleUserLoginDto) {
-        Jwt jwtModel =
+        Jwt jwt =
             simpleUserLogin.jwtProvider(simpleUserLoginDto.email,
                 simpleUserLoginDto.password);
 
-        JwtDto jwtDto = jwtMapper.jwtModelToJwtDto(jwtModel);
+        JwtDto jwtDto = jwtMapper.toDto(jwt);
         return ResponseEntity.status(HttpStatus.OK).body(jwtDto);
     }
 

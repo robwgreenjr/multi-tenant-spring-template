@@ -1,37 +1,37 @@
 package template.authentication.repositories;
 
 import org.springframework.stereotype.Service;
-import template.authentication.entities.InternalUserPasswordEntity;
+import template.authentication.entities.TenantUserPasswordEntity;
 
 import java.util.Optional;
 
 @Service
 public class TenantUserPasswordRepositoryImpl implements
-    InternalUserPasswordRepository {
-    private final IInternalUserPasswordRepository userPasswordRepository;
+    TenantUserPasswordRepository {
+    private final ITenantUserPasswordRepository userPasswordRepository;
 
     public TenantUserPasswordRepositoryImpl(
-        IInternalUserPasswordRepository userPasswordRepository) {
+        ITenantUserPasswordRepository userPasswordRepository) {
         this.userPasswordRepository = userPasswordRepository;
     }
 
     @Override
-    public Optional<InternalUserPasswordEntity> getById(Integer id) {
+    public Optional<TenantUserPasswordEntity> getById(Integer id) {
         return userPasswordRepository.findById(id);
     }
 
     @Override
-    public Optional<InternalUserPasswordEntity> getByUserEmail(String email) {
+    public Optional<TenantUserPasswordEntity> getByUserEmail(String email) {
         return userPasswordRepository.getByUserEmail(email);
     }
 
     @Override
-    public void save(InternalUserPasswordEntity userPassword) {
+    public void save(TenantUserPasswordEntity userPassword) {
         userPasswordRepository.save(userPassword);
     }
 
     @Override
-    public void delete(InternalUserPasswordEntity userPassword) {
+    public void delete(TenantUserPasswordEntity userPassword) {
         userPasswordRepository.delete(userPassword);
     }
 }

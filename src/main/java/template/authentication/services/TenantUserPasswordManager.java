@@ -1,51 +1,50 @@
 package template.authentication.services;
 
 import org.springframework.stereotype.Service;
-import template.authentication.entities.InternalUserPasswordEntity;
-import template.authentication.events.publishers.InternalUserPasswordEventPublisher;
+import template.authentication.entities.TenantUserPasswordEntity;
+import template.authentication.events.publishers.TenantUserPasswordEventPublisher;
 import template.authentication.exceptions.UserPasswordCreateIncompleteException;
 import template.authentication.exceptions.UserPasswordNotFoundException;
 import template.authentication.exceptions.UserPasswordUpdateIncompleteException;
-import template.authentication.mappers.UserPasswordMapper;
-import template.authentication.models.InternalUserPassword;
-import template.authentication.repositories.InternalUserPasswordRepository;
+import template.authentication.mappers.TenantUserPasswordMapper;
+import template.authentication.models.TenantUserPassword;
+import template.authentication.repositories.TenantUserPasswordRepository;
 
 import java.util.Objects;
 import java.util.Optional;
 
-@Service
+@Service("TenantUserPasswordManager")
 public class TenantUserPasswordManager
-    implements UserPasswordManager<InternalUserPassword> {
-    private final InternalUserPasswordRepository userPasswordRepository;
-    private final UserPasswordMapper userPasswordMapper;
-    private final InternalUserPasswordEventPublisher userPasswordEventPublisher;
+    implements UserPasswordManager<TenantUserPassword> {
+    private final TenantUserPasswordRepository userPasswordRepository;
+    private final TenantUserPasswordMapper userPasswordMapper;
+    private final TenantUserPasswordEventPublisher userPasswordEventPublisher;
 
     public TenantUserPasswordManager(
-        InternalUserPasswordRepository userPasswordRepository,
-        UserPasswordMapper userPasswordMapper,
-        InternalUserPasswordEventPublisher userPasswordEventPublisher) {
+        TenantUserPasswordRepository userPasswordRepository,
+        TenantUserPasswordMapper userPasswordMapper,
+        TenantUserPasswordEventPublisher userPasswordEventPublisher) {
         this.userPasswordRepository = userPasswordRepository;
         this.userPasswordMapper = userPasswordMapper;
         this.userPasswordEventPublisher = userPasswordEventPublisher;
     }
 
     @Override
-    public InternalUserPassword findByUserEmail(String email) {
-        Optional<InternalUserPasswordEntity> userPassword =
+    public TenantUserPassword findByUserEmail(String email) {
+        Optional<TenantUserPasswordEntity> userPasswordEntity =
             userPasswordRepository.getByUserEmail(email);
 
-        if (userPassword.isEmpty()) {
+        if (userPasswordEntity.isEmpty()) {
             throw new UserPasswordNotFoundException();
         }
 
-        return userPasswordMapper.toUserPasswordModel(userPassword.get());
+        return userPasswordMapper.entityToObject(userPasswordEntity.get());
     }
 
     @Override
-    public InternalUserPassword create(InternalUserPassword userPasswordModel) {
-        InternalUserPasswordEntity newUserPassword =
-            userPasswordMapper.userPasswordModelToUserPassword(
-                userPasswordModel);
+    public TenantUserPassword create(TenantUserPassword userPasswordModel) {
+        TenantUserPasswordEntity newUserPassword =
+            userPasswordMapper.toEntity(userPasswordModel);
         try {
             userPasswordRepository.save(newUserPassword);
         } catch (Exception exception) {
@@ -57,7 +56,7 @@ public class TenantUserPasswordManager
         }
 
         userPasswordModel =
-            userPasswordMapper.toUserPasswordModel(newUserPassword);
+            userPasswordMapper.entityToObject(newUserPassword);
         userPasswordEventPublisher.publishUserPasswordCreatedEvent(
             userPasswordModel);
 
@@ -65,12 +64,11 @@ public class TenantUserPasswordManager
     }
 
     @Override
-    public InternalUserPassword update(Integer id,
-                                       InternalUserPassword userPasswordModel)
+    public TenantUserPassword update(Integer id,
+                                     TenantUserPassword userPasswordModel)
         throws Exception {
-        InternalUserPasswordEntity entity =
-            userPasswordMapper.userPasswordModelToUserPassword(
-                userPasswordModel);
+        TenantUserPasswordEntity entity =
+            userPasswordMapper.toEntity(userPasswordModel);
 //        entity.setId(id);
 
         try {
@@ -83,7 +81,7 @@ public class TenantUserPasswordManager
             }
         }
 
-        userPasswordModel = userPasswordMapper.toUserPasswordModel(entity);
+        userPasswordModel = userPasswordMapper.entityToObject(entity);
         userPasswordEventPublisher.publishUserPasswordUpdatedEvent(
             userPasswordModel);
 
@@ -91,22 +89,22 @@ public class TenantUserPasswordManager
     }
 
     @Override
-    public InternalUserPassword updatePartial(Integer id,
-                                              InternalUserPassword userPasswordModel) {
-        Optional<InternalUserPasswordEntity> findEntity =
+    public TenantUserPassword updatePartial(Integer id,
+                                            TenantUserPassword userPasswordModel) {
+        Optional<TenantUserPasswordEntity> findEntity =
             userPasswordRepository.getById(id);
 
         if (findEntity.isEmpty()) {
             throw new UserPasswordNotFoundException();
         }
 
-        InternalUserPasswordEntity foundEntity = findEntity.get();
+        TenantUserPasswordEntity foundEntity = findEntity.get();
 //        userPasswordModel.setId(foundEntity.getId());
 
         userPasswordMapper.update(foundEntity, userPasswordModel);
         userPasswordRepository.save(foundEntity);
 
-        userPasswordModel = userPasswordMapper.toUserPasswordModel(foundEntity);
+        userPasswordModel = userPasswordMapper.entityToObject(foundEntity);
         userPasswordEventPublisher.publishUserPasswordUpdatedEvent(
             userPasswordModel);
 
@@ -115,7 +113,7 @@ public class TenantUserPasswordManager
 
     @Override
     public void delete(Integer id) {
-        Optional<InternalUserPasswordEntity> findEntity =
+        Optional<TenantUserPasswordEntity> findEntity =
             userPasswordRepository.getById(id);
 
         if (findEntity.isEmpty()) {
@@ -124,8 +122,8 @@ public class TenantUserPasswordManager
 
         userPasswordRepository.delete(findEntity.get());
 
-        InternalUserPassword userPasswordModel =
-            userPasswordMapper.toUserPasswordModel(findEntity.get());
+        TenantUserPassword userPasswordModel =
+            userPasswordMapper.entityToObject(findEntity.get());
         userPasswordEventPublisher.publishUserPasswordDeletedEvent(
             userPasswordModel);
     }

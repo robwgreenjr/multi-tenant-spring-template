@@ -5,7 +5,7 @@ import template.authentication.entities.InternalResetPasswordTokenEntity;
 import template.authentication.events.publishers.InternalResetPasswordTokenEventPublisher;
 import template.authentication.exceptions.ResetPasswordTokenCreateIncompleteException;
 import template.authentication.exceptions.ResetPasswordTokenNotFoundException;
-import template.authentication.mappers.ResetPasswordTokenMapper;
+import template.authentication.mappers.InternalResetPasswordTokenMapper;
 import template.authentication.models.InternalResetPasswordToken;
 import template.authentication.repositories.InternalResetPasswordTokenRepository;
 import template.database.exceptions.NotNullColumnDataException;
@@ -15,18 +15,18 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
+@Service("InternalResetPasswordTokenManager")
 public class InternalResetPasswordTokenManager
     implements ResetPasswordTokenManager<InternalResetPasswordToken> {
     private final InternalResetPasswordTokenRepository
         resetPasswordTokenRepository;
-    private final ResetPasswordTokenMapper resetPasswordTokenMapper;
+    private final InternalResetPasswordTokenMapper resetPasswordTokenMapper;
     private final InternalResetPasswordTokenEventPublisher
         resetPasswordTokenEventPublisher;
 
     public InternalResetPasswordTokenManager(
         InternalResetPasswordTokenRepository resetPasswordTokenRepository,
-        ResetPasswordTokenMapper resetPasswordTokenMapper,
+        InternalResetPasswordTokenMapper resetPasswordTokenMapper,
         InternalResetPasswordTokenEventPublisher resetPasswordTokenEventPublisher) {
         this.resetPasswordTokenRepository = resetPasswordTokenRepository;
         this.resetPasswordTokenMapper = resetPasswordTokenMapper;
@@ -35,37 +35,36 @@ public class InternalResetPasswordTokenManager
     }
 
     @Override
-    public InternalResetPasswordToken findByUserEmail(String email) {
-        Optional<InternalResetPasswordTokenEntity> resetPasswordToken =
+    public Optional<InternalResetPasswordToken> findByUserEmail(String email) {
+        Optional<InternalResetPasswordTokenEntity> resetPasswordTokenEntity =
             resetPasswordTokenRepository.getByUserEmail(email);
 
-        if (resetPasswordToken.isEmpty()) {
+        if (resetPasswordTokenEntity.isEmpty()) {
             throw new ResetPasswordTokenNotFoundException();
         }
 
-        return resetPasswordTokenMapper.toResetPasswordTokenModel(
-            resetPasswordToken.get());
+        return Optional.of(resetPasswordTokenMapper.entityToObject(
+            resetPasswordTokenEntity.get()));
     }
 
     @Override
-    public InternalResetPasswordToken findByToken(UUID token) {
-        Optional<InternalResetPasswordTokenEntity> resetPasswordToken =
+    public Optional<InternalResetPasswordToken> findByToken(UUID token) {
+        Optional<InternalResetPasswordTokenEntity> resetPasswordTokenEntity =
             resetPasswordTokenRepository.getByToken(token);
 
-        if (resetPasswordToken.isEmpty()) {
+        if (resetPasswordTokenEntity.isEmpty()) {
             throw new ResetPasswordTokenNotFoundException();
         }
 
-        return resetPasswordTokenMapper.toResetPasswordTokenModel(
-            resetPasswordToken.get());
+        return Optional.of(resetPasswordTokenMapper.entityToObject(
+            resetPasswordTokenEntity.get()));
     }
 
     @Override
     public InternalResetPasswordToken create(
-        InternalResetPasswordToken resetPasswordTokenModel) {
+        InternalResetPasswordToken resetPasswordToken) {
         InternalResetPasswordTokenEntity newResetPasswordToken =
-            resetPasswordTokenMapper.resetPasswordTokenModelToResetPasswordToken(
-                resetPasswordTokenModel);
+            resetPasswordTokenMapper.toEntity(resetPasswordToken);
 
         newResetPasswordToken.setToken(UUID.randomUUID());
 
@@ -81,13 +80,12 @@ public class InternalResetPasswordTokenManager
             throw new UnknownServerException(exception.getMessage());
         }
 
-        resetPasswordTokenModel =
-            resetPasswordTokenMapper.toResetPasswordTokenModel(
-                newResetPasswordToken);
+        resetPasswordToken =
+            resetPasswordTokenMapper.entityToObject(newResetPasswordToken);
         resetPasswordTokenEventPublisher.publishResetPasswordTokenCreatedEvent(
-            resetPasswordTokenModel);
+            resetPasswordToken);
 
-        return resetPasswordTokenModel;
+        return resetPasswordToken;
     }
 
     @Override
@@ -101,10 +99,9 @@ public class InternalResetPasswordTokenManager
 
         resetPasswordTokenRepository.delete(findEntity.get());
 
-        InternalResetPasswordToken resetPasswordTokenModel =
-            resetPasswordTokenMapper.toResetPasswordTokenModel(
-                findEntity.get());
+        InternalResetPasswordToken resetPasswordToken =
+            resetPasswordTokenMapper.entityToObject(findEntity.get());
         resetPasswordTokenEventPublisher.publishResetPasswordTokenDeletedEvent(
-            resetPasswordTokenModel);
+            resetPasswordToken);
     }
 }

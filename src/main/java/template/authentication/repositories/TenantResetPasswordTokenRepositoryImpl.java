@@ -1,7 +1,7 @@
 package template.authentication.repositories;
 
 import org.springframework.stereotype.Service;
-import template.authentication.entities.InternalResetPasswordTokenEntity;
+import template.authentication.entities.TenantResetPasswordTokenEntity;
 import template.database.exceptions.NotNullColumnDataException;
 
 import java.util.Optional;
@@ -9,36 +9,36 @@ import java.util.UUID;
 
 @Service
 public class TenantResetPasswordTokenRepositoryImpl
-    implements InternalResetPasswordTokenRepository {
-    private final IInternalResetPasswordTokenRepository
+    implements TenantResetPasswordTokenRepository {
+    private final ITenantResetPasswordTokenRepository
         resetPasswordTokenRepository;
 
     public TenantResetPasswordTokenRepositoryImpl(
-        IInternalResetPasswordTokenRepository resetPasswordTokenRepository) {
+        ITenantResetPasswordTokenRepository resetPasswordTokenRepository) {
         this.resetPasswordTokenRepository = resetPasswordTokenRepository;
     }
 
     @Override
-    public Optional<InternalResetPasswordTokenEntity> getByToken(UUID token) {
+    public Optional<TenantResetPasswordTokenEntity> getByToken(UUID token) {
         return resetPasswordTokenRepository.getByToken(token);
     }
 
     @Override
-    public Optional<InternalResetPasswordTokenEntity> getByUserEmail(
+    public Optional<TenantResetPasswordTokenEntity> getByUserEmail(
         String email) {
         return resetPasswordTokenRepository.getByUserEmail(email);
     }
 
     @Override
-    public void save(InternalResetPasswordTokenEntity resetPasswordToken) {
-        String email;
+    public void save(TenantResetPasswordTokenEntity resetPasswordToken) {
+        String email = "";
         try {
-            email = resetPasswordToken.getUser().getEmail();
+//            email = resetPasswordToken.getUser().getEmail();
         } catch (Exception exception) {
             throw new NotNullColumnDataException("You must provide a user.");
         }
 
-        Optional<InternalResetPasswordTokenEntity> existingEntity =
+        Optional<TenantResetPasswordTokenEntity> existingEntity =
             getByUserEmail(email);
 
         existingEntity.ifPresent(this::delete);
@@ -47,7 +47,7 @@ public class TenantResetPasswordTokenRepositoryImpl
     }
 
     @Override
-    public void delete(InternalResetPasswordTokenEntity resetPasswordToken) {
+    public void delete(TenantResetPasswordTokenEntity resetPasswordToken) {
         resetPasswordTokenRepository.delete(resetPasswordToken);
     }
 }

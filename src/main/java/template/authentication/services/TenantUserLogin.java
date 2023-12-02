@@ -3,28 +3,29 @@ package template.authentication.services;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import template.authentication.helpers.JwtSpecialist;
-import template.authentication.models.InternalUserPassword;
 import template.authentication.models.Jwt;
-import template.authorization.models.InternalRole;
-import template.authorization.services.InternalRoleManager;
+import template.authentication.models.TenantUserPassword;
+import template.authorization.models.TenantRole;
+import template.authorization.services.TenantRoleManager;
 import template.global.services.StringEncoder;
+import template.tenants.models.TenantUser;
 
 import java.util.List;
 
-@Service
+@Service("TenantUserLogin")
 public class TenantUserLogin
-    implements UserLoginHandler<InternalUserPassword> {
-    private final UserPasswordManager<InternalUserPassword> userPasswordManager;
-    private final JwtSpecialist simpleJwtSpecialist;
+    implements UserLoginHandler<TenantUserPassword> {
+    private final UserPasswordManager<TenantUserPassword> userPasswordManager;
+    private final JwtSpecialist<TenantUser> simpleJwtSpecialist;
     private final StringEncoder bCryptEncoder;
-    private final InternalRoleManager roleManager;
+    private final TenantRoleManager roleManager;
 
     public TenantUserLogin(
-        UserPasswordManager<InternalUserPassword> userPasswordManager,
-        JwtSpecialist simpleJwtSpecialist,
+        UserPasswordManager<TenantUserPassword> userPasswordManager,
+        JwtSpecialist<TenantUser> simpleJwtSpecialist,
         @Qualifier("BCryptEncoder")
         StringEncoder bCryptEncoder,
-        InternalRoleManager roleManager) {
+        TenantRoleManager roleManager) {
         this.userPasswordManager = userPasswordManager;
         this.simpleJwtSpecialist = simpleJwtSpecialist;
         this.bCryptEncoder = bCryptEncoder;
@@ -33,7 +34,7 @@ public class TenantUserLogin
 
     @Override
     public Jwt jwtProvider(String identifier, String password) {
-        InternalUserPassword userPassword = login(identifier, password);
+        TenantUserPassword userPassword = login(identifier, password);
 
 //        String scopeList = buildScopeList(userPassword.getUser().getId());
 //        String token =
@@ -46,8 +47,8 @@ public class TenantUserLogin
     }
 
     @Override
-    public InternalUserPassword login(String identifier, String password) {
-        InternalUserPassword userPassword = new InternalUserPassword();
+    public TenantUserPassword login(String identifier, String password) {
+        TenantUserPassword userPassword = new TenantUserPassword();
 //        try {
 //            userPassword = userPasswordManager.findByUserEmail(identifier);
 //        } catch (UserPasswordNotFoundException exception) {
@@ -73,11 +74,11 @@ public class TenantUserLogin
     }
 
     private String buildScopeList(Integer userId) {
-        List<InternalRole> roleModels = roleManager.getListByUserId(userId);
+        List<TenantRole> roleModels = roleManager.getListByUserId(userId);
 
 //        StringBuilder scopeList = new StringBuilder();
-        for (InternalRole roleModel : roleModels) {
-//            for (InternalPermission permissionModel : roleModel.getPermissions()) {
+        for (TenantRole roleModel : roleModels) {
+//            for (TenantPermission permissionModel : roleModel.getPermissions()) {
 //                if (scopeList.toString().isEmpty()) {
 //                    scopeList.append(permissionModel.getName()).append(".")
 //                        .append(permissionModel.getType());
