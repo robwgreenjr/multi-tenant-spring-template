@@ -11,9 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
 import template.global.entities.Configuration;
-import template.helpers.IntegrationTest;
+import template.helpers.InternalIntegrationTest;
 
 import java.util.List;
 import java.util.Map;
@@ -21,14 +20,13 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class ConfigurationControllerTest extends IntegrationTest {
+public class ConfigurationControllerTest extends InternalIntegrationTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private TestRestTemplate restTemplate;
 
     @Test
-    @Sql(scripts = {"classpath:sql/global/configuration/create.sql"})
     public void givenConfigurationExist_whenCalledByKey_shouldReturnEntity()
         throws JSONException {
         HttpHeaders headers = new HttpHeaders();
@@ -50,7 +48,6 @@ public class ConfigurationControllerTest extends IntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/global/configuration/create.sql"})
     public void givenUpdatePartialName_whenCallingPATCH_shouldUpdateUserName() {
         String expected = "this is a test partial";
 
