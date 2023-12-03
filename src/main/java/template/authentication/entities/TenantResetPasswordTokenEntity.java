@@ -17,5 +17,4 @@ public class TenantResetPasswordTokenEntity {
     private UUID token;
     @Generated
     private Instant createdOn;
-
 }

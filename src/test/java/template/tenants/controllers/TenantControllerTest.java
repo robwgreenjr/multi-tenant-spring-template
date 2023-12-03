@@ -28,7 +28,7 @@ public class TenantControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDataExists_whenGetListIsCalled_shouldReturnData() {
-        seeder.tenantTable(jdbcTemplate, 12);
+        seeder.tenant(jdbcTemplate, 12);
 
         ResponseEntity<String> response =
             restTemplate.exchange("/internal/tenants", HttpMethod.GET,
@@ -45,7 +45,7 @@ public class TenantControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDataExists_whenGetSingleIsCalled_shouldReturnData() {
-        seeder.tenantTable(jdbcTemplate, 3, "test", 1);
+        seeder.tenant(jdbcTemplate, 3, "test", 1);
 
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
@@ -84,7 +84,7 @@ public class TenantControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPost_shouldCreateData() {
-        seeder.tenantTable(jdbcTemplate, 1);
+        seeder.tenant(jdbcTemplate, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.tenant");
 
@@ -133,7 +133,7 @@ public class TenantControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPut_shouldCreateData() {
-        seeder.tenantTable(jdbcTemplate, 1);
+        seeder.tenant(jdbcTemplate, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList("SELECT * FROM internal.tenant");
 
@@ -165,7 +165,7 @@ public class TenantControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenPartialData_whenPut_shouldReturn400() {
-        seeder.tenantTable(jdbcTemplate, 1);
+        seeder.tenant(jdbcTemplate, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.tenant");
@@ -192,7 +192,7 @@ public class TenantControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenPartialData_whenPatch_shouldUpdate() {
-        seeder.tenantTable(jdbcTemplate, 1);
+        seeder.tenant(jdbcTemplate, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.tenant");
 
@@ -220,7 +220,7 @@ public class TenantControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDataExists_whenDelete_shouldRemoveObject() {
-        seeder.tenantTable(jdbcTemplate, 1);
+        seeder.tenant(jdbcTemplate, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.tenant");
 

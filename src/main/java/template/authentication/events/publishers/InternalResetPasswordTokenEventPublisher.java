@@ -16,19 +16,19 @@ public class InternalResetPasswordTokenEventPublisher {
     }
 
     public void publishResetPasswordTokenCreatedEvent(
-        InternalResetPasswordToken resetPasswordTokenModel) {
+        InternalResetPasswordToken resetPasswordToken) {
         InternalResetPasswordTokenCreatedEvent resetPasswordTokenCreatedEvent =
             new InternalResetPasswordTokenCreatedEvent(this,
-                resetPasswordTokenModel);
+                resetPasswordToken);
 
         applicationEventPublisher.publishEvent(resetPasswordTokenCreatedEvent);
     }
 
     public void publishResetPasswordTokenDeletedEvent(
-        InternalResetPasswordToken resetPasswordTokenModel) {
+        InternalResetPasswordToken resetPasswordToken) {
         InternalResetPasswordTokenDeletedEvent resetPasswordTokenDeletedEvent =
             new InternalResetPasswordTokenDeletedEvent(this,
-                resetPasswordTokenModel);
+                resetPasswordToken);
 
         applicationEventPublisher.publishEvent(resetPasswordTokenDeletedEvent);
     }

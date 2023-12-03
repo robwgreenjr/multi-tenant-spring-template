@@ -52,6 +52,8 @@ public class IntegrationTest {
     public void init() {
         tenantId = seeder.createMainTenant(jdbcTemplate);
         headers.set("tenant-id", String.valueOf(tenantId));
+
+        seeder.defaultConfiguration(jdbcTemplate);
     }
 
     protected JdbcTemplate getTenantDataSource(String tenantId) {

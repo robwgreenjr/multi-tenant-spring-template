@@ -1,10 +1,6 @@
 package template.global.controllers;
 
 import com.zaxxer.hikari.HikariDataSource;
-import template.database.models.ApplicationDataSource;
-import template.database.models.DatabaseConnectionContext;
-import template.helpers.DatabaseSeeder;
-import template.helpers.TemplatePostgreSqlContainer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +20,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
+import template.database.models.ApplicationDataSource;
+import template.database.models.DatabaseConnectionContext;
+import template.helpers.DatabaseSeeder;
+import template.helpers.TemplatePostgreSqlContainer;
 
 import javax.sql.DataSource;
 
@@ -64,7 +64,7 @@ public class ParameterControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 100, "test", 15);
+        databaseSeeder.single(jdbcTemplate, 100, "test", 15);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(
@@ -84,7 +84,7 @@ public class ParameterControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 400);
+        databaseSeeder.single(jdbcTemplate, 400);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(
@@ -102,7 +102,7 @@ public class ParameterControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 100);
+        databaseSeeder.single(jdbcTemplate, 100);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(
@@ -122,7 +122,7 @@ public class ParameterControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 100);
+        databaseSeeder.single(jdbcTemplate, 100);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(
@@ -142,7 +142,7 @@ public class ParameterControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 100);
+        databaseSeeder.single(jdbcTemplate, 100);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(
@@ -162,7 +162,7 @@ public class ParameterControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 100);
+        databaseSeeder.single(jdbcTemplate, 100);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(
@@ -182,7 +182,7 @@ public class ParameterControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 100, "test", 15);
+        databaseSeeder.single(jdbcTemplate, 100, "test", 15);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(

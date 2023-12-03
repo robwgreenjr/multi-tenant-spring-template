@@ -29,7 +29,7 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDataExists_whenGetListIsCalled_shouldReturnData() {
-        seeder.internalRoleTable(jdbcTemplate, 12);
+        seeder.internalRole(jdbcTemplate, 12);
 
         ResponseEntity<String> response =
             restTemplate.exchange("/internal/authorization/roles",
@@ -47,7 +47,7 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDataExists_whenGetSingleIsCalled_shouldReturnData() {
-        seeder.internalRoleTable(jdbcTemplate, 3, "test", 1);
+        seeder.internalRole(jdbcTemplate, 3, "test", 1);
 
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
@@ -189,7 +189,7 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPut_shouldCreateData() {
-        seeder.internalRoleTable(jdbcTemplate, 1);
+        seeder.internalRole(jdbcTemplate, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_role");
@@ -219,7 +219,7 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenPartialData_whenPut_shouldReturn400() {
-        seeder.internalRoleTable(jdbcTemplate, 1);
+        seeder.internalRole(jdbcTemplate, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_role");
@@ -243,7 +243,7 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPutList_shouldCreateAllData() {
-        seeder.internalRoleTable(jdbcTemplate, 3);
+        seeder.internalRole(jdbcTemplate, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_role");
@@ -294,7 +294,7 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDuplicateNameAndType_whenPutList_shouldReturn400() {
-        seeder.internalRoleTable(jdbcTemplate, 3);
+        seeder.internalRole(jdbcTemplate, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_role");
@@ -327,7 +327,7 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenPartialData_whenPatch_shouldUpdate() {
-        seeder.internalRoleTable(jdbcTemplate, 1);
+        seeder.internalRole(jdbcTemplate, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_role");
@@ -357,7 +357,7 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDataExists_whenDelete_shouldRemoveObject() {
-        seeder.internalRoleTable(jdbcTemplate, 1);
+        seeder.internalRole(jdbcTemplate, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_role");

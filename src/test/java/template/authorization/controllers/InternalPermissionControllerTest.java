@@ -29,7 +29,7 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDataExists_whenGetListIsCalled_shouldReturnData() {
-        seeder.internalPermissionTable(jdbcTemplate, 12);
+        seeder.internalPermission(jdbcTemplate, 12);
 
         ResponseEntity<String> response =
             restTemplate.exchange("/internal/authorization/permissions",
@@ -47,7 +47,7 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDataExists_whenGetSingleIsCalled_shouldReturnData() {
-        seeder.internalPermissionTable(jdbcTemplate, 3, "test", 1);
+        seeder.internalPermission(jdbcTemplate, 3, "test", 1);
 
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
@@ -212,7 +212,7 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPut_shouldCreateData() {
-        seeder.internalPermissionTable(jdbcTemplate, 1);
+        seeder.internalPermission(jdbcTemplate, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_permission");
@@ -243,7 +243,7 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenPartialData_whenPut_shouldReturn400() {
-        seeder.internalPermissionTable(jdbcTemplate, 1);
+        seeder.internalPermission(jdbcTemplate, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_permission");
@@ -267,7 +267,7 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPutList_shouldCreateAllData() {
-        seeder.internalPermissionTable(jdbcTemplate, 3);
+        seeder.internalPermission(jdbcTemplate, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_permission");
@@ -321,7 +321,7 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDuplicateNameAndType_whenPutList_shouldReturn400() {
-        seeder.internalPermissionTable(jdbcTemplate, 3);
+        seeder.internalPermission(jdbcTemplate, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_permission");
@@ -356,7 +356,7 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenPartialData_whenPatch_shouldUpdate() {
-        seeder.internalPermissionTable(jdbcTemplate, 1);
+        seeder.internalPermission(jdbcTemplate, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_permission");
@@ -386,7 +386,7 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDataExists_whenDelete_shouldRemoveObject() {
-        seeder.internalPermissionTable(jdbcTemplate, 1);
+        seeder.internalPermission(jdbcTemplate, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_permission");

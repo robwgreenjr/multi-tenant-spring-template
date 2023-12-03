@@ -72,7 +72,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 400);
+        databaseSeeder.single(jdbcTemplate, 400);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -93,7 +93,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 400);
+        databaseSeeder.single(jdbcTemplate, 400);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -114,7 +114,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 50, "test", 15);
+        databaseSeeder.single(jdbcTemplate, 50, "test", 15);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -136,7 +136,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 413);
+        databaseSeeder.single(jdbcTemplate, 413);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -157,7 +157,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 400);
+        databaseSeeder.single(jdbcTemplate, 400);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -178,7 +178,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 400);
+        databaseSeeder.single(jdbcTemplate, 400);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -199,7 +199,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 50, "test", 15);
+        databaseSeeder.single(jdbcTemplate, 50, "test", 15);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -221,7 +221,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 400);
+        databaseSeeder.single(jdbcTemplate, 400);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -242,7 +242,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 400);
+        databaseSeeder.single(jdbcTemplate, 400);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -264,7 +264,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 400);
+        databaseSeeder.single(jdbcTemplate, 400);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -285,7 +285,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 100);
+        databaseSeeder.single(jdbcTemplate, 100);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -306,7 +306,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 100);
+        databaseSeeder.single(jdbcTemplate, 100);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -327,7 +327,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 400);
+        databaseSeeder.single(jdbcTemplate, 400);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -348,7 +348,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 400);
+        databaseSeeder.single(jdbcTemplate, 400);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -370,7 +370,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 50, "test", 15);
+        databaseSeeder.single(jdbcTemplate, 50, "test", 15);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -392,7 +392,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 400);
+        databaseSeeder.single(jdbcTemplate, 400);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -413,7 +413,7 @@ public class MetaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 600);
+        databaseSeeder.single(jdbcTemplate, 600);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =

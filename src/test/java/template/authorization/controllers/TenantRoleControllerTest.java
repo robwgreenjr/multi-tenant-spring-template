@@ -29,7 +29,7 @@ public class TenantRoleControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDataExists_whenGetListIsCalled_shouldReturnData() {
-        seeder.tenantRoleTable(jdbcTemplate, tenantId, 12);
+        seeder.tenantRole(jdbcTemplate, tenantId, 12);
 
         ResponseEntity<String> response =
             restTemplate.exchange("/authorization/roles",
@@ -47,7 +47,7 @@ public class TenantRoleControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDataExists_whenGetSingleIsCalled_shouldReturnData() {
-        seeder.tenantRoleTable(jdbcTemplate, tenantId, 3, "test", 1);
+        seeder.tenantRole(jdbcTemplate, tenantId, 3, "test", 1);
 
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
@@ -189,7 +189,7 @@ public class TenantRoleControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenValidData_whenPut_shouldCreateData() {
-        seeder.tenantRoleTable(jdbcTemplate, tenantId, 1);
+        seeder.tenantRole(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_role");
@@ -219,7 +219,7 @@ public class TenantRoleControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenPartialData_whenPut_shouldReturn400() {
-        seeder.tenantRoleTable(jdbcTemplate, tenantId, 1);
+        seeder.tenantRole(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_role");
@@ -243,7 +243,7 @@ public class TenantRoleControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenValidData_whenPutList_shouldCreateAllData() {
-        seeder.tenantRoleTable(jdbcTemplate, tenantId, 3);
+        seeder.tenantRole(jdbcTemplate, tenantId, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_role");
@@ -294,7 +294,7 @@ public class TenantRoleControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDuplicateNameAndType_whenPutList_shouldReturn400() {
-        seeder.tenantRoleTable(jdbcTemplate, tenantId, 3);
+        seeder.tenantRole(jdbcTemplate, tenantId, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_role");
@@ -327,7 +327,7 @@ public class TenantRoleControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenPartialData_whenPatch_shouldUpdate() {
-        seeder.tenantRoleTable(jdbcTemplate, tenantId, 1);
+        seeder.tenantRole(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_role");
@@ -357,7 +357,7 @@ public class TenantRoleControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDataExists_whenDelete_shouldRemoveObject() {
-        seeder.tenantRoleTable(jdbcTemplate, tenantId, 1);
+        seeder.tenantRole(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_role");

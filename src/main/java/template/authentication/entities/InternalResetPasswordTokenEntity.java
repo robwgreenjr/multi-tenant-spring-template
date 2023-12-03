@@ -46,14 +46,25 @@ public class InternalResetPasswordTokenEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof InternalResetPasswordTokenEntity that)) return false;
-        return Objects.equals(getUser(), that.getUser()) &&
-            Objects.equals(getToken(), that.getToken()) &&
-            Objects.equals(getCreatedOn(), that.getCreatedOn());
+        if (o == null || getClass() != o.getClass()) return false;
+        InternalResetPasswordTokenEntity that =
+            (InternalResetPasswordTokenEntity) o;
+        return Objects.equals(user, that.user) &&
+            Objects.equals(token, that.token) &&
+            Objects.equals(createdOn, that.createdOn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUser(), getToken(), getCreatedOn());
+        return Objects.hash(user, token, createdOn);
+    }
+
+    @Override
+    public String toString() {
+        return "InternalResetPasswordTokenEntity{" +
+            "user=" + user +
+            ", token=" + token +
+            ", createdOn=" + createdOn +
+            '}';
     }
 }

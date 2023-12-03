@@ -35,32 +35,6 @@ public class TenantResetPasswordTokenManager
     }
 
     @Override
-    public Optional<TenantResetPasswordToken> findByUserEmail(String email) {
-        Optional<TenantResetPasswordTokenEntity> resetPasswordToken =
-            resetPasswordTokenRepository.getByUserEmail(email);
-
-        if (resetPasswordToken.isEmpty()) {
-            throw new ResetPasswordTokenNotFoundException();
-        }
-
-        return Optional.of(resetPasswordTokenMapper.entityToObject(
-            resetPasswordToken.get()));
-    }
-
-    @Override
-    public Optional<TenantResetPasswordToken> findByToken(UUID token) {
-        Optional<TenantResetPasswordTokenEntity> resetPasswordToken =
-            resetPasswordTokenRepository.getByToken(token);
-
-        if (resetPasswordToken.isEmpty()) {
-            throw new ResetPasswordTokenNotFoundException();
-        }
-
-        return Optional.of(resetPasswordTokenMapper.entityToObject(
-            resetPasswordToken.get()));
-    }
-
-    @Override
     public TenantResetPasswordToken create(
         TenantResetPasswordToken resetPasswordTokenModel) {
         TenantResetPasswordTokenEntity newResetPasswordToken =
@@ -104,5 +78,31 @@ public class TenantResetPasswordTokenManager
                 findEntity.get());
         resetPasswordTokenEventPublisher.publishResetPasswordTokenDeletedEvent(
             resetPasswordTokenModel);
+    }
+
+    @Override
+    public Optional<TenantResetPasswordToken> findByToken(UUID token) {
+        Optional<TenantResetPasswordTokenEntity> resetPasswordToken =
+            resetPasswordTokenRepository.getByToken(token);
+
+        if (resetPasswordToken.isEmpty()) {
+            throw new ResetPasswordTokenNotFoundException();
+        }
+
+        return Optional.of(resetPasswordTokenMapper.entityToObject(
+            resetPasswordToken.get()));
+    }
+
+    @Override
+    public Optional<TenantResetPasswordToken> findByUserEmail(String email) {
+        Optional<TenantResetPasswordTokenEntity> resetPasswordToken =
+            resetPasswordTokenRepository.getByUserEmail(email);
+
+        if (resetPasswordToken.isEmpty()) {
+            throw new ResetPasswordTokenNotFoundException();
+        }
+
+        return Optional.of(resetPasswordTokenMapper.entityToObject(
+            resetPasswordToken.get()));
     }
 }

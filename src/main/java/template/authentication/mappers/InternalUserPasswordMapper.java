@@ -16,6 +16,7 @@ public interface InternalUserPasswordMapper {
     InternalUserPassword changePasswordDtoToObject(
         ChangePasswordDto changePasswordDto);
 
+    @Mapping(target = "user.", source = "user")
     InternalUserPassword entityToObject(
         InternalUserPasswordEntity userPasswordEntity);
 
@@ -26,6 +27,7 @@ public interface InternalUserPasswordMapper {
     InternalUserPassword resetPasswordDtoToObject(
         ResetPasswordTokenDto resetPasswordDto);
 
+    @Mapping(target = "user.", source = "user")
     InternalUserPasswordEntity toEntity(InternalUserPassword userPassword);
 
     @BeanMapping(

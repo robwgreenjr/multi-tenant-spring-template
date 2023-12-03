@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 public class DatabaseSeeder {
-    public void singleTable(JdbcTemplate jdbcTemplate, Integer count) {
+    public void single(JdbcTemplate jdbcTemplate, Integer count) {
         Faker faker = new Faker();
 
         for (int i = 0; i < count; i++) {
@@ -30,8 +30,8 @@ public class DatabaseSeeder {
         }
     }
 
-    public void singleTable(JdbcTemplate jdbcTemplate, Integer count,
-                            String commonValue, int numberOfCommonValues) {
+    public void single(JdbcTemplate jdbcTemplate, Integer count,
+                       String commonValue, int numberOfCommonValues) {
         Faker faker = new Faker();
 
         for (int i = 0; i < count; i++) {

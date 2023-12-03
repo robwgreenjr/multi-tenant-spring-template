@@ -3,7 +3,7 @@ package template.authentication.services;
 import org.springframework.stereotype.Service;
 import template.authentication.entities.TenantUserPasswordEntity;
 import template.authentication.events.publishers.TenantUserPasswordEventPublisher;
-import template.authentication.exceptions.UserPasswordCreateIncompleteException;
+import template.authentication.exceptions.UserPasswordInvalidException;
 import template.authentication.exceptions.UserPasswordNotFoundException;
 import template.authentication.exceptions.UserPasswordUpdateIncompleteException;
 import template.authentication.mappers.TenantUserPasswordMapper;
@@ -30,18 +30,6 @@ public class TenantUserPasswordManager
     }
 
     @Override
-    public TenantUserPassword findByUserEmail(String email) {
-        Optional<TenantUserPasswordEntity> userPasswordEntity =
-            userPasswordRepository.getByUserEmail(email);
-
-        if (userPasswordEntity.isEmpty()) {
-            throw new UserPasswordNotFoundException();
-        }
-
-        return userPasswordMapper.entityToObject(userPasswordEntity.get());
-    }
-
-    @Override
     public TenantUserPassword create(TenantUserPassword userPasswordModel) {
         TenantUserPasswordEntity newUserPassword =
             userPasswordMapper.toEntity(userPasswordModel);
@@ -50,7 +38,7 @@ public class TenantUserPasswordManager
         } catch (Exception exception) {
             if (Objects.requireNonNull(exception.getMessage())
                 .contains("user_id")) {
-                throw new UserPasswordCreateIncompleteException(
+                throw new UserPasswordInvalidException(
                     "To create a password a user must be associated with said password.");
             }
         }
@@ -64,9 +52,38 @@ public class TenantUserPasswordManager
     }
 
     @Override
+    public void delete(Integer id) {
+        Optional<TenantUserPasswordEntity> findEntity =
+            userPasswordRepository.getById(id);
+
+        if (findEntity.isEmpty()) {
+            throw new UserPasswordNotFoundException();
+        }
+
+        userPasswordRepository.delete(findEntity.get());
+
+        TenantUserPassword userPasswordModel =
+            userPasswordMapper.entityToObject(findEntity.get());
+        userPasswordEventPublisher.publishUserPasswordDeletedEvent(
+            userPasswordModel);
+    }
+
+    @Override
+    public Optional<TenantUserPassword> findByUserEmail(String email) {
+        Optional<TenantUserPasswordEntity> userPasswordEntity =
+            userPasswordRepository.getByUserEmail(email);
+
+        if (userPasswordEntity.isEmpty()) {
+            throw new UserPasswordNotFoundException();
+        }
+
+        return Optional.of(
+            userPasswordMapper.entityToObject(userPasswordEntity.get()));
+    }
+
+    @Override
     public TenantUserPassword update(Integer id,
-                                     TenantUserPassword userPasswordModel)
-        throws Exception {
+                                     TenantUserPassword userPasswordModel) {
         TenantUserPasswordEntity entity =
             userPasswordMapper.toEntity(userPasswordModel);
 //        entity.setId(id);
@@ -109,22 +126,5 @@ public class TenantUserPasswordManager
             userPasswordModel);
 
         return userPasswordModel;
-    }
-
-    @Override
-    public void delete(Integer id) {
-        Optional<TenantUserPasswordEntity> findEntity =
-            userPasswordRepository.getById(id);
-
-        if (findEntity.isEmpty()) {
-            throw new UserPasswordNotFoundException();
-        }
-
-        userPasswordRepository.delete(findEntity.get());
-
-        TenantUserPassword userPasswordModel =
-            userPasswordMapper.entityToObject(findEntity.get());
-        userPasswordEventPublisher.publishUserPasswordDeletedEvent(
-            userPasswordModel);
     }
 }

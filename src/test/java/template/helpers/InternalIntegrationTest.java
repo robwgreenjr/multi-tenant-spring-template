@@ -1,6 +1,7 @@
 package template.helpers;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
+import template.database.cli.Seeder;
 import template.database.models.ApplicationDataSource;
 import template.database.models.DatabaseConnectionContext;
 import template.global.constants.GlobalVariable;
@@ -42,6 +44,13 @@ public class InternalIntegrationTest {
     @Qualifier("CryptoEncoder")
     @Autowired
     private StringEncoder cryptoEncoder;
+    @Autowired
+    private Seeder seeder;
+
+    @Before
+    public void init() {
+        seeder.defaultConfiguration(jdbcTemplate);
+    }
 
     protected JdbcTemplate getTenantDataSource(String tenantId) {
         List<Map<String, Object>> tenantDatabase =

@@ -10,7 +10,6 @@ import template.authentication.models.InternalResetPasswordToken;
 import template.authentication.repositories.InternalResetPasswordTokenRepository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -36,7 +35,7 @@ public class InternalResetPasswordTokenManagerEventTest {
     }
 
     @Test
-    public void givenUser_whenCreated_shouldTriggerCreateEvent() {
+    public void whenCreated_shouldTriggerCreateEvent() {
         InternalResetPasswordToken resetPasswordToken =
             new InternalResetPasswordToken();
         InternalResetPasswordTokenEntity resetPasswordTokenEntity =
@@ -60,22 +59,20 @@ public class InternalResetPasswordTokenManagerEventTest {
     }
 
     @Test
-    public void givenUserId_whenDeleted_shouldTriggerDeletedEvent() {
-        UUID uuid = UUID.randomUUID();
-
+    public void whenDeleted_shouldTriggerDeletedEvent() {
         InternalResetPasswordTokenEntity resetPasswordTokenEntity =
             new InternalResetPasswordTokenEntity();
         InternalResetPasswordToken resetPasswordToken =
             new InternalResetPasswordToken();
-        doNothing().when(resetPasswordTokenRepository)
-            .delete(resetPasswordTokenEntity);
-        when(resetPasswordTokenRepository.getByToken(uuid)).thenReturn(
-            Optional.of(resetPasswordTokenEntity));
-        when(resetPasswordTokenMapper.toEntity(
-            resetPasswordToken)).thenReturn(
-            resetPasswordTokenEntity);
 
-        resetPasswordTokenManager.delete(uuid);
+        when(resetPasswordTokenMapper.entityToObject(
+            resetPasswordTokenEntity)).thenReturn(
+            resetPasswordToken);
+
+        when(resetPasswordTokenRepository.getByToken(Mockito.any())).thenReturn(
+            Optional.of(resetPasswordTokenEntity));
+
+        resetPasswordTokenManager.delete(Mockito.any());
 
         verify(resetPasswordTokenEventPublisher,
             times(1)).publishResetPasswordTokenDeletedEvent(

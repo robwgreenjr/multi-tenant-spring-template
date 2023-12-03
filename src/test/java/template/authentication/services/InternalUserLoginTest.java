@@ -8,7 +8,9 @@ import template.authentication.exceptions.PasswordIncorrectException;
 import template.authentication.exceptions.PasswordNotSetException;
 import template.authentication.models.InternalUserPassword;
 import template.authentication.models.Jwt;
+import template.database.cli.Seeder;
 import template.helpers.IntegrationTest;
+import template.internal.models.InternalUser;
 
 import java.util.List;
 import java.util.Map;
@@ -23,19 +25,22 @@ public class InternalUserLoginTest extends IntegrationTest {
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private UserPasswordManager<InternalUserPassword> userPasswordManager;
+    @Autowired
+    private Seeder seeder;
 
     @Test
     public void givenUserPasswordExists_whenJwtProvider_shouldReturnJwtToken() {
-        List<Map<String, Object>> userList = jdbcTemplate.queryForList(
-            "SELECT * FROM internal.user WHERE email = 'testing1@gmail.com'");
+        seeder.internalUserPassword(jdbcTemplate, 1);
+        List<Map<String, Object>> objectList =
+            jdbcTemplate.queryForList("SELECT * FROM internal.user");
 
-//        UserModel userModel = new UserModel();
-//        userModel.setId((Integer) userList.get(0).get("id"));
-//        InternalUserPassword userPasswordModel = new InternalUserPassword();
-//        userPasswordModel.setUser(userModel);
-//        userPasswordModel.setPassword("password");
-//
-//        userPasswordManager.create(userPasswordModel);
+        InternalUser user = new InternalUser();
+        user.setId(Integer.valueOf(objectList.get(0).get("id").toString()));
+        InternalUserPassword userPassword = new InternalUserPassword();
+        userPassword.setUser(user);
+        userPassword.setPassword("password");
+
+        userPasswordManager.create(userPassword);
 
         Jwt actual =
             simpleUserLogin.jwtProvider("testing1@gmail.com", "password");
@@ -56,13 +61,13 @@ public class InternalUserLoginTest extends IntegrationTest {
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.user WHERE email = 'testing1@gmail.com'");
 
-//        UserModel userModel = new UserModel();
-//        userModel.setId((Integer) userList.get(0).get("id"));
-//        InternalUserPassword userPasswordModel = new InternalUserPassword();
-//        userPasswordModel.setUser(userModel);
-//        userPasswordModel.setPassword("password");
-//
-//        userPasswordManager.create(userPasswordModel);
+        InternalUser user = new InternalUser();
+        user.setId(Integer.valueOf(userList.get(0).get("id").toString()));
+        InternalUserPassword userPassword = new InternalUserPassword();
+        userPassword.setUser(user);
+        userPassword.setPassword("password");
+
+        userPasswordManager.create(userPassword);
 
         simpleUserLogin.jwtProvider("testing1@gmail.com", "passwords");
     }

@@ -29,7 +29,7 @@ public class TenantPermissionControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDataExists_whenGetListIsCalled_shouldReturnData() {
-        seeder.tenantPermissionTable(jdbcTemplate, tenantId, 12);
+        seeder.tenantPermission(jdbcTemplate, tenantId, 12);
 
         ResponseEntity<String> response =
             restTemplate.exchange("/authorization/permissions",
@@ -47,7 +47,7 @@ public class TenantPermissionControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDataExists_whenGetSingleIsCalled_shouldReturnData() {
-        seeder.tenantPermissionTable(jdbcTemplate, tenantId, 3, "test", 1);
+        seeder.tenantPermission(jdbcTemplate, tenantId, 3, "test", 1);
 
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
@@ -212,7 +212,7 @@ public class TenantPermissionControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenValidData_whenPut_shouldCreateData() {
-        seeder.tenantPermissionTable(jdbcTemplate, tenantId, 1);
+        seeder.tenantPermission(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_permission");
@@ -243,7 +243,7 @@ public class TenantPermissionControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenPartialData_whenPut_shouldReturn400() {
-        seeder.tenantPermissionTable(jdbcTemplate, tenantId, 1);
+        seeder.tenantPermission(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_permission");
@@ -267,7 +267,7 @@ public class TenantPermissionControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenValidData_whenPutList_shouldCreateAllData() {
-        seeder.tenantPermissionTable(jdbcTemplate, tenantId, 3);
+        seeder.tenantPermission(jdbcTemplate, tenantId, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_permission");
@@ -321,7 +321,7 @@ public class TenantPermissionControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDuplicateNameAndType_whenPutList_shouldReturn400() {
-        seeder.tenantPermissionTable(jdbcTemplate, tenantId, 3);
+        seeder.tenantPermission(jdbcTemplate, tenantId, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_permission");
@@ -356,7 +356,7 @@ public class TenantPermissionControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenPartialData_whenPatch_shouldUpdate() {
-        seeder.tenantPermissionTable(jdbcTemplate, tenantId, 1);
+        seeder.tenantPermission(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_permission");
@@ -386,7 +386,7 @@ public class TenantPermissionControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDataExists_whenDelete_shouldRemoveObject() {
-        seeder.tenantPermissionTable(jdbcTemplate, tenantId, 1);
+        seeder.tenantPermission(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_permission");

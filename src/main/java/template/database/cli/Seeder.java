@@ -72,7 +72,7 @@ public class Seeder {
         int successCount = 0;
         if (schema.equals("internal") && table.equals("user")) {
             successCount =
-                internalUserTable(jdbcTemplate, Integer.valueOf(count));
+                internalUser(jdbcTemplate, Integer.valueOf(count));
         }
 
         System.out.println(
@@ -81,8 +81,44 @@ public class Seeder {
         CliRunner.shutdown(context);
     }
 
-    public Integer internalUserTable(JdbcTemplate jdbcTemplate,
-                                     Integer count) {
+    public void defaultConfiguration(JdbcTemplate jdbcTemplate) {
+        String insertQuery =
+            "INSERT INTO internal.configuration (key, value) VALUES (?, ?) ON CONFLICT DO NOTHING";
+        try {
+            jdbcTemplate.update(insertQuery, "JWT_SECRET", "this is a test");
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+
+        insertQuery =
+            "INSERT INTO internal.configuration (key, value) VALUES (?, ?) ON CONFLICT DO NOTHING";
+        try {
+            jdbcTemplate.update(insertQuery, "JWT_EXPIRATION",
+                "2400");
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+
+        insertQuery =
+            "INSERT INTO internal.configuration (key, value) VALUES (?, ?) ON CONFLICT DO NOTHING";
+        try {
+            jdbcTemplate.update(insertQuery, "RESET_PASSWORD_EXPIRATION",
+                "2400");
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+
+        insertQuery =
+            "INSERT INTO internal.configuration (key, value) VALUES (?, ?) ON CONFLICT DO NOTHING";
+        try {
+            jdbcTemplate.update(insertQuery, "CREATE_PASSWORD_EXPIRATION",
+                "2400");
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+    }
+
+    public Integer internalUser(JdbcTemplate jdbcTemplate, Integer count) {
         Faker faker = new Faker();
 
         int successCount = 0;
@@ -110,9 +146,9 @@ public class Seeder {
         return successCount;
     }
 
-    public Integer internalUserTable(JdbcTemplate jdbcTemplate,
-                                     Integer count, String commonFirstName,
-                                     Integer numberOfCommonValues) {
+    public Integer internalUser(JdbcTemplate jdbcTemplate, Integer count,
+                                String commonFirstName,
+                                Integer numberOfCommonValues) {
         Faker faker = new Faker();
 
         int successCount = 0;
@@ -146,8 +182,127 @@ public class Seeder {
         return successCount;
     }
 
-    public Integer tenantTable(JdbcTemplate jdbcTemplate,
-                               Integer count) {
+    public Integer internalUserResetPasswordToken(JdbcTemplate jdbcTemplate,
+                                                  Integer count) {
+        Faker faker = new Faker();
+
+        int successCount = 0;
+        for (int i = 0; i < count; i++) {
+            String firstName = faker.name().firstName();
+            String lastName = faker.name().lastName();
+            String email = faker.internet().emailAddress();
+            String phone = faker.phoneNumber().phoneNumber();
+
+            String insertQuery =
+                "INSERT INTO internal.user (first_name, last_name, email, phone) VALUES (?, ?, ?, ?)";
+            try {
+                jdbcTemplate.update(insertQuery, firstName, lastName, email,
+                    phone);
+
+                String sql = "SELECT * FROM internal.user WHERE email = ?";
+                List<Map<String, Object>> singleObject =
+                    jdbcTemplate.queryForList(sql, email);
+                insertQuery =
+                    "INSERT INTO internal.authentication_user_reset_password_token (user_id, token) VALUES (?, ?)";
+                jdbcTemplate.update(insertQuery, singleObject.get(0).get("id"),
+                    UUID.randomUUID());
+            } catch (Exception exception) {
+                // We could fail from unique values and will need to try again
+                count++;
+
+                System.out.println(exception.getMessage());
+                continue;
+            }
+            successCount++;
+        }
+
+        return successCount;
+    }
+
+    public Integer internalUserPassword(JdbcTemplate jdbcTemplate,
+                                        Integer count) {
+        Faker faker = new Faker();
+
+        int successCount = 0;
+        for (int i = 0; i < count; i++) {
+            String firstName = faker.name().firstName();
+            String lastName = faker.name().lastName();
+            String email = faker.internet().emailAddress();
+            String phone = faker.phoneNumber().phoneNumber();
+
+            String insertQuery =
+                "INSERT INTO internal.user (first_name, last_name, email, phone) VALUES (?, ?, ?, ?)";
+            try {
+                jdbcTemplate.update(insertQuery, firstName, lastName, email,
+                    phone);
+
+                String sql = "SELECT * FROM internal.user WHERE email = ?";
+                List<Map<String, Object>> singleObject =
+                    jdbcTemplate.queryForList(sql, email);
+                insertQuery =
+                    "INSERT INTO internal.authentication_user_password (user_id, password) VALUES (?, ?)";
+                jdbcTemplate.update(insertQuery, singleObject.get(0).get("id"),
+                    UUID.randomUUID());
+            } catch (Exception exception) {
+                // We could fail from unique values and will need to try again
+                count++;
+
+                System.out.println(exception.getMessage());
+                continue;
+            }
+            successCount++;
+        }
+
+        return successCount;
+    }
+
+    public Integer internalUserResetPasswordToken(JdbcTemplate jdbcTemplate,
+                                                  Integer count,
+                                                  String commonFirstName,
+                                                  Integer numberOfCommonValues) {
+        Faker faker = new Faker();
+
+        int successCount = 0;
+        for (int i = 0; i < count; i++) {
+            String firstName = faker.name().firstName();
+            String lastName = faker.name().lastName();
+            String email = faker.internet().emailAddress();
+            String phone = faker.phoneNumber().phoneNumber();
+
+            if (numberOfCommonValues > successCount) {
+                firstName += commonFirstName;
+            } else {
+                firstName = firstName.replace(commonFirstName, "");
+            }
+
+            String insertQuery =
+                "INSERT INTO internal.user (first_name, last_name, email, phone) VALUES (?, ?, ?, ?)";
+            try {
+                jdbcTemplate.update(insertQuery, firstName, lastName, email,
+                    phone);
+
+                String sql = "SELECT * FROM internal.user WHERE email = ?";
+                List<Map<String, Object>> singleObject =
+                    jdbcTemplate.queryForList(sql, email);
+                insertQuery =
+                    "INSERT INTO internal.authentication_user_reset_password_token (user_id, token) VALUES (?, ?)";
+                jdbcTemplate.update(insertQuery, singleObject.get(0).get("id"),
+                    UUID.randomUUID());
+            } catch (Exception exception) {
+                // We could fail from unique values and will need to try again
+                count++;
+
+                System.out.println(exception.getMessage());
+                continue;
+            }
+            successCount++;
+        }
+
+        return successCount;
+    }
+
+    public Integer tenant(JdbcTemplate jdbcTemplate,
+                          Integer count) {
         Faker faker = new Faker();
 
         int successCount = 0;
@@ -204,9 +359,9 @@ public class Seeder {
     }
 
 
-    public Integer tenantTable(JdbcTemplate jdbcTemplate,
-                               Integer count, String commonCompanyName,
-                               Integer numberOfCommonValues) {
+    public Integer tenant(JdbcTemplate jdbcTemplate,
+                          Integer count, String commonCompanyName,
+                          Integer numberOfCommonValues) {
         Faker faker = new Faker();
 
         int successCount = 0;
@@ -243,8 +398,8 @@ public class Seeder {
     }
 
 
-    public Integer tenantUserTable(JdbcTemplate jdbcTemplate, UUID tenantId,
-                                   Integer count) {
+    public Integer tenantUser(JdbcTemplate jdbcTemplate, UUID tenantId,
+                              Integer count) {
         Faker faker = new Faker();
 
         int successCount = 0;
@@ -273,9 +428,9 @@ public class Seeder {
         return successCount;
     }
 
-    public Integer tenantUserTable(JdbcTemplate jdbcTemplate, UUID tenantId,
-                                   Integer count, String commonFirstName,
-                                   Integer numberOfCommonValues) {
+    public Integer tenantUser(JdbcTemplate jdbcTemplate, UUID tenantId,
+                              Integer count, String commonFirstName,
+                              Integer numberOfCommonValues) {
         Faker faker = new Faker();
 
         int successCount = 0;
@@ -309,8 +464,8 @@ public class Seeder {
         return successCount;
     }
 
-    public Integer internalPermissionTable(JdbcTemplate jdbcTemplate,
-                                           Integer count) {
+    public Integer internalPermission(JdbcTemplate jdbcTemplate,
+                                      Integer count) {
         Faker faker = new Faker();
 
         int successCount = 0;
@@ -336,10 +491,10 @@ public class Seeder {
         return successCount;
     }
 
-    public Integer internalPermissionTable(JdbcTemplate jdbcTemplate,
-                                           Integer count,
-                                           String commonName,
-                                           Integer numberOfCommonValues) {
+    public Integer internalPermission(JdbcTemplate jdbcTemplate,
+                                      Integer count,
+                                      String commonName,
+                                      Integer numberOfCommonValues) {
         Faker faker = new Faker();
 
         int successCount = 0;
@@ -371,9 +526,9 @@ public class Seeder {
         return successCount;
     }
 
-    public Integer tenantPermissionTable(JdbcTemplate jdbcTemplate,
-                                         UUID tenantId,
-                                         Integer count) {
+    public Integer tenantPermission(JdbcTemplate jdbcTemplate,
+                                    UUID tenantId,
+                                    Integer count) {
         Faker faker = new Faker();
 
         int successCount = 0;
@@ -400,11 +555,11 @@ public class Seeder {
         return successCount;
     }
 
-    public Integer tenantPermissionTable(JdbcTemplate jdbcTemplate,
-                                         UUID tenantId,
-                                         Integer count,
-                                         String commonName,
-                                         Integer numberOfCommonValues) {
+    public Integer tenantPermission(JdbcTemplate jdbcTemplate,
+                                    UUID tenantId,
+                                    Integer count,
+                                    String commonName,
+                                    Integer numberOfCommonValues) {
         Faker faker = new Faker();
 
         int successCount = 0;
@@ -437,8 +592,8 @@ public class Seeder {
         return successCount;
     }
 
-    public Integer tenantRoleTable(JdbcTemplate jdbcTemplate, UUID tenantId,
-                                   Integer count) {
+    public Integer tenantRole(JdbcTemplate jdbcTemplate, UUID tenantId,
+                              Integer count) {
         Faker faker = new Faker();
 
         int successCount = 0;
@@ -463,10 +618,10 @@ public class Seeder {
         return successCount;
     }
 
-    public Integer tenantRoleTable(JdbcTemplate jdbcTemplate, UUID tenantId,
-                                   Integer count,
-                                   String commonName,
-                                   Integer numberOfCommonValues) {
+    public Integer tenantRole(JdbcTemplate jdbcTemplate, UUID tenantId,
+                              Integer count,
+                              String commonName,
+                              Integer numberOfCommonValues) {
         Faker faker = new Faker();
 
         int successCount = 0;
@@ -497,8 +652,8 @@ public class Seeder {
         return successCount;
     }
 
-    public Integer internalRoleTable(JdbcTemplate jdbcTemplate,
-                                     Integer count) {
+    public Integer internalRole(JdbcTemplate jdbcTemplate,
+                                Integer count) {
         Faker faker = new Faker();
 
         int successCount = 0;
@@ -523,10 +678,10 @@ public class Seeder {
         return successCount;
     }
 
-    public Integer internalRoleTable(JdbcTemplate jdbcTemplate,
-                                     Integer count,
-                                     String commonName,
-                                     Integer numberOfCommonValues) {
+    public Integer internalRole(JdbcTemplate jdbcTemplate,
+                                Integer count,
+                                String commonName,
+                                Integer numberOfCommonValues) {
         Faker faker = new Faker();
 
         int successCount = 0;

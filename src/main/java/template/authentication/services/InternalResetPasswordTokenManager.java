@@ -35,32 +35,6 @@ public class InternalResetPasswordTokenManager
     }
 
     @Override
-    public Optional<InternalResetPasswordToken> findByUserEmail(String email) {
-        Optional<InternalResetPasswordTokenEntity> resetPasswordTokenEntity =
-            resetPasswordTokenRepository.getByUserEmail(email);
-
-        if (resetPasswordTokenEntity.isEmpty()) {
-            throw new ResetPasswordTokenNotFoundException();
-        }
-
-        return Optional.of(resetPasswordTokenMapper.entityToObject(
-            resetPasswordTokenEntity.get()));
-    }
-
-    @Override
-    public Optional<InternalResetPasswordToken> findByToken(UUID token) {
-        Optional<InternalResetPasswordTokenEntity> resetPasswordTokenEntity =
-            resetPasswordTokenRepository.getByToken(token);
-
-        if (resetPasswordTokenEntity.isEmpty()) {
-            throw new ResetPasswordTokenNotFoundException();
-        }
-
-        return Optional.of(resetPasswordTokenMapper.entityToObject(
-            resetPasswordTokenEntity.get()));
-    }
-
-    @Override
     public InternalResetPasswordToken create(
         InternalResetPasswordToken resetPasswordToken) {
         InternalResetPasswordTokenEntity newResetPasswordToken =
@@ -103,5 +77,31 @@ public class InternalResetPasswordTokenManager
             resetPasswordTokenMapper.entityToObject(findEntity.get());
         resetPasswordTokenEventPublisher.publishResetPasswordTokenDeletedEvent(
             resetPasswordToken);
+    }
+
+    @Override
+    public Optional<InternalResetPasswordToken> findByUserEmail(String email) {
+        Optional<InternalResetPasswordTokenEntity> resetPasswordTokenEntity =
+            resetPasswordTokenRepository.getByUserEmail(email);
+
+        if (resetPasswordTokenEntity.isEmpty()) {
+            throw new ResetPasswordTokenNotFoundException();
+        }
+
+        return Optional.of(resetPasswordTokenMapper.entityToObject(
+            resetPasswordTokenEntity.get()));
+    }
+
+    @Override
+    public Optional<InternalResetPasswordToken> findByToken(UUID token) {
+        Optional<InternalResetPasswordTokenEntity> resetPasswordTokenEntity =
+            resetPasswordTokenRepository.getByToken(token);
+
+        if (resetPasswordTokenEntity.isEmpty()) {
+            throw new ResetPasswordTokenNotFoundException();
+        }
+
+        return Optional.of(resetPasswordTokenMapper.entityToObject(
+            resetPasswordTokenEntity.get()));
     }
 }

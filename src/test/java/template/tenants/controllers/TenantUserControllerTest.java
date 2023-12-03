@@ -28,7 +28,7 @@ public class TenantUserControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDataExists_whenGetListIsCalled_shouldReturnData() {
-        seeder.tenantUserTable(jdbcTemplate, tenantId, 12);
+        seeder.tenantUser(jdbcTemplate, tenantId, 12);
 
         ResponseEntity<String> response =
             restTemplate.exchange("/users", HttpMethod.GET,
@@ -45,7 +45,7 @@ public class TenantUserControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDataExists_whenGetSingleIsCalled_shouldReturnData() {
-        seeder.tenantUserTable(jdbcTemplate, tenantId, 1);
+        seeder.tenantUser(jdbcTemplate, tenantId, 1);
 
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList("SELECT * FROM tenant.user");
@@ -230,7 +230,7 @@ public class TenantUserControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenValidData_whenPut_shouldCreateData() {
-        seeder.tenantUserTable(jdbcTemplate, tenantId, 1);
+        seeder.tenantUser(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList("SELECT * FROM tenant.user");
 
@@ -261,7 +261,7 @@ public class TenantUserControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenPartialData_whenPut_shouldReturn400() {
-        seeder.tenantUserTable(jdbcTemplate, tenantId, 1);
+        seeder.tenantUser(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.user");
@@ -287,7 +287,7 @@ public class TenantUserControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenValidData_whenPutList_shouldCreateAllData() {
-        seeder.tenantUserTable(jdbcTemplate, tenantId, 3);
+        seeder.tenantUser(jdbcTemplate, tenantId, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM tenant.user");
 
@@ -343,7 +343,7 @@ public class TenantUserControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDuplicateEmail_whenPutList_shouldReturn400() {
-        seeder.tenantUserTable(jdbcTemplate, tenantId, 3);
+        seeder.tenantUser(jdbcTemplate, tenantId, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM tenant.user");
 
@@ -379,7 +379,7 @@ public class TenantUserControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDuplicatePhone_whenPutList_shouldReturn400() {
-        seeder.tenantUserTable(jdbcTemplate, tenantId, 3);
+        seeder.tenantUser(jdbcTemplate, tenantId, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM tenant.user");
 
@@ -416,7 +416,7 @@ public class TenantUserControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenPartialData_whenPatch_shouldUpdate() {
-        seeder.tenantUserTable(jdbcTemplate, tenantId, 1);
+        seeder.tenantUser(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM tenant.user");
 
@@ -444,7 +444,7 @@ public class TenantUserControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDataExists_whenDelete_shouldRemoveObject() {
-        seeder.tenantUserTable(jdbcTemplate, tenantId, 1);
+        seeder.tenantUser(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM tenant.user");
 

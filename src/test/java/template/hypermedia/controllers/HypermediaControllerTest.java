@@ -97,7 +97,7 @@ public class HypermediaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 400);
+        databaseSeeder.single(jdbcTemplate, 400);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -118,7 +118,7 @@ public class HypermediaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 50);
+        databaseSeeder.single(jdbcTemplate, 50);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -139,7 +139,7 @@ public class HypermediaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 400);
+        databaseSeeder.single(jdbcTemplate, 400);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -161,7 +161,7 @@ public class HypermediaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 200);
+        databaseSeeder.single(jdbcTemplate, 200);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -182,7 +182,7 @@ public class HypermediaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 1043);
+        databaseSeeder.single(jdbcTemplate, 1043);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
@@ -225,7 +225,7 @@ public class HypermediaControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.singleTable(jdbcTemplate, 765);
+        databaseSeeder.single(jdbcTemplate, 765);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =

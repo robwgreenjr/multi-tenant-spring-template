@@ -7,45 +7,61 @@ import org.springframework.test.context.jdbc.Sql;
 import template.authentication.exceptions.ResetPasswordTokenCreateIncompleteException;
 import template.authentication.exceptions.ResetPasswordTokenNotFoundException;
 import template.authentication.models.InternalResetPasswordToken;
-import template.helpers.IntegrationTest;
+import template.database.cli.Seeder;
+import template.helpers.InternalIntegrationTest;
+import template.internal.models.InternalUser;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 
-public class InternalResetPasswordTokenManagerTest extends IntegrationTest {
+public class InternalResetPasswordTokenManagerTest extends
+    InternalIntegrationTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private ResetPasswordTokenManager<InternalResetPasswordToken>
         resetPasswordTokenManager;
+    @Autowired
+    private Seeder seeder;
 
     @Test
+    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
     public void givenResetPasswordTokenExists_whenFindByEmailIsCalled_shouldReturnResetPasswordToken() {
-//        InternalResetPasswordToken actual =
-//            resetPasswordTokenManager.findByUserEmail("testing1@gmail.com");
+        seeder.internalUserResetPasswordToken(jdbcTemplate, 1);
+        List<Map<String, Object>> objectList =
+            jdbcTemplate.queryForList("SELECT * FROM internal.user");
 
-//        assertEquals("testing1@gmail.com", actual.getUser().getEmail());
+        Optional<InternalResetPasswordToken> actual =
+            resetPasswordTokenManager.findByUserEmail(
+                objectList.get(0).get("email").toString());
+
+        assertTrue(actual.isPresent());
     }
 
     @Test(expected = ResetPasswordTokenNotFoundException.class)
-    @Sql(scripts = {
-        "classpath:sql/truncateInternalSchema.sql"})
+    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
     public void givenNoResetPasswordTokenExists_whenFindByEmailIsCalled_shouldThrowException() {
         resetPasswordTokenManager.findByUserEmail("testing@gmail.com");
     }
 
     @Test
+    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
     public void givenResetPasswordTokenExists_whenFindByTokenIsCalled_shouldReturnResetPasswordToken() {
-        UUID uuid = UUID.fromString("ba346530-9a2b-4483-9c71-816255d9ff59");
+        seeder.internalUserResetPasswordToken(jdbcTemplate, 1);
+        List<Map<String, Object>> objectList =
+            jdbcTemplate.queryForList(
+                "SELECT * FROM internal.authentication_user_reset_password_token");
 
-//        InternalResetPasswordToken actual =
-//            resetPasswordTokenManager.findByToken(uuid);
+        Optional<InternalResetPasswordToken> actual =
+            resetPasswordTokenManager.findByToken(
+                UUID.fromString(objectList.get(0).get("token").toString()));
 
-//        assertEquals(uuid, actual.getToken());
+        assertTrue(actual.isPresent());
     }
 
     @Test(expected = ResetPasswordTokenNotFoundException.class)
@@ -57,57 +73,55 @@ public class InternalResetPasswordTokenManagerTest extends IntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql",
-        "classpath:sql/authentication/reset_password_token/create.sql",
-        "classpath:sql/global/configuration/create.sql"})
+    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
     public void givenNewResetPasswordToken_whenCreate_shouldStoreNewResetPasswordToken() {
-        UUID uuid = UUID.randomUUID();
+        seeder.internalUser(jdbcTemplate, 1);
+        List<Map<String, Object>> objectList =
+            jdbcTemplate.queryForList("SELECT * FROM internal.user");
 
-        List<Map<String, Object>> userList = jdbcTemplate.queryForList(
-            "SELECT * FROM internal.user WHERE email = 'testing1@gmail.com'");
-//        UserModel user = new UserModel();
-//        user.setId((Integer) userList.get(0).get("id"));
-//        user.setEmail("testing1@gmail.com");
-//        InternalResetPasswordToken resetPasswordTokenModel =
-//            new InternalResetPasswordToken();
-//        resetPasswordTokenModel.setUser(user);
-//        resetPasswordTokenModel.setToken(uuid);
+        InternalUser user = new InternalUser();
+        user.setId(Integer.valueOf(objectList.get(0).get("id").toString()));
+        user.setEmail(objectList.get(0).get("email").toString());
+        InternalResetPasswordToken resetPasswordTokenModel =
+            new InternalResetPasswordToken();
+        resetPasswordTokenModel.setUser(user);
+        resetPasswordTokenModel.setToken(UUID.randomUUID());
 
-//        resetPasswordTokenManager.create(resetPasswordTokenModel);
+        resetPasswordTokenManager.create(resetPasswordTokenModel);
 
         List<Map<String, Object>> resetPasswordTokenList =
             jdbcTemplate.queryForList(
-                "SELECT * FROM internal.authentication_user_reset_password_token JOIN internal.user us on us.id = internal.authentication_user_reset_password_token.user_id WHERE us.email = 'testing1@gmail.com'");
+                "SELECT * FROM internal.authentication_user_reset_password_token JOIN internal.user us on us.id = internal.authentication_user_reset_password_token.user_id WHERE us.email = '" +
+                    objectList.get(0).get("email").toString() + "'");
 
         assertEquals(1, resetPasswordTokenList.size());
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql",
-        "classpath:sql/authentication/reset_password_token/create.sql",
-        "classpath:sql/global/configuration/create.sql"})
+    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
     public void givenNewResetPasswordToken_whenCreate_shouldSetCreatedOnField() {
-        List<Map<String, Object>> userList =
+        seeder.internalUser(jdbcTemplate, 1);
+        List<Map<String, Object>> objectList =
+            jdbcTemplate.queryForList("SELECT * FROM internal.user");
+
+        InternalUser user = new InternalUser();
+        user.setId((Integer) objectList.get(0).get("id"));
+        user.setEmail(objectList.get(0).get("email").toString());
+        InternalResetPasswordToken resetPasswordTokenModel =
+            new InternalResetPasswordToken();
+        resetPasswordTokenModel.setUser(user);
+        resetPasswordTokenModel.setToken(UUID.randomUUID());
+
+        resetPasswordTokenModel =
+            resetPasswordTokenManager.create(resetPasswordTokenModel);
+
+        List<Map<String, Object>> resetPasswordTokenList =
             jdbcTemplate.queryForList(
-                "SELECT * FROM internal.user WHERE email = 'testing1@gmail.com'");
-//        UserModel user = new UserModel();
-//        user.setId((Integer) userList.get(0).get("id"));
-//        user.setEmail("testing1@gmail.com");
-//        InternalResetPasswordToken resetPasswordTokenModel =
-//            new InternalResetPasswordToken();
-//        resetPasswordTokenModel.setUser(user);
-//        resetPasswordTokenModel.setToken(UUID.randomUUID());
-//
-//        resetPasswordTokenModel =
-//            resetPasswordTokenManager.create(resetPasswordTokenModel);
+                "SELECT * FROM internal.authentication_user_reset_password_token WHERE token = '" +
+                    resetPasswordTokenModel.getToken().toString() +
+                    "';");
 
-//        List<Map<String, Object>> resetPasswordTokenList =
-//            jdbcTemplate.queryForList(
-//                "SELECT * FROM internal.authentication_user_reset_password_token WHERE token = '" +
-//                    resetPasswordTokenModel.getToken().toString() +
-//                    "';");
-
-//        assertNotNull(resetPasswordTokenList.get(0).get("created_on"));
+        assertNotNull(resetPasswordTokenList.get(0).get("created_on"));
     }
 
     @Test(expected = ResetPasswordTokenCreateIncompleteException.class)
@@ -121,9 +135,15 @@ public class InternalResetPasswordTokenManagerTest extends IntegrationTest {
     }
 
     @Test
+    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
     public void givenDeleteResetPasswordToken_whenDelete_shouldRemoveResetPasswordToken() {
+        seeder.internalUserResetPasswordToken(jdbcTemplate, 1);
+        List<Map<String, Object>> objectList =
+            jdbcTemplate.queryForList(
+                "SELECT * FROM internal.authentication_user_reset_password_token");
+
         resetPasswordTokenManager.delete(
-            UUID.fromString("ba346530-9a2b-4483-9c71-816255d9ff59"));
+            UUID.fromString(objectList.get(0).get("token").toString()));
 
         List<Map<String, Object>> actualList =
             jdbcTemplate.queryForList(

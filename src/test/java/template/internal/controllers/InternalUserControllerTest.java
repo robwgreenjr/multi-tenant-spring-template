@@ -28,7 +28,7 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDataExists_whenGetListIsCalled_shouldReturnData() {
-        seeder.internalUserTable(jdbcTemplate, 12);
+        seeder.internalUser(jdbcTemplate, 12);
 
         ResponseEntity<String> response =
             restTemplate.exchange("/internal/users", HttpMethod.GET,
@@ -45,7 +45,7 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDataExists_whenGetSingleIsCalled_shouldReturnData() {
-        seeder.internalUserTable(jdbcTemplate, 3, "test", 1);
+        seeder.internalUser(jdbcTemplate, 3, "test", 1);
 
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
@@ -231,7 +231,7 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPut_shouldCreateData() {
-        seeder.internalUserTable(jdbcTemplate, 1);
+        seeder.internalUser(jdbcTemplate, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList("SELECT * FROM internal.user");
 
@@ -262,7 +262,7 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenPartialData_whenPut_shouldReturn400() {
-        seeder.internalUserTable(jdbcTemplate, 1);
+        seeder.internalUser(jdbcTemplate, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.user");
@@ -288,7 +288,7 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPutList_shouldCreateAllData() {
-        seeder.internalUserTable(jdbcTemplate, 3);
+        seeder.internalUser(jdbcTemplate, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.user");
 
@@ -344,7 +344,7 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDuplicateEmail_whenPutList_shouldReturn400() {
-        seeder.internalUserTable(jdbcTemplate, 3);
+        seeder.internalUser(jdbcTemplate, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.user");
 
@@ -380,7 +380,7 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDuplicatePhone_whenPutList_shouldReturn400() {
-        seeder.internalUserTable(jdbcTemplate, 3);
+        seeder.internalUser(jdbcTemplate, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.user");
 
@@ -417,7 +417,7 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenPartialData_whenPatch_shouldUpdate() {
-        seeder.internalUserTable(jdbcTemplate, 1);
+        seeder.internalUser(jdbcTemplate, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.user");
 
@@ -445,7 +445,7 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDataExists_whenDelete_shouldRemoveObject() {
-        seeder.internalUserTable(jdbcTemplate, 1);
+        seeder.internalUser(jdbcTemplate, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.user");
 
