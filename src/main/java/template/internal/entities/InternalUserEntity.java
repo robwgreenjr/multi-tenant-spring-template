@@ -21,12 +21,6 @@ public class InternalUserEntity {
     @Generated
     private Instant updatedOn;
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, phone, createdOn,
-            updatedOn);
-    }
-
     public Integer getId() {
         return id;
     }
@@ -95,6 +89,12 @@ public class InternalUserEntity {
             Objects.equals(phone, that.phone) &&
             Objects.equals(createdOn, that.createdOn) &&
             Objects.equals(updatedOn, that.updatedOn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, email, phone, createdOn,
+            updatedOn);
     }
 
     @Override

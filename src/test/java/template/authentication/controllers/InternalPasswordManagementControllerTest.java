@@ -36,7 +36,7 @@ public class InternalPasswordManagementControllerTest extends IntegrationTest {
     private ResetPasswordTokenManager resetPasswordTokenManager;
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql"})
+    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
     public void givenChangePasswordDto_whenCalled_shouldChangePassword() {
         List<Map<String, Object>> userList =
             jdbcTemplate.queryForList(
@@ -65,7 +65,7 @@ public class InternalPasswordManagementControllerTest extends IntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql"})
+    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
     public void givenForgotPasswordDto_whenForgotCalled_shouldCreateResetPassword() {
         ForgotPasswordDto forgotPasswordDto = new ForgotPasswordDto();
         forgotPasswordDto.email = "testing1@gmail.com";
@@ -82,8 +82,7 @@ public class InternalPasswordManagementControllerTest extends IntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql",
-        "classpath:sql/global/configuration/create.sql"})
+    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
     public void givenResetPasswordExists_whenForgotCalled_shouldReturn200() {
         ForgotPasswordDto forgotPasswordDto = new ForgotPasswordDto();
         forgotPasswordDto.email = "testing1@gmail.com";
@@ -103,8 +102,7 @@ public class InternalPasswordManagementControllerTest extends IntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql",
-        "classpath:sql/global/configuration/create.sql"})
+    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
     public void givenResetPasswordTokenDto_whenResetCalled_shouldUpdatePassword() {
         List<Map<String, Object>> userList =
             jdbcTemplate.queryForList(
@@ -140,8 +138,7 @@ public class InternalPasswordManagementControllerTest extends IntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/users/create.sql",
-        "classpath:sql/global/configuration/create.sql"})
+    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
     public void givenNoUserPassword_whenResetCalled_shouldCreatePassword() {
         List<Map<String, Object>> userList =
             jdbcTemplate.queryForList(

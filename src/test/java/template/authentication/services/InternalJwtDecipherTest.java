@@ -3,8 +3,13 @@ package template.authentication.services;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import template.authentication.helpers.InternalJwtSpecialist;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.jdbc.Sql;
+import template.authentication.helpers.JwtSpecialist;
 import template.helpers.IntegrationTest;
+import template.internal.models.InternalUser;
+
+import static org.junit.Assert.assertNotNull;
 
 public class InternalJwtDecipherTest extends IntegrationTest {
 
@@ -12,21 +17,24 @@ public class InternalJwtDecipherTest extends IntegrationTest {
     @Qualifier("InternalJwtDecipher")
     private AuthenticationProcessor jwtDecipher;
     @Autowired
-    private InternalJwtSpecialist simpleJwtSpecialist;
+    @Qualifier("InternalJwtSpecialist")
+    private JwtSpecialist<InternalUser> simpleJwtSpecialist;
 
     @Test
+    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
     public void givenToken_whenValidate_shouldSetUserId() {
-//        UserModel userModel = new UserModel();
-//        userModel.setId(1);
-//        userModel.setEmail("testing1@gmail.com");
-//
-//        String token = simpleJwtSpecialist.generate(userModel, "scopeList");
+        InternalUser user = new InternalUser();
+        user.setId(1);
+        user.setEmail("testing1@gmail.com");
 
-//        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-//        httpServletRequest.addHeader("Authorization", "Bearer " + token);
+        String token = simpleJwtSpecialist.generate(user, "scopeList");
 
-//        jwtDecipher.validate(httpServletRequest);
-//
-//        assertNotNull(httpServletRequest.getAttribute("user_id"));
+        MockHttpServletRequest httpServletRequest =
+            new MockHttpServletRequest();
+        httpServletRequest.addHeader("Authorization", "Bearer " + token);
+
+        jwtDecipher.validate(httpServletRequest);
+
+        assertNotNull(httpServletRequest.getAttribute("user_id"));
     }
 }

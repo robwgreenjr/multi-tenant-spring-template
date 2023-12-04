@@ -3,7 +3,7 @@ package template.authorization.entities;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.TenantId;
-import template.internal.entities.InternalUserEntity;
+import template.tenants.entities.TenantUserEntity;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -26,13 +26,13 @@ public class TenantRoleEntity {
     @JoinTable(name = "authorization_role_permission", schema = "internal",
         joinColumns = {@JoinColumn(name = "role_id")},
         inverseJoinColumns = {@JoinColumn(name = "permission_id")})
-    private Set<InternalPermissionEntity> permissions = new HashSet<>();
+    private Set<TenantPermissionEntity> permissions = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "authorization_role_user", schema = "internal",
         joinColumns = {@JoinColumn(name = "role_id")},
         inverseJoinColumns = {@JoinColumn(name = "user_id")})
-    private Set<InternalUserEntity> users = new HashSet<>();
+    private Set<TenantUserEntity> users = new HashSet<>();
 
     @Generated
     private Instant createdOn;
@@ -71,21 +71,21 @@ public class TenantRoleEntity {
         this.description = description;
     }
 
-    public Set<InternalPermissionEntity> getPermissions() {
+    public Set<TenantPermissionEntity> getPermissions() {
         return permissions;
     }
 
     public void setPermissions(
-        Set<InternalPermissionEntity> permissions) {
+        Set<TenantPermissionEntity> permissions) {
         this.permissions = permissions;
     }
 
-    public Set<InternalUserEntity> getUsers() {
+    public Set<TenantUserEntity> getUsers() {
         return users;
     }
 
     public void setUsers(
-        Set<InternalUserEntity> users) {
+        Set<TenantUserEntity> users) {
         this.users = users;
     }
 

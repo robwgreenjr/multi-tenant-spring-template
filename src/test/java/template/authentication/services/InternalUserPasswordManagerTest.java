@@ -1,198 +1,120 @@
 package template.authentication.services;
 
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
-import template.authentication.exceptions.UserPasswordInvalidException;
-import template.authentication.exceptions.UserPasswordNotFoundException;
-import template.authentication.exceptions.UserPasswordUpdateIncompleteException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import template.authentication.entities.InternalUserPasswordEntity;
+import template.authentication.events.publishers.InternalUserPasswordEventPublisher;
+import template.authentication.mappers.InternalUserPasswordMapper;
 import template.authentication.models.InternalUserPassword;
-import template.database.cli.Seeder;
-import template.helpers.IntegrationTest;
-import template.internal.models.InternalUser;
+import template.authentication.repositories.InternalUserPasswordRepository;
+import template.internal.entities.InternalUserEntity;
+import template.internal.repositories.InternalUserRepository;
 
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
-public class InternalUserPasswordManagerTest extends IntegrationTest {
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
-    @Qualifier("InternalUserPasswordManager")
-    private UserPasswordManager<InternalUserPassword> userPasswordManager;
-    @Autowired
-    private Seeder seeder;
+public class InternalUserPasswordManagerTest {
+    private final InternalUserPasswordRepository userPasswordRepository =
+        Mockito.mock(InternalUserPasswordRepository.class);
+    private final InternalUserRepository userRepository =
+        Mockito.mock(InternalUserRepository.class);
+    private final InternalUserPasswordMapper userPasswordMapper =
+        Mockito.mock(InternalUserPasswordMapper.class);
+    private final InternalUserPasswordEventPublisher
+        userPasswordEventPublisher =
+        Mockito.mock(
+            InternalUserPasswordEventPublisher.class);
+    private final InternalUserPasswordEntity userPasswordEntity =
+        Mockito.mock(InternalUserPasswordEntity.class);
+    private InternalUserPasswordManager userPasswordManager;
 
-    @Test
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenUserPasswordExists_whenFindByEmailIsCalled_shouldReturnUserPassword() {
-        seeder.internalUserPassword(jdbcTemplate, 1);
-        List<Map<String, Object>> objectList =
-            jdbcTemplate.queryForList("SELECT * FROM internal.user");
-        Optional<InternalUserPassword> actual =
-            userPasswordManager.findByUserEmail(
-                objectList.get(0).get("email").toString());
-
-        assertTrue(actual.isPresent());
-    }
-
-    @Test(expected = UserPasswordNotFoundException.class)
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenNoUserPassword_whenFindByEmailIsCalled_shouldThrowException() {
-        userPasswordManager.findByUserEmail("testing@gmail.com");
+    @BeforeEach
+    void initUseCase() {
+        userPasswordManager =
+            new InternalUserPasswordManager(userPasswordRepository,
+                userPasswordMapper,
+                userPasswordEventPublisher, userRepository);
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenNewUserPassword_whenCreate_shouldStoreNewUserPassword() {
-        seeder.internalUser(jdbcTemplate, 1);
-        List<Map<String, Object>> objectList =
-            jdbcTemplate.queryForList("SELECT * FROM internal.user");
-        InternalUser user = new InternalUser();
-        user.setId(Integer.valueOf(objectList.get(0).get("id").toString()));
+    public void givenUser_whenCreated_shouldTriggerCreateEvent() {
         InternalUserPassword userPassword = new InternalUserPassword();
-        userPassword.setUser(user);
-        userPassword.setPassword("password");
+        when(userPasswordEntity.getUser()).thenReturn(new InternalUserEntity());
+        when(userPasswordMapper.entityToObject(
+            userPasswordEntity)).thenReturn(
+            userPassword);
+        when(userPasswordMapper.toEntity(userPassword)).thenReturn(
+            userPasswordEntity);
+        when(userRepository.getById(Mockito.any())).thenReturn(
+            Optional.of(new InternalUserEntity()));
+
+        doNothing().when(userPasswordRepository).save(userPasswordEntity);
 
         userPasswordManager.create(userPassword);
 
-        List<Map<String, Object>> userPasswordList =
-            jdbcTemplate.queryForList(
-                "SELECT * FROM internal.authentication_user_password JOIN internal.user us on us.id = internal.authentication_user_password.user_id WHERE us.email = '" +
-                    objectList.get(0).get("email") + "'");
-
-        assertEquals(1, userPasswordList.size());
-    }
-
-    @Test
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenNewUserPassword_whenCreate_shouldSetCreatedOnField() {
-        seeder.internalUser(jdbcTemplate, 1);
-        List<Map<String, Object>> objectList =
-            jdbcTemplate.queryForList("SELECT * FROM internal.user");
-        InternalUser user = new InternalUser();
-        user.setId((Integer) objectList.get(0).get("id"));
-        InternalUserPassword userPassword = new InternalUserPassword();
-        userPassword.setUser(user);
-        userPassword.setPassword("password");
-
-        userPassword = userPasswordManager.create(userPassword);
-
-        List<Map<String, Object>> userPasswordList =
-            jdbcTemplate.queryForList(
-                "SELECT * FROM internal.authentication_user_password as aup JOIN internal.user u on u.id = aup.user_id WHERE u.id = '" +
-                    objectList.get(0).get("id") + "';");
-
-        assertNotNull(userPasswordList.get(0).get("created_on"));
-    }
-
-    @Test(expected = UserPasswordInvalidException.class)
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenNewUserPasswordWithoutUser_whenCreate_shouldThrowException() {
-        InternalUserPassword userPassword = new InternalUserPassword();
-        userPassword.setPassword("password");
-
-        userPasswordManager.create(userPassword);
-    }
-
-    @Test
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenUpdatePassword_whenUpdate_shouldUpdateUserPassword() {
-        seeder.internalUserPassword(jdbcTemplate, 1);
-        List<Map<String, Object>> objectList =
-            jdbcTemplate.queryForList(
-                "SELECT * FROM internal.authentication_user_password");
-        InternalUser user = new InternalUser();
-        user.setId((Integer) objectList.get(0).get("id"));
-        InternalUserPassword userPassword = new InternalUserPassword();
-        userPassword.setUser(user);
-        userPassword.setPassword("password updated");
-
-        Timestamp createdOn =
-            (Timestamp) objectList.get(0).get("created_on");
-        userPassword.setCreatedOn(createdOn.toInstant());
-
-        userPasswordManager.update((Integer) objectList.get(0).get("id"),
-            userPassword);
-
-        List<Map<String, Object>> actualList =
-            jdbcTemplate.queryForList(
-                "SELECT * FROM internal.authentication_user_password WHERE password = 'password updated'");
-
-        assertEquals("password updated", actualList.get(0).get("password"));
-    }
-
-    @Test(expected = UserPasswordUpdateIncompleteException.class)
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenUpdatePasswordWithoutUser_whenUpdate_shouldThrowException() {
-        seeder.internalUserPassword(jdbcTemplate, 1);
-        List<Map<String, Object>> objectList =
-            jdbcTemplate.queryForList(
-                "SELECT * FROM internal.authentication_user_password");
-        InternalUserPassword userPassword = new InternalUserPassword();
-        userPassword.setPassword("password updated");
-
-        userPasswordManager.update((Integer) objectList.get(0).get("id"),
+        verify(userPasswordEventPublisher,
+            times(1)).publishUserPasswordCreatedEvent(
             userPassword);
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenUpdatePassword_whenUpdatePartial_shouldUpdatePassword() {
-        seeder.internalUserPassword(jdbcTemplate, 1);
-        List<Map<String, Object>> objectList =
-            jdbcTemplate.queryForList(
-                "SELECT * FROM internal.authentication_user_password");
+    public void givenUser_whenUpdated_shouldTriggerUpdateEvent() {
+        InternalUserPasswordEntity userPasswordEntity =
+            new InternalUserPasswordEntity();
         InternalUserPassword userPassword = new InternalUserPassword();
-        userPassword.setPassword("password updated");
-
-        userPasswordManager.updatePartial(
-            Integer.valueOf(objectList.get(0).get("id").toString()),
+        when(userPasswordMapper.toEntity(
+            userPassword)).thenReturn(
+            userPasswordEntity);
+        doNothing().when(userPasswordRepository).save(userPasswordEntity);
+        when(userPasswordMapper.entityToObject(userPasswordEntity)).thenReturn(
             userPassword);
 
-        List<Map<String, Object>> actualList =
-            jdbcTemplate.queryForList(
-                "SELECT * FROM internal.authentication_user_password WHERE password = 'password updated'");
+        userPasswordManager.update(1, userPassword);
 
-        assertEquals("password updated", actualList.get(0).get("password"));
+        verify(userPasswordEventPublisher,
+            times(1)).publishUserPasswordUpdatedEvent(
+            userPassword);
     }
 
-    @Test(expected = UserPasswordNotFoundException.class)
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenUpdatePasswordWithNoneExistingUser_whenUpdatePartial_shouldThrowException() {
+    @Test
+    public void givenUser_whenUpdatePartial_shouldTriggerUpdateEvent() {
+        InternalUserPasswordEntity userPasswordEntity =
+            new InternalUserPasswordEntity();
+        Optional<InternalUserPasswordEntity> optional =
+            Optional.of(userPasswordEntity);
         InternalUserPassword userPassword = new InternalUserPassword();
-        userPassword.setPassword("password updated");
+        when(userPasswordMapper.toEntity(
+            userPassword)).thenReturn(
+            userPasswordEntity);
+        doNothing().when(userPasswordRepository).save(userPasswordEntity);
+        when(userPasswordMapper.entityToObject(userPasswordEntity)).thenReturn(
+            userPassword);
+        when(userPasswordRepository.getById(1)).thenReturn(optional);
 
         userPasswordManager.updatePartial(1, userPassword);
+
+        verify(userPasswordEventPublisher,
+            times(1)).publishUserPasswordUpdatedEvent(
+            userPassword);
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenDeletePassword_whenDelete_shouldRemoveUserPassword() {
-        seeder.internalUserPassword(jdbcTemplate, 1);
-        List<Map<String, Object>> objectList =
-            jdbcTemplate.queryForList(
-                "SELECT * FROM internal.authentication_user_password");
+    public void givenUserId_whenDeleted_shouldTriggerDeletedEvent() {
+        InternalUserPasswordEntity userPasswordEntity =
+            new InternalUserPasswordEntity();
+        InternalUserPassword userPassword = new InternalUserPassword();
+        doNothing().when(userPasswordRepository).delete(userPasswordEntity);
+        when(userPasswordRepository.getById(1)).thenReturn(
+            Optional.of(userPasswordEntity));
+        when(userPasswordMapper.entityToObject(userPasswordEntity)).thenReturn(
+            userPassword);
 
-        userPasswordManager.delete(
-            Integer.valueOf(objectList.get(0).get("id").toString()));
-
-        List<Map<String, Object>> actualList =
-            jdbcTemplate.queryForList(
-                "SELECT * FROM internal.authentication_user_password");
-
-        assertEquals(0, actualList.size());
-    }
-
-    @Test(expected = UserPasswordNotFoundException.class)
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenDeletePasswordWithNoneExistingUser_whenDelete_shouldThrowException() {
         userPasswordManager.delete(1);
+
+        verify(userPasswordEventPublisher,
+            times(1)).publishUserPasswordDeletedEvent(
+            userPassword);
     }
 }

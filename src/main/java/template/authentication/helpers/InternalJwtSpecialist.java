@@ -9,6 +9,7 @@ import template.global.exceptions.KnownServerException;
 import template.global.exceptions.UnknownServerException;
 import template.global.models.ConfigurationModel;
 import template.global.services.ConfigurationManager;
+import template.internal.mappers.InternalUserMapper;
 import template.internal.models.InternalUser;
 
 import java.time.LocalDateTime;
@@ -20,13 +21,14 @@ import java.util.UUID;
 public class InternalJwtSpecialist implements JwtSpecialist<InternalUser> {
     static Integer zoneOffSet = -5;
     private final ConfigurationManager authenticationConfigurationManager;
-//    private final UserMapper userMapper;
+    private final InternalUserMapper userMapper;
 
     public InternalJwtSpecialist(
-        ConfigurationManager authenticationConfigurationManager) {
+        ConfigurationManager authenticationConfigurationManager,
+        InternalUserMapper userMapper) {
         this.authenticationConfigurationManager =
             authenticationConfigurationManager;
-//        this.userMapper = userMapper;
+        this.userMapper = userMapper;
     }
 
 
@@ -66,8 +68,8 @@ public class InternalJwtSpecialist implements JwtSpecialist<InternalUser> {
             }
 
             jwt = Jwts.builder().setSubject(user.getEmail())
-//                .claim("userDetails",
-//                    userMapper.userToUserDto(user))
+                .claim("userDetails",
+                    userMapper.toDto(user))
                 .claim("scopes", scopeList.isEmpty() ? "" : scopeList)
                 .claim("tenantId", tenantId == null ? "" : tenantId.toString())
                 .signWith(SignatureAlgorithm.HS256, jwtSecret.getValue())

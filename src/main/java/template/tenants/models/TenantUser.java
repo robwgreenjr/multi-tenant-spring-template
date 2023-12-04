@@ -2,11 +2,9 @@ package template.tenants.models;
 
 import java.time.Instant;
 import java.util.Objects;
-import java.util.UUID;
 
 public class TenantUser {
     private Integer id;
-    private UUID tenantId;
     private String firstName;
     private String lastName;
     private String email;
@@ -20,14 +18,6 @@ public class TenantUser {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public UUID getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(UUID tenantId) {
-        this.tenantId = tenantId;
     }
 
     public String getFirstName() {
@@ -84,7 +74,6 @@ public class TenantUser {
         if (o == null || getClass() != o.getClass()) return false;
         TenantUser that = (TenantUser) o;
         return Objects.equals(id, that.id) &&
-            Objects.equals(tenantId, that.tenantId) &&
             Objects.equals(firstName, that.firstName) &&
             Objects.equals(lastName, that.lastName) &&
             Objects.equals(email, that.email) &&
@@ -95,7 +84,7 @@ public class TenantUser {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, tenantId, firstName, lastName, email, phone,
+        return Objects.hash(id, firstName, lastName, email, phone,
             createdOn, updatedOn);
     }
 
@@ -103,7 +92,6 @@ public class TenantUser {
     public String toString() {
         return "TenantUser{" +
             "id=" + id +
-            ", tenantId=" + tenantId +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
             ", email='" + email + '\'' +

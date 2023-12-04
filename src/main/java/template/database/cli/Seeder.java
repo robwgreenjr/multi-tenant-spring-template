@@ -341,13 +341,12 @@ public class Seeder {
         String companySubdomain = faker.internet().domainName();
 
         String insertQuery =
-            "INSERT INTO internal.tenant (company_name, email, phone, subdomain) VALUES (?, ?, ?, ?)";
+            "INSERT INTO internal.tenant (company_name, email, phone, subdomain) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING";
         try {
             jdbcTemplate.update(insertQuery, companyName, companyPhone,
                 companyEmail,
                 companySubdomain);
         } catch (Exception exception) {
-
             System.out.println(exception.getMessage());
         }
 
