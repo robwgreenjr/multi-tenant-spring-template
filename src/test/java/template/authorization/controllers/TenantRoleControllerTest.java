@@ -87,8 +87,6 @@ public class TenantRoleControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenValidData_whenPost_shouldCreateData() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("name", "Tester");
         data.put("description", "This is some long description test.");
@@ -110,8 +108,6 @@ public class TenantRoleControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenNoName_whenPost_shouldReturn400() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         ResponseEntity<String> response =
             restTemplate.exchange("/authorization/role",
@@ -126,8 +122,6 @@ public class TenantRoleControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenValidData_whenPostList_shouldCreateAllData() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
         firstObject.put("name", "Tester");
@@ -168,8 +162,6 @@ public class TenantRoleControllerTest extends IntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateTenantSchema.sql"})
     public void givenDuplicateName_whenPostList_shouldReturn400() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
         firstObject.put("name", "Tester");
@@ -197,8 +189,6 @@ public class TenantRoleControllerTest extends IntegrationTest {
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_role");
-
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         JSONObject data = new JSONObject();
         data.put("name", "Updated Name");
@@ -228,8 +218,6 @@ public class TenantRoleControllerTest extends IntegrationTest {
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_role");
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("description", "updated");
         ResponseEntity<String> response =
@@ -251,8 +239,6 @@ public class TenantRoleControllerTest extends IntegrationTest {
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_role");
-
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
@@ -303,8 +289,6 @@ public class TenantRoleControllerTest extends IntegrationTest {
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_role");
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
         firstObject.put("id", objectList.get(0).get("id"));
@@ -335,8 +319,6 @@ public class TenantRoleControllerTest extends IntegrationTest {
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_role");
-
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         JSONObject data = new JSONObject();
         data.put("name", "Partial Update");

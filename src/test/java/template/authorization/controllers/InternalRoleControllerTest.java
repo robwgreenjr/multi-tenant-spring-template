@@ -5,7 +5,10 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import template.database.cli.Seeder;
@@ -87,8 +90,6 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPost_shouldCreateData() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("name", "Tester");
         data.put("description", "This is some long description test.");
@@ -110,8 +111,6 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenNoName_whenPost_shouldReturn400() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         ResponseEntity<String> response =
             restTemplate.exchange("/internal/authorization/role",
@@ -126,8 +125,6 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPostList_shouldCreateAllData() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
         firstObject.put("name", "Tester");
@@ -168,8 +165,6 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDuplicateName_whenPostList_shouldReturn400() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
         firstObject.put("name", "Tester");
@@ -197,8 +192,6 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_role");
-
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         JSONObject data = new JSONObject();
         data.put("name", "Updated Name");
@@ -228,8 +221,6 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_role");
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("description", "updated");
         ResponseEntity<String> response =
@@ -251,8 +242,6 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_role");
-
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
@@ -303,8 +292,6 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_role");
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
         firstObject.put("id", objectList.get(0).get("id"));
@@ -335,8 +322,6 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_role");
-
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         JSONObject data = new JSONObject();
         data.put("name", "Partial Update");

@@ -5,7 +5,10 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import template.database.cli.Seeder;
@@ -87,8 +90,6 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPost_shouldCreateData() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("name", "Tester");
         data.put("type", "Blue");
@@ -111,8 +112,6 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenNoName_whenPost_shouldReturn400() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("type", "Blue");
         ResponseEntity<String> response =
@@ -128,8 +127,6 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenNoType_whenPost_shouldReturn400() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("name", "Tester");
         ResponseEntity<String> response =
@@ -145,8 +142,6 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPostList_shouldCreateAllData() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
         firstObject.put("name", "Tester");
@@ -190,8 +185,6 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDuplicateNameAndType_whenPostList_shouldReturn400() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
         firstObject.put("name", "Tester");
@@ -222,8 +215,6 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_permission");
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("name", "Updated Name");
         data.put("type", "Updated Type");
@@ -253,8 +244,6 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_permission");
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("name", "Updated");
         ResponseEntity<String> response =
@@ -276,8 +265,6 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_permission");
-
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
@@ -331,8 +318,6 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.authorization_permission");
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
         firstObject.put("id", objectList.get(0).get("id"));
@@ -364,9 +349,7 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
         seeder.internalPermission(jdbcTemplate, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList(
-                "SELECT * FROM internal.authorization_permission");
-
-        headers.setContentType(MediaType.APPLICATION_JSON);
+                "SELECT * FROM internal.authorization_permission;");
 
         JSONObject data = new JSONObject();
         data.put("name", "Partial Update");

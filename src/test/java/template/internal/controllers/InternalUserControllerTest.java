@@ -5,7 +5,10 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import template.database.cli.Seeder;
@@ -84,8 +87,6 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPost_shouldCreateData() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("firstName", "Tester");
         data.put("lastName", "Blue");
@@ -110,8 +111,6 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenNoEmail_whenPost_shouldReturn400() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("firstName", "Tester");
         data.put("lastName", "Blue");
@@ -130,8 +129,6 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenValidData_whenPostList_shouldCreateAllData() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
         firstObject.put("firstName", "Tester");
@@ -178,8 +175,6 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDuplicateEmail_whenPostList_shouldReturn400() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
         firstObject.put("firstName", "Tester");
@@ -207,8 +202,6 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenDuplicatePhone_whenPostList_shouldReturn400() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
         firstObject.put("firstName", "Tester");
@@ -240,8 +233,6 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList("SELECT * FROM internal.user");
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("firstName", "Updated");
         data.put("lastName", "Updated");
@@ -272,8 +263,6 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.user");
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("firstName", "Updated");
         data.put("lastName", "Updated");
@@ -296,8 +285,6 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
         seeder.internalUser(jdbcTemplate, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.user");
-
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
@@ -353,8 +340,6 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.user");
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
         firstObject.put("id", objectList.get(0).get("id"));
@@ -388,8 +373,6 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
         seeder.internalUser(jdbcTemplate, 3);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.user");
-
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         JSONArray data = new JSONArray();
         JSONObject firstObject = new JSONObject();
@@ -425,8 +408,6 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
         seeder.internalUser(jdbcTemplate, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.user");
-
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         JSONObject data = new JSONObject();
         data.put("firstName", "Partial Update");

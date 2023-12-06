@@ -5,7 +5,10 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import template.database.cli.Seeder;
@@ -88,8 +91,6 @@ public class TenantControllerTest extends InternalIntegrationTest {
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.tenant");
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("companyName", "Tester");
         data.put("subdomain", "Blue");
@@ -115,7 +116,6 @@ public class TenantControllerTest extends InternalIntegrationTest {
     @Sql(scripts = {
         "classpath:sql/truncateInternalSchema.sql"})
     public void givenNoEmail_whenPost_shouldReturn400() {
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         JSONObject data = new JSONObject();
         data.put("companyName", "Tester");
@@ -138,8 +138,6 @@ public class TenantControllerTest extends InternalIntegrationTest {
         seeder.tenant(jdbcTemplate, 1);
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList("SELECT * FROM internal.tenant");
-
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         JSONObject data = new JSONObject();
         data.put("companyName", "Updated");
@@ -172,9 +170,6 @@ public class TenantControllerTest extends InternalIntegrationTest {
             jdbcTemplate.queryForList(
                 "SELECT * FROM internal.tenant");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         JSONObject data = new JSONObject();
         data.put("companyName", "Updated");
         data.put("subdomain", "Updated");
@@ -197,8 +192,6 @@ public class TenantControllerTest extends InternalIntegrationTest {
         seeder.tenant(jdbcTemplate, 1);
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.tenant");
-
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         JSONObject data = new JSONObject();
         data.put("companyName", "Partial Update");
