@@ -94,7 +94,8 @@ public class TenantPermissionControllerTest extends IntegrationTest {
         data.put("type", "Blue");
         data.put("description", "This is some long description test.");
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/authorization/permission",
+            restTemplate.exchange("/authorization/permission",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -115,7 +116,8 @@ public class TenantPermissionControllerTest extends IntegrationTest {
         JSONObject data = new JSONObject();
         data.put("type", "Blue");
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/authorization/permission",
+            restTemplate.exchange("/authorization/permission",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -131,7 +133,8 @@ public class TenantPermissionControllerTest extends IntegrationTest {
         JSONObject data = new JSONObject();
         data.put("name", "Tester");
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/authorization/permission",
+            restTemplate.exchange("/authorization/permission",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -162,7 +165,8 @@ public class TenantPermissionControllerTest extends IntegrationTest {
         data.put(thirdObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/authorization/permissions",
+            restTemplate.exchange("/authorization/permissions",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -201,7 +205,8 @@ public class TenantPermissionControllerTest extends IntegrationTest {
         data.put(secondObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/authorization/permissions",
+            restTemplate.exchange("/authorization/permissions",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -403,8 +408,8 @@ public class TenantPermissionControllerTest extends IntegrationTest {
 
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
-                "SELECT * FROM tenant.authorization_permission WHERE name = '" +
-                    objectList.get(0).get("name") + "'");
+                "SELECT * FROM tenant.authorization_permission WHERE name = ?",
+                objectList.get(0).get("name"));
         assertEquals(0, singleObject.size());
     }
 }

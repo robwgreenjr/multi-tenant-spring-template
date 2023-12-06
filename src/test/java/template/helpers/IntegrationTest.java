@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -52,7 +53,8 @@ public class IntegrationTest {
     public void init() {
         tenantId = seeder.createMainTenant(jdbcTemplate);
         headers.set("tenant-id", String.valueOf(tenantId));
-
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        
         seeder.defaultConfiguration(jdbcTemplate);
     }
 

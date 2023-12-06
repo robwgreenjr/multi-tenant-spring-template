@@ -93,7 +93,8 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
         data.put("name", "Tester");
         data.put("description", "This is some long description test.");
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/authorization/role",
+            restTemplate.exchange("/internal/authorization/role",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -113,7 +114,8 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
 
         JSONObject data = new JSONObject();
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/authorization/role",
+            restTemplate.exchange("/internal/authorization/role",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -141,7 +143,8 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
         data.put(thirdObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/authorization/roles",
+            restTemplate.exchange("/internal/authorization/roles",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -178,7 +181,8 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
         data.put(secondObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/authorization/roles",
+            restTemplate.exchange("/internal/authorization/roles",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 

@@ -31,6 +31,11 @@ public class InternalUserRepositoryImpl
     }
 
     @Override
+    public Optional<InternalUserEntity> getByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
     public Optional<InternalUserEntity> getById(Integer id) {
         return userRepository.findById(id);
     }

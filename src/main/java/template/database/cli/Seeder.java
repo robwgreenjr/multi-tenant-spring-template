@@ -2,12 +2,14 @@ package template.database.cli;
 
 import com.zaxxer.hikari.HikariDataSource;
 import net.datafaker.Faker;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import template.CliRunner;
 import template.database.services.DatabaseConnection;
+import template.global.services.StringEncoder;
 
 import java.sql.Connection;
 import java.util.List;
@@ -21,11 +23,15 @@ import java.util.UUID;
 public class Seeder {
     private final ApplicationContext context;
     private final DatabaseConnection databaseConnection;
+    private final StringEncoder stringEncoder;
 
     public Seeder(ApplicationContext context,
-                  DatabaseConnection databaseConnection) {
+                  DatabaseConnection databaseConnection,
+                  @Qualifier("BCryptEncoder")
+                  StringEncoder stringEncoder) {
         this.context = context;
         this.databaseConnection = databaseConnection;
+        this.stringEncoder = stringEncoder;
     }
 
     public void run(ApplicationArguments args) {
@@ -242,7 +248,49 @@ public class Seeder {
                 insertQuery =
                     "INSERT INTO internal.authentication_user_password (user_id, password) VALUES (?, ?)";
                 jdbcTemplate.update(insertQuery, singleObject.get(0).get("id"),
-                    UUID.randomUUID());
+                    stringEncoder.encode("password"));
+            } catch (Exception exception) {
+                // We could fail from unique values and will need to try again
+                count++;
+
+                System.out.println(exception.getMessage());
+                continue;
+            }
+            successCount++;
+        }
+
+        return successCount;
+    }
+
+    public Integer internalUserPasswordAndResetPasswordToken(
+        JdbcTemplate jdbcTemplate,
+        Integer count) {
+        Faker faker = new Faker();
+
+        int successCount = 0;
+        for (int i = 0; i < count; i++) {
+            String firstName = faker.name().firstName();
+            String lastName = faker.name().lastName();
+            String email = faker.internet().emailAddress();
+            String phone = faker.phoneNumber().phoneNumber();
+
+            String insertQuery =
+                "INSERT INTO internal.user (first_name, last_name, email, phone) VALUES (?, ?, ?, ?)";
+            try {
+                jdbcTemplate.update(insertQuery, firstName, lastName, email,
+                    phone);
+
+                String sql = "SELECT * FROM internal.user WHERE email = ?";
+                List<Map<String, Object>> singleObject =
+                    jdbcTemplate.queryForList(sql, email);
+                insertQuery =
+                    "INSERT INTO internal.authentication_user_password (user_id, password) VALUES (?, ?)";
+                jdbcTemplate.update(insertQuery, singleObject.get(0).get("id"),
+                    stringEncoder.encode("password"));
+
+                insertQuery =
+                    "INSERT INTO internal.authentication_user_reset_password_token (user_id) VALUES (?)";
+                jdbcTemplate.update(insertQuery, singleObject.get(0).get("id"));
             } catch (Exception exception) {
                 // We could fail from unique values and will need to try again
                 count++;
@@ -347,7 +395,18 @@ public class Seeder {
                 companyEmail,
                 companySubdomain);
         } catch (Exception exception) {
-            System.out.println(exception.getMessage());
+            companyName = faker.company().name();
+            companyPhone = faker.phoneNumber().phoneNumber();
+            companyEmail = faker.internet().emailAddress();
+            companySubdomain = faker.internet().domainName();
+
+            try {
+                jdbcTemplate.update(insertQuery, companyName, companyPhone,
+                    companyEmail,
+                    companySubdomain);
+            } catch (Exception exceptionTwo) {
+                System.out.println(exception.getMessage());
+            }
         }
 
         String sql = "SELECT * FROM internal.tenant WHERE company_name = ?";

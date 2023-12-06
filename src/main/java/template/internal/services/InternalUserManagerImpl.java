@@ -72,6 +72,14 @@ public class InternalUserManagerImpl implements InternalUserManager {
     }
 
     @Override
+    public Optional<InternalUser> getByEmail(String email) {
+        Optional<InternalUserEntity> userEntity =
+            userRepository.getByEmail(email);
+
+        return userEntity.map(userMapper::entityToObject);
+    }
+
+    @Override
     public QueryResult<InternalUser> getList(Query<Integer> query) {
         List<InternalUserEntity> entityList =
             userRepository.getList(query);

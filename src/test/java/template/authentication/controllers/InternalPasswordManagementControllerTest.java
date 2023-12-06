@@ -1,5 +1,6 @@
 package template.authentication.controllers;
 
+import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -9,162 +10,130 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
-import template.authentication.dtos.ChangePasswordDto;
-import template.authentication.dtos.ForgotPasswordDto;
 import template.authentication.models.InternalUserPassword;
 import template.authentication.services.InternalUserLogin;
-import template.authentication.services.ResetPasswordTokenManager;
-import template.authentication.services.UserPasswordManager;
-import template.helpers.IntegrationTest;
+import template.database.cli.Seeder;
+import template.helpers.InternalIntegrationTest;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-public class InternalPasswordManagementControllerTest extends IntegrationTest {
+public class InternalPasswordManagementControllerTest extends
+    InternalIntegrationTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private TestRestTemplate restTemplate;
     @Autowired
-    private UserPasswordManager userPasswordManager;
-    @Autowired
     private InternalUserLogin simpleUserLogin;
     @Autowired
-    private ResetPasswordTokenManager resetPasswordTokenManager;
+    private Seeder seeder;
 
     @Test
     @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenChangePasswordDto_whenCalled_shouldChangePassword() {
-        List<Map<String, Object>> userList =
-            jdbcTemplate.queryForList(
-                "SELECT * FROM internal.user WHERE email = 'testing1@gmail.com'");
-//        UserModel user = new UserModel();
-//        user.setId((Integer) userList.get(0).get("id"));
-//        InternalUserPassword userPasswordModel = new InternalUserPassword();
-//        userPasswordModel.setUser(user);
-//        userPasswordModel.setPassword("password");
-//
-//        userPasswordManager.create(userPasswordModel);
+    public void givenValidData_whenCallingPut_shouldChangePassword() {
+        seeder.internalUserPassword(jdbcTemplate, 1);
+        List<Map<String, Object>> objectList =
+            jdbcTemplate.queryForList("SELECT * FROM internal.user");
 
-        ChangePasswordDto changePasswordDto = new ChangePasswordDto();
-        changePasswordDto.password = "passwords";
-        changePasswordDto.passwordConfirmation = "passwords";
-        changePasswordDto.emailConfirmation = "testing1@gmail.com";
-        changePasswordDto.currentPassword = "password";
+        JSONObject data = new JSONObject();
+        data.put("password", "passwords");
+        data.put("passwordConfirmation", "passwords");
+        data.put("emailConfirmation",
+            objectList.get(0).get("email").toString());
+        data.put("currentPassword", "password");
 
-        restTemplate.exchange("/authentication/password", HttpMethod.PUT,
-            new HttpEntity<>(changePasswordDto),
-            String.class);
+        ResponseEntity<String> response =
+            restTemplate.exchange("/internal/authentication/password",
+                HttpMethod.PUT,
+                new HttpEntity<>(data.toString(), headers),
+                String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
         InternalUserPassword actual =
-            simpleUserLogin.login("testing1@gmail.com", "passwords");
+            simpleUserLogin.login(objectList.get(0).get("email").toString(),
+                "passwords");
         assertNotNull(actual.getPassword());
     }
 
     @Test
     @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenForgotPasswordDto_whenForgotCalled_shouldCreateResetPassword() {
-        ForgotPasswordDto forgotPasswordDto = new ForgotPasswordDto();
-        forgotPasswordDto.email = "testing1@gmail.com";
+    public void givenValidData_whenForgotCalled_shouldCreateResetPassword() {
+        seeder.internalUserPassword(jdbcTemplate, 1);
+        List<Map<String, Object>> objectList =
+            jdbcTemplate.queryForList("SELECT * FROM internal.user;");
 
-        restTemplate.exchange("/authentication/password/forgot",
-            HttpMethod.POST,
-            new HttpEntity<>(forgotPasswordDto),
-            String.class);
-
-//        InternalResetPasswordToken resetPasswordTokenModel =
-//            resetPasswordTokenManager.findByUserEmail("testing1@gmail.com");
-
-//        assertNotNull(resetPasswordTokenModel);
-    }
-
-    @Test
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenResetPasswordExists_whenForgotCalled_shouldReturn200() {
-        ForgotPasswordDto forgotPasswordDto = new ForgotPasswordDto();
-        forgotPasswordDto.email = "testing1@gmail.com";
-
-        restTemplate.exchange("/authentication/password/forgot",
-            HttpMethod.POST,
-            new HttpEntity<>(forgotPasswordDto),
-            String.class);
+        JSONObject data = new JSONObject();
+        data.put("email", objectList.get(0).get("email").toString());
 
         ResponseEntity<String> response =
-            restTemplate.exchange("/authentication/password/forgot",
+            restTemplate.exchange("/internal/authentication/password/forgot",
                 HttpMethod.POST,
-                new HttpEntity<>(forgotPasswordDto),
+                new HttpEntity<>(data.toString(), headers),
                 String.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        List<Map<String, Object>> actual =
+            jdbcTemplate.queryForList(
+                "SELECT * FROM internal.authentication_user_reset_password_token " +
+                    "JOIN internal.user u on u.id = authentication_user_reset_password_token.user_id WHERE u.email = '" +
+                    objectList.get(0).get("email").toString() + "'");
+        assertFalse(actual.isEmpty());
     }
 
     @Test
     @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
-    public void givenResetPasswordTokenDto_whenResetCalled_shouldUpdatePassword() {
-        List<Map<String, Object>> userList =
+    public void givenValidData_whenResetCalled_shouldUpdatePassword() {
+        seeder.internalUserPasswordAndResetPasswordToken(jdbcTemplate, 1);
+        List<Map<String, Object>> resetPasswordTokenList =
             jdbcTemplate.queryForList(
-                "SELECT * FROM internal.user WHERE email = 'testing1@gmail.com'");
-//        UserModel userModel = new UserModel();
-//        userModel.setId((Integer) userList.get(0).get("id"));
-//        InternalUserPassword userPasswordModel = new InternalUserPassword();
-//        userPasswordModel.setUser(userModel);
-//        userPasswordModel.setPassword("password");
-//
-//        userPasswordManager.create(userPasswordModel);
-//
-//        InternalResetPasswordToken resetPasswordTokenModel =
-//            new InternalResetPasswordToken();
-//        resetPasswordTokenModel.setUser(userModel);
+                "SELECT * FROM internal.authentication_user_reset_password_token");
+        List<Map<String, Object>> userList =
+            jdbcTemplate.queryForList("SELECT * FROM internal.user");
+        JSONObject data = new JSONObject();
+        data.put("token",
+            resetPasswordTokenList.get(0).get("token").toString());
+        data.put("password", "passwords");
+        data.put("passwordConfirmation", "passwords");
 
-//        resetPasswordTokenModel =
-//            resetPasswordTokenManager.create(resetPasswordTokenModel);
-//
-//        ResetPasswordTokenDto resetPasswordTokenDto =
-//            new ResetPasswordTokenDto();
-//        resetPasswordTokenDto.token = resetPasswordTokenModel.getToken();
-//        resetPasswordTokenDto.password = "passwords";
-//        resetPasswordTokenDto.passwordConfirmation = "passwords";
-
-//        restTemplate.exchange("/authentication/password/reset", HttpMethod.POST,
-//            new HttpEntity<>(resetPasswordTokenDto),
-//            String.class);
+        restTemplate.exchange("/internal/authentication/password/reset",
+            HttpMethod.POST,
+            new HttpEntity<>(data.toString(), headers),
+            String.class);
 
         InternalUserPassword actual =
-            simpleUserLogin.login("testing1@gmail.com", "passwords");
+            simpleUserLogin.login(userList.get(0).get("email").toString(),
+                "passwords");
         assertNotNull(actual.getPassword());
     }
 
     @Test
     @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
     public void givenNoUserPassword_whenResetCalled_shouldCreatePassword() {
-        List<Map<String, Object>> userList =
+        seeder.internalUserPasswordAndResetPasswordToken(jdbcTemplate, 1);
+        List<Map<String, Object>> resetPasswordTokenList =
             jdbcTemplate.queryForList(
-                "SELECT * FROM internal.user WHERE email = 'testing1@gmail.com'");
-//        UserModel userModel = new UserModel();
-//        userModel.setId((Integer) userList.get(0).get("id"));
-//
-//        InternalResetPasswordToken resetPasswordTokenModel =
-//            new InternalResetPasswordToken();
-//        resetPasswordTokenModel.setUser(userModel);
+                "SELECT * FROM internal.authentication_user_reset_password_token");
+        List<Map<String, Object>> userList =
+            jdbcTemplate.queryForList("SELECT * FROM internal.user");
+        JSONObject data = new JSONObject();
+        data.put("token",
+            resetPasswordTokenList.get(0).get("token").toString());
+        data.put("password", "passwords");
+        data.put("passwordConfirmation", "passwords");
 
-//        resetPasswordTokenModel =
-//            resetPasswordTokenManager.create(resetPasswordTokenModel);
-//
-//        ResetPasswordTokenDto resetPasswordTokenDto =
-//            new ResetPasswordTokenDto();
-//        resetPasswordTokenDto.token = resetPasswordTokenModel.getToken();
-//        resetPasswordTokenDto.password = "passwords";
-//        resetPasswordTokenDto.passwordConfirmation = "passwords";
-//
-//        restTemplate.exchange("/authentication/password/reset", HttpMethod.POST,
-//            new HttpEntity<>(resetPasswordTokenDto),
-//            String.class);
+        restTemplate.exchange("/internal/authentication/password/reset",
+            HttpMethod.POST,
+            new HttpEntity<>(data.toString(), headers),
+            String.class);
 
         InternalUserPassword actual =
-            simpleUserLogin.login("testing1@gmail.com", "passwords");
+            simpleUserLogin.login(userList.get(0).get("email").toString(),
+                "passwords");
         assertNotNull(actual.getPassword());
     }
 }

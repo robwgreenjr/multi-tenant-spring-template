@@ -93,7 +93,8 @@ public class TenantRoleControllerTest extends IntegrationTest {
         data.put("name", "Tester");
         data.put("description", "This is some long description test.");
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/authorization/role",
+            restTemplate.exchange("/authorization/role",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -113,7 +114,8 @@ public class TenantRoleControllerTest extends IntegrationTest {
 
         JSONObject data = new JSONObject();
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/authorization/role",
+            restTemplate.exchange("/authorization/role",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -141,7 +143,8 @@ public class TenantRoleControllerTest extends IntegrationTest {
         data.put(thirdObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/authorization/roles",
+            restTemplate.exchange("/authorization/roles",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -178,7 +181,8 @@ public class TenantRoleControllerTest extends IntegrationTest {
         data.put(secondObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/authorization/roles",
+            restTemplate.exchange("/authorization/roles",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -374,8 +378,8 @@ public class TenantRoleControllerTest extends IntegrationTest {
 
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
-                "SELECT * FROM tenant.authorization_role WHERE name = '" +
-                    objectList.get(0).get("name") + "'");
+                "SELECT * FROM tenant.authorization_role WHERE name = ?",
+                objectList.get(0).get("name"));
         assertEquals(0, singleObject.size());
     }
 }

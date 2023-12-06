@@ -94,7 +94,8 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
         data.put("type", "Blue");
         data.put("description", "This is some long description test.");
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/authorization/permission",
+            restTemplate.exchange("/internal/authorization/permission",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -115,7 +116,8 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
         JSONObject data = new JSONObject();
         data.put("type", "Blue");
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/authorization/permission",
+            restTemplate.exchange("/internal/authorization/permission",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -131,7 +133,8 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
         JSONObject data = new JSONObject();
         data.put("name", "Tester");
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/authorization/permission",
+            restTemplate.exchange("/internal/authorization/permission",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -162,7 +165,8 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
         data.put(thirdObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/authorization/permissions",
+            restTemplate.exchange("/internal/authorization/permissions",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -201,7 +205,8 @@ public class InternalPermissionControllerTest extends InternalIntegrationTest {
         data.put(secondObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/authorization/permissions",
+            restTemplate.exchange("/internal/authorization/permissions",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 

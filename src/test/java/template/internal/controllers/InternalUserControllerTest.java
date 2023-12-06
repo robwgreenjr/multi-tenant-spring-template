@@ -93,7 +93,8 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
         data.put("phone", "555-555-5555");
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/user",
+            restTemplate.exchange("/internal/user",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -117,7 +118,8 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
         data.put("phone", "555-555-5555");
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/user",
+            restTemplate.exchange("/internal/user",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -151,7 +153,8 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
         data.put(thirdObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/users",
+            restTemplate.exchange("/internal/users",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -192,7 +195,8 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
         data.put(secondObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/users",
+            restTemplate.exchange("/internal/users",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -220,7 +224,8 @@ public class InternalUserControllerTest extends InternalIntegrationTest {
         data.put(secondObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/users",
+            restTemplate.exchange("/internal/users",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 

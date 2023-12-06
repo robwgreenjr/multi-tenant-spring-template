@@ -103,6 +103,6 @@ public class InternalUserLogin
             }
         }
 
-        return "";
+        return scopeList.toString();
     }
 }

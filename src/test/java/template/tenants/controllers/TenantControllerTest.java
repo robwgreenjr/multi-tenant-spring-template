@@ -98,7 +98,8 @@ public class TenantControllerTest extends InternalIntegrationTest {
         data.put("tenantId", objectList.get(0).get("id"));
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/tenant",
+            restTemplate.exchange("/internal/tenant",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -122,7 +123,8 @@ public class TenantControllerTest extends InternalIntegrationTest {
         data.put("phone", "555-555-5555");
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/internal/tenant",
+            restTemplate.exchange("/internal/tenant",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 

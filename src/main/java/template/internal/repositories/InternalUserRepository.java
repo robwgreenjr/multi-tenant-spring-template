@@ -11,5 +11,7 @@ public interface InternalUserRepository extends
     QueryRepository<InternalUserEntity, Integer>,
     Repository<InternalUserEntity>,
     ListRepository<InternalUserEntity, Integer> {
+    Optional<InternalUserEntity> getByEmail(String email);
+
     Optional<InternalUserEntity> getById(Integer id);
 }

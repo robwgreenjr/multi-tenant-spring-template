@@ -25,27 +25,27 @@ public class InternalPasswordManagementController {
 
     @PostMapping("forgot")
     public void forgot(@RequestBody ForgotPasswordDto forgotPasswordDto) {
-        InternalUserPassword userPasswordModel =
+        InternalUserPassword userPassword =
             userPasswordMapper.forgotPasswordDtoToObject(forgotPasswordDto);
 
-        passwordManagement.forgot(userPasswordModel);
+        passwordManagement.forgot(userPassword);
     }
 
     @PostMapping("reset")
     public void reset(@RequestBody ResetPasswordTokenDto resetPasswordDto)
         throws Exception {
-        InternalUserPassword userPasswordModel =
+        InternalUserPassword userPassword =
             userPasswordMapper.resetPasswordDtoToObject(resetPasswordDto);
 
-        passwordManagement.reset(userPasswordModel);
+        passwordManagement.reset(userPassword);
     }
 
     @PutMapping
     public void change(@RequestBody ChangePasswordDto changePasswordDto)
         throws Exception {
-        InternalUserPassword userPasswordModel =
+        InternalUserPassword userPassword =
             userPasswordMapper.changePasswordDtoToObject(changePasswordDto);
 
-        passwordManagement.change(userPasswordModel);
+        passwordManagement.change(userPassword);
     }
 }

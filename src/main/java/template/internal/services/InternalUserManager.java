@@ -5,8 +5,11 @@ import template.global.services.Manager;
 import template.global.services.QueryManager;
 import template.internal.models.InternalUser;
 
+import java.util.Optional;
+
 public interface InternalUserManager extends
     QueryManager<InternalUser, Integer>,
     ListManager<InternalUser, Integer>,
     Manager<InternalUser, Integer> {
+    Optional<InternalUser> getByEmail(String email);
 }

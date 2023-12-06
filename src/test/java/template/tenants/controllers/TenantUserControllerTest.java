@@ -92,7 +92,8 @@ public class TenantUserControllerTest extends IntegrationTest {
         data.put("phone", "555-555-5555");
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/user",
+            restTemplate.exchange("/user",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -116,7 +117,8 @@ public class TenantUserControllerTest extends IntegrationTest {
         data.put("phone", "555-555-5555");
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/user",
+            restTemplate.exchange("/user",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -150,7 +152,8 @@ public class TenantUserControllerTest extends IntegrationTest {
         data.put(thirdObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/users",
+            restTemplate.exchange("/users",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -191,7 +194,8 @@ public class TenantUserControllerTest extends IntegrationTest {
         data.put(secondObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/users",
+            restTemplate.exchange("/users",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
@@ -219,7 +223,8 @@ public class TenantUserControllerTest extends IntegrationTest {
         data.put(secondObject);
 
         ResponseEntity<String> response =
-            restTemplate.postForEntity("/users",
+            restTemplate.exchange("/users",
+                HttpMethod.POST,
                 new HttpEntity<>(data.toString(), headers),
                 String.class);
 
