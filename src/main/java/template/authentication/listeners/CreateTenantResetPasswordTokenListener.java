@@ -3,26 +3,26 @@ package template.authentication.listeners;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
-import template.authentication.events.InternalResetPasswordTokenCreatedEvent;
+import template.authentication.events.TenantResetPasswordTokenCreatedEvent;
 import template.authentication.helpers.AuthenticationEmailProvider;
-import template.authentication.models.InternalResetPasswordToken;
-import template.authentication.models.InternalUserPassword;
+import template.authentication.models.TenantResetPasswordToken;
+import template.authentication.models.TenantUserPassword;
 import template.authentication.services.UserPasswordManager;
 
 import java.util.Optional;
 
 @Component
-public class CreateInternalResetPasswordTokenListener
-    implements ApplicationListener<InternalResetPasswordTokenCreatedEvent> {
-    private final AuthenticationEmailProvider<InternalResetPasswordToken>
+public class CreateTenantResetPasswordTokenListener
+    implements ApplicationListener<TenantResetPasswordTokenCreatedEvent> {
+    private final AuthenticationEmailProvider<TenantResetPasswordToken>
         authenticationEmailProvider;
-    private final UserPasswordManager<InternalUserPassword> userPasswordManager;
+    private final UserPasswordManager<TenantUserPassword> userPasswordManager;
 
-    public CreateInternalResetPasswordTokenListener(
-        @Qualifier("InternalAuthenticationEmailProvider")
-        AuthenticationEmailProvider<InternalResetPasswordToken> authenticationEmailProvider,
-        @Qualifier("InternalUserPasswordManager")
-        UserPasswordManager<InternalUserPassword> userPasswordManager) {
+    public CreateTenantResetPasswordTokenListener(
+        @Qualifier("TenantAuthenticationEmailProvider")
+        AuthenticationEmailProvider<TenantResetPasswordToken> authenticationEmailProvider,
+        @Qualifier("TenantUserPasswordManager")
+        UserPasswordManager<TenantUserPassword> userPasswordManager) {
         this.authenticationEmailProvider = authenticationEmailProvider;
         this.userPasswordManager = userPasswordManager;
     }
@@ -30,11 +30,11 @@ public class CreateInternalResetPasswordTokenListener
 
     @Override
     public void onApplicationEvent(
-        InternalResetPasswordTokenCreatedEvent event) {
-        InternalResetPasswordToken resetPasswordToken =
+        TenantResetPasswordTokenCreatedEvent event) {
+        TenantResetPasswordToken resetPasswordToken =
             event.getResetPasswordToken();
 
-        Optional<InternalUserPassword> userPassword = Optional.empty();
+        Optional<TenantUserPassword> userPassword = Optional.empty();
         try {
             userPassword = userPasswordManager.findByUserEmail(
                 resetPasswordToken.getUser().getEmail());

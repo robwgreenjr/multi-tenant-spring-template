@@ -2,21 +2,21 @@ package template.authentication.helpers;
 
 import org.springframework.stereotype.Service;
 import template.authentication.constants.AuthenticationVariable;
-import template.authentication.models.InternalResetPasswordToken;
+import template.authentication.models.TenantResetPasswordToken;
 import template.aws.services.SESSender;
 import template.global.exceptions.KnownServerException;
 import template.global.models.ConfigurationModel;
 import template.global.services.ConfigurationManager;
 import template.global.utilities.TimeSpecialist;
 
-@Service
-public class SimpleAuthenticationEmailProvider
-    implements AuthenticationEmailProvider {
+@Service("TenantAuthenticationEmailProvider")
+public class TenantAuthenticationEmailProvider
+    implements AuthenticationEmailProvider<TenantResetPasswordToken> {
     private final SESSender sesSender;
     private final TimeSpecialist timeSpecialist;
     private final ConfigurationManager authenticationConfigurationManager;
 
-    public SimpleAuthenticationEmailProvider(SESSender sesSender,
+    public TenantAuthenticationEmailProvider(SESSender sesSender,
                                              TimeSpecialist timeSpecialist,
                                              ConfigurationManager authenticationConfigurationManager) {
         this.sesSender = sesSender;
@@ -27,13 +27,13 @@ public class SimpleAuthenticationEmailProvider
 
     @Override
     public void sendForgotPasswordEmail(
-        InternalResetPasswordToken resetPasswordTokenModel) {
+        TenantResetPasswordToken resetPasswordToken) {
         String[] to =
-            new String[]{resetPasswordTokenModel.getUser().getEmail()};
+            new String[]{resetPasswordToken.getUser().getEmail()};
 
         String frontendUrl = "";
         String createPasswordUrl =
-            frontendUrl + resetPasswordTokenModel.getCreatePasswordUri();
+            frontendUrl + resetPasswordToken.getCreatePasswordUri();
 
         ConfigurationModel resetPasswordExpiration =
             authenticationConfigurationManager.findByKey(
@@ -45,7 +45,7 @@ public class SimpleAuthenticationEmailProvider
 
         String title =
             "<h2>Forgot your password " +
-                resetPasswordTokenModel.getUser().getFirstName() +
+                resetPasswordToken.getUser().getFirstName() +
                 "?</h2>";
         String subject = "** Reset Forgotten Password **";
 
@@ -68,13 +68,13 @@ public class SimpleAuthenticationEmailProvider
 
     @Override
     public void sendCreatePasswordEmail(
-        InternalResetPasswordToken resetPasswordTokenModel) {
+        TenantResetPasswordToken resetPasswordToken) {
         String[] to =
-            new String[]{resetPasswordTokenModel.getUser().getEmail()};
+            new String[]{resetPasswordToken.getUser().getEmail()};
 
         String frontendUrl = "";
         String createPasswordUrl =
-            frontendUrl + resetPasswordTokenModel.getCreatePasswordUri();
+            frontendUrl + resetPasswordToken.getCreatePasswordUri();
 
         ConfigurationModel createPasswordExpiration =
             authenticationConfigurationManager.findByKey(
@@ -86,7 +86,7 @@ public class SimpleAuthenticationEmailProvider
 
         String title =
             "<h2>Welcome " +
-                resetPasswordTokenModel.getUser().getFirstName() +
+                resetPasswordToken.getUser().getFirstName() +
                 "!</h2>";
         String subject = "** Create New Password **";
 

@@ -31,9 +31,9 @@ public class TenantResetPasswordTokenRepositoryImpl
 
     @Override
     public void save(TenantResetPasswordTokenEntity resetPasswordToken) {
-        String email = "";
+        String email;
         try {
-//            email = resetPasswordToken.getUser().getEmail();
+            email = resetPasswordToken.getUser().getEmail();
         } catch (Exception exception) {
             throw new NotNullColumnDataException("You must provide a user.");
         }

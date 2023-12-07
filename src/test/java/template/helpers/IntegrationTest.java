@@ -23,6 +23,7 @@ import template.database.models.ApplicationDataSource;
 import template.database.models.DatabaseConnectionContext;
 import template.global.constants.GlobalVariable;
 import template.global.services.StringEncoder;
+import template.tenants.resolvers.TenantIdentifierResolver;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -42,19 +43,23 @@ public class IntegrationTest {
     protected UUID tenantId;
     protected HttpHeaders headers = new HttpHeaders();
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    protected JdbcTemplate jdbcTemplate;
     @Qualifier("CryptoEncoder")
     @Autowired
     private StringEncoder cryptoEncoder;
     @Autowired
     private Seeder seeder;
+    @Autowired
+    private TenantIdentifierResolver currentTenant;
 
     @Before
     public void init() {
         tenantId = seeder.createMainTenant(jdbcTemplate);
+        currentTenant.setCurrentTenant(tenantId);
+
         headers.set("tenant-id", String.valueOf(tenantId));
         headers.setContentType(MediaType.APPLICATION_JSON);
-        
+
         seeder.defaultConfiguration(jdbcTemplate);
     }
 

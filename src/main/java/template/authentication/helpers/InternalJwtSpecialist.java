@@ -4,7 +4,6 @@ import io.jsonwebtoken.*;
 import org.springframework.stereotype.Service;
 import template.authentication.constants.AuthenticationVariable;
 import template.authentication.exceptions.InvalidJwtException;
-import template.database.models.DatabaseConnectionContext;
 import template.global.exceptions.KnownServerException;
 import template.global.exceptions.UnknownServerException;
 import template.global.models.ConfigurationModel;
@@ -15,7 +14,6 @@ import template.internal.models.InternalUser;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
-import java.util.UUID;
 
 @Service("InternalJwtSpecialist")
 public class InternalJwtSpecialist implements JwtSpecialist<InternalUser> {
@@ -55,27 +53,13 @@ public class InternalJwtSpecialist implements JwtSpecialist<InternalUser> {
         String jwt;
 
         try {
-            String[] findTenantId =
-                DatabaseConnectionContext.getCurrentDatabaseConnection()
-                    .getDataSource()
-                    .getJdbcUrl().split("/");
-            UUID tenantId = null;
-            try {
-                tenantId =
-                    UUID.fromString(findTenantId[findTenantId.length - 1]);
-            } catch (Exception ignore) {
-                // If there is an error then we aren't dealing with a proper tenant ID
-            }
-
             jwt = Jwts.builder().setSubject(user.getEmail())
-                .claim("userDetails",
-                    userMapper.toDto(user))
+                .claim("userDetails", userMapper.toDto(user))
                 .claim("scopes", scopeList.isEmpty() ? "" : scopeList)
-                .claim("tenantId", tenantId == null ? "" : tenantId.toString())
                 .signWith(SignatureAlgorithm.HS256, jwtSecret.getValue())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(Date.from(expiration.toInstant(
-                    ZoneOffset.ofHours(zoneOffSet))))
+                .setExpiration(Date.from(
+                    expiration.toInstant(ZoneOffset.ofHours(zoneOffSet))))
                 .compact();
         } catch (Exception exception) {
             throw new UnknownServerException("Server error generating jwt.");

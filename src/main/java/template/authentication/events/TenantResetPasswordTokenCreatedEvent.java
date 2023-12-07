@@ -12,7 +12,7 @@ public class TenantResetPasswordTokenCreatedEvent extends ApplicationEvent {
         this.resetPasswordToken = resetPasswordToken;
     }
 
-    public TenantResetPasswordToken getResetPasswordTokenModel() {
+    public TenantResetPasswordToken getResetPasswordToken() {
         return resetPasswordToken;
     }
 }

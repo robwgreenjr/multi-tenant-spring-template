@@ -36,6 +36,7 @@ public interface TenantUserPasswordMapper {
     TenantUserPassword resetPasswordDtoToObject(
         ResetPasswordTokenDto resetPasswordDto);
 
+    @Mapping(target = "user.", source = "user")
     TenantUserPasswordEntity toEntity(TenantUserPassword userPassword);
 
     @BeanMapping(

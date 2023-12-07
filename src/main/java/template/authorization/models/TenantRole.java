@@ -9,7 +9,7 @@ public class TenantRole {
     private Integer id;
     private String name;
     private String description;
-    private Set<InternalPermission> permissions;
+    private Set<TenantPermission> permissions;
     private Set<TenantUser> users;
 
     public Integer getId() {
@@ -36,12 +36,12 @@ public class TenantRole {
         this.description = description;
     }
 
-    public Set<InternalPermission> getPermissions() {
+    public Set<TenantPermission> getPermissions() {
         return permissions;
     }
 
     public void setPermissions(
-        Set<InternalPermission> permissions) {
+        Set<TenantPermission> permissions) {
         this.permissions = permissions;
     }
 

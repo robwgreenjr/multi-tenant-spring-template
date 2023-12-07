@@ -41,7 +41,7 @@ public class InternalIntegrationTest {
 
     protected HttpHeaders headers = new HttpHeaders();
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    protected JdbcTemplate jdbcTemplate;
     @Qualifier("CryptoEncoder")
     @Autowired
     private StringEncoder cryptoEncoder;

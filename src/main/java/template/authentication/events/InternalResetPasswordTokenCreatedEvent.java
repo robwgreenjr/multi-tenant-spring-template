@@ -4,15 +4,15 @@ import org.springframework.context.ApplicationEvent;
 import template.authentication.models.InternalResetPasswordToken;
 
 public class InternalResetPasswordTokenCreatedEvent extends ApplicationEvent {
-    private final InternalResetPasswordToken resetPasswordTokenModel;
+    private final InternalResetPasswordToken resetPasswordToken;
 
     public InternalResetPasswordTokenCreatedEvent(Object source,
-                                                  InternalResetPasswordToken resetPasswordTokenModel) {
+                                                  InternalResetPasswordToken resetPasswordToken) {
         super(source);
-        this.resetPasswordTokenModel = resetPasswordTokenModel;
+        this.resetPasswordToken = resetPasswordToken;
     }
 
-    public InternalResetPasswordToken getResetPasswordTokenModel() {
-        return resetPasswordTokenModel;
+    public InternalResetPasswordToken getResetPasswordToken() {
+        return resetPasswordToken;
     }
 }

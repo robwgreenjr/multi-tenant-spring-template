@@ -225,6 +225,46 @@ public class Seeder {
         return successCount;
     }
 
+    public Integer tenantUserResetPasswordToken(JdbcTemplate jdbcTemplate,
+                                                UUID tenantId,
+                                                Integer count) {
+        Faker faker = new Faker();
+
+        int successCount = 0;
+        for (int i = 0; i < count; i++) {
+            String firstName = faker.name().firstName();
+            String lastName = faker.name().lastName();
+            String email = faker.internet().emailAddress();
+            String phone = faker.phoneNumber().phoneNumber();
+
+            String insertQuery =
+                "INSERT INTO tenant.user (tenant_id, first_name, last_name, email, phone) VALUES (?, ?, ?, ?, ?)";
+            try {
+                jdbcTemplate.update(insertQuery, tenantId, firstName, lastName,
+                    email,
+                    phone);
+
+                String sql = "SELECT * FROM tenant.user WHERE email = ?";
+                List<Map<String, Object>> singleObject =
+                    jdbcTemplate.queryForList(sql, email);
+                insertQuery =
+                    "INSERT INTO tenant.authentication_user_reset_password_token (tenant_id, user_id, token) VALUES (?, ?, ?)";
+                jdbcTemplate.update(insertQuery, tenantId,
+                    singleObject.get(0).get("id"),
+                    UUID.randomUUID());
+            } catch (Exception exception) {
+                // We could fail from unique values and will need to try again
+                count++;
+
+                System.out.println(exception.getMessage());
+                continue;
+            }
+            successCount++;
+        }
+
+        return successCount;
+    }
+
     public Integer internalUserPassword(JdbcTemplate jdbcTemplate,
                                         Integer count) {
         Faker faker = new Faker();
@@ -248,6 +288,45 @@ public class Seeder {
                 insertQuery =
                     "INSERT INTO internal.authentication_user_password (user_id, password) VALUES (?, ?)";
                 jdbcTemplate.update(insertQuery, singleObject.get(0).get("id"),
+                    stringEncoder.encode("password"));
+            } catch (Exception exception) {
+                // We could fail from unique values and will need to try again
+                count++;
+
+                System.out.println(exception.getMessage());
+                continue;
+            }
+            successCount++;
+        }
+
+        return successCount;
+    }
+
+    public Integer tenantUserPassword(JdbcTemplate jdbcTemplate, UUID tenantId,
+                                      Integer count) {
+        Faker faker = new Faker();
+
+        int successCount = 0;
+        for (int i = 0; i < count; i++) {
+            String firstName = faker.name().firstName();
+            String lastName = faker.name().lastName();
+            String email = faker.internet().emailAddress();
+            String phone = faker.phoneNumber().phoneNumber();
+
+            String insertQuery =
+                "INSERT INTO tenant.user (tenant_id, first_name, last_name, email, phone) VALUES (?, ?, ?, ?, ?)";
+            try {
+                jdbcTemplate.update(insertQuery, tenantId, firstName, lastName,
+                    email,
+                    phone);
+
+                String sql = "SELECT * FROM tenant.user WHERE email = ?";
+                List<Map<String, Object>> singleObject =
+                    jdbcTemplate.queryForList(sql, email);
+                insertQuery =
+                    "INSERT INTO tenant.authentication_user_password (tenant_id, user_id, password) VALUES (?, ?, ?)";
+                jdbcTemplate.update(insertQuery, tenantId,
+                    singleObject.get(0).get("id"),
                     stringEncoder.encode("password"));
             } catch (Exception exception) {
                 // We could fail from unique values and will need to try again
@@ -405,7 +484,18 @@ public class Seeder {
                     companyEmail,
                     companySubdomain);
             } catch (Exception exceptionTwo) {
-                System.out.println(exception.getMessage());
+                companyName = faker.company().name();
+                companyPhone = faker.phoneNumber().phoneNumber();
+                companyEmail = faker.internet().emailAddress();
+                companySubdomain = faker.internet().domainName();
+
+                try {
+                    jdbcTemplate.update(insertQuery, companyName, companyPhone,
+                        companyEmail,
+                        companySubdomain);
+                } catch (Exception exceptionThree) {
+                    System.out.println(exception.getMessage());
+                }
             }
         }
 

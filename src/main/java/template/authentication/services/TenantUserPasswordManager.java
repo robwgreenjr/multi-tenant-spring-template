@@ -30,9 +30,9 @@ public class TenantUserPasswordManager
     }
 
     @Override
-    public TenantUserPassword create(TenantUserPassword userPasswordModel) {
+    public TenantUserPassword create(TenantUserPassword userPassword) {
         TenantUserPasswordEntity newUserPassword =
-            userPasswordMapper.toEntity(userPasswordModel);
+            userPasswordMapper.toEntity(userPassword);
         try {
             userPasswordRepository.save(newUserPassword);
         } catch (Exception exception) {
@@ -43,12 +43,12 @@ public class TenantUserPasswordManager
             }
         }
 
-        userPasswordModel =
+        userPassword =
             userPasswordMapper.entityToObject(newUserPassword);
         userPasswordEventPublisher.publishUserPasswordCreatedEvent(
-            userPasswordModel);
+            userPassword);
 
-        return userPasswordModel;
+        return userPassword;
     }
 
     @Override
@@ -62,10 +62,10 @@ public class TenantUserPasswordManager
 
         userPasswordRepository.delete(findEntity.get());
 
-        TenantUserPassword userPasswordModel =
+        TenantUserPassword userPassword =
             userPasswordMapper.entityToObject(findEntity.get());
         userPasswordEventPublisher.publishUserPasswordDeletedEvent(
-            userPasswordModel);
+            userPassword);
     }
 
     @Override
@@ -83,10 +83,10 @@ public class TenantUserPasswordManager
 
     @Override
     public TenantUserPassword update(Integer id,
-                                     TenantUserPassword userPasswordModel) {
+                                     TenantUserPassword userPassword) {
         TenantUserPasswordEntity entity =
-            userPasswordMapper.toEntity(userPasswordModel);
-//        entity.setId(id);
+            userPasswordMapper.toEntity(userPassword);
+        entity.setId(id);
 
         try {
             userPasswordRepository.save(entity);
@@ -98,16 +98,16 @@ public class TenantUserPasswordManager
             }
         }
 
-        userPasswordModel = userPasswordMapper.entityToObject(entity);
+        userPassword = userPasswordMapper.entityToObject(entity);
         userPasswordEventPublisher.publishUserPasswordUpdatedEvent(
-            userPasswordModel);
+            userPassword);
 
-        return userPasswordModel;
+        return userPassword;
     }
 
     @Override
     public TenantUserPassword updatePartial(Integer id,
-                                            TenantUserPassword userPasswordModel) {
+                                            TenantUserPassword userPassword) {
         Optional<TenantUserPasswordEntity> findEntity =
             userPasswordRepository.getById(id);
 
@@ -116,15 +116,15 @@ public class TenantUserPasswordManager
         }
 
         TenantUserPasswordEntity foundEntity = findEntity.get();
-//        userPasswordModel.setId(foundEntity.getId());
+        userPassword.setId(foundEntity.getId());
 
-        userPasswordMapper.update(foundEntity, userPasswordModel);
+        userPasswordMapper.update(foundEntity, userPassword);
         userPasswordRepository.save(foundEntity);
 
-        userPasswordModel = userPasswordMapper.entityToObject(foundEntity);
+        userPassword = userPasswordMapper.entityToObject(foundEntity);
         userPasswordEventPublisher.publishUserPasswordUpdatedEvent(
-            userPasswordModel);
+            userPassword);
 
-        return userPasswordModel;
+        return userPassword;
     }
 }

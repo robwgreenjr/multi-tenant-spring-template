@@ -2,15 +2,22 @@ package template.authentication.services;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import template.authentication.exceptions.PasswordIncorrectException;
+import template.authentication.exceptions.PasswordNotSetException;
+import template.authentication.exceptions.UserPasswordNotFoundException;
 import template.authentication.helpers.JwtSpecialist;
 import template.authentication.models.Jwt;
 import template.authentication.models.TenantUserPassword;
+import template.authorization.models.TenantPermission;
 import template.authorization.models.TenantRole;
 import template.authorization.services.TenantRoleManager;
+import template.global.exceptions.UnknownServerException;
 import template.global.services.StringEncoder;
+import template.tenants.exceptions.TenantUserNotFoundException;
 import template.tenants.models.TenantUser;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service("TenantUserLogin")
 public class TenantUserLogin
@@ -36,60 +43,65 @@ public class TenantUserLogin
     public Jwt jwtProvider(String identifier, String password) {
         TenantUserPassword userPassword = login(identifier, password);
 
-//        String scopeList = buildScopeList(userPassword.getUser().getId());
-//        String token =
-//            simpleJwtSpecialist.generate(userPassword.getUser(), scopeList);
+        String scopeList = buildScopeList(userPassword.getUser().getId());
+        String token =
+            simpleJwtSpecialist.generate(userPassword.getUser(), scopeList);
 
         Jwt jwtModel = new Jwt();
-//        jwtModel.setToken(token);
+        jwtModel.setToken(token);
 
         return jwtModel;
     }
 
     @Override
     public TenantUserPassword login(String identifier, String password) {
-        TenantUserPassword userPassword = new TenantUserPassword();
-//        try {
-//            userPassword = userPasswordManager.findByUserEmail(identifier);
-//        } catch (UserPasswordNotFoundException exception) {
-//            throw new PasswordNotSetException();
-//        }
+        Optional<TenantUserPassword> userPassword;
+        try {
+            userPassword = userPasswordManager.findByUserEmail(identifier);
+        } catch (UserPasswordNotFoundException exception) {
+            throw new PasswordNotSetException();
+        }
 
-//        Boolean isVerified;
-//        try {
-//            isVerified =
-//                bCryptEncoder.verify(password, userPassword.getPassword());
-//        } catch (NullPointerException nullPointerException) {
-//            throw new PasswordNotSetException();
-//        } catch (Exception exception) {
-//            throw new UnknownServerException(
-//                "Error occurred while verifying password.");
-//        }
+        if (userPassword.isEmpty()) {
+            throw new TenantUserNotFoundException();
+        }
 
-//        if (!isVerified) {
-//            throw new PasswordIncorrectException();
-//        }
+        Boolean isVerified;
+        try {
+            isVerified =
+                bCryptEncoder.verify(password,
+                    userPassword.get().getPassword());
+        } catch (NullPointerException nullPointerException) {
+            throw new PasswordNotSetException();
+        } catch (Exception exception) {
+            throw new UnknownServerException(
+                "Error occurred while verifying password.");
+        }
 
-        return userPassword;
+        if (!isVerified) {
+            throw new PasswordIncorrectException();
+        }
+
+        return userPassword.get();
     }
 
     private String buildScopeList(Integer userId) {
         List<TenantRole> roleModels = roleManager.getListByUserId(userId);
 
-//        StringBuilder scopeList = new StringBuilder();
+        StringBuilder scopeList = new StringBuilder();
         for (TenantRole roleModel : roleModels) {
-//            for (TenantPermission permissionModel : roleModel.getPermissions()) {
-//                if (scopeList.toString().isEmpty()) {
-//                    scopeList.append(permissionModel.getName()).append(".")
-//                        .append(permissionModel.getType());
-//                } else {
-//                    scopeList.append(",").append(permissionModel.getName())
-//                        .append(".")
-//                        .append(permissionModel.getType());
-//                }
-//            }
+            for (TenantPermission permissionModel : roleModel.getPermissions()) {
+                if (scopeList.toString().isEmpty()) {
+                    scopeList.append(permissionModel.getName()).append(".")
+                        .append(permissionModel.getType());
+                } else {
+                    scopeList.append(",").append(permissionModel.getName())
+                        .append(".")
+                        .append(permissionModel.getType());
+                }
+            }
         }
 
-        return "";
+        return scopeList.toString();
     }
 }

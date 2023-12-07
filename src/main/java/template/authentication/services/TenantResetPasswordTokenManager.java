@@ -40,7 +40,7 @@ public class TenantResetPasswordTokenManager
         TenantResetPasswordTokenEntity newResetPasswordToken =
             resetPasswordTokenMapper.toEntity(resetPasswordTokenModel);
 
-//        newResetPasswordToken.setToken(UUID.randomUUID());
+        newResetPasswordToken.setToken(UUID.randomUUID());
 
         try {
             resetPasswordTokenRepository.save(newResetPasswordToken);

@@ -7,43 +7,35 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import template.authentication.exceptions.PasswordIncorrectException;
 import template.authentication.exceptions.PasswordNotSetException;
-import template.authentication.models.InternalUserPassword;
 import template.authentication.models.Jwt;
+import template.authentication.models.TenantUserPassword;
 import template.database.cli.Seeder;
 import template.helpers.IntegrationTest;
-import template.internal.models.InternalUser;
+import template.tenants.models.TenantUser;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 
-public class InternalUserLoginTest extends IntegrationTest {
-
+public class TenantUserLoginTest extends IntegrationTest {
     @Autowired
-    private InternalUserLogin simpleUserLogin;
+    @Qualifier("TenantUserLogin")
+    private UserLoginHandler<TenantUserPassword> simpleUserLogin;
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    @Qualifier("InternalUserPasswordManager")
-    private UserPasswordManager<InternalUserPassword> userPasswordManager;
+    @Qualifier("TenantUserPasswordManager")
+    private UserPasswordManager<TenantUserPassword> userPasswordManager;
     @Autowired
     private Seeder seeder;
 
     @Test
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
+    @Sql(scripts = {"classpath:sql/truncateTenantSchema.sql"})
     public void givenUserPasswordExists_whenJwtProvider_shouldReturnJwtToken() {
-        seeder.internalUser(jdbcTemplate, 1);
+        seeder.tenantUserPassword(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> objectList =
-            jdbcTemplate.queryForList("SELECT * FROM internal.user");
-
-        InternalUser user = new InternalUser();
-        user.setId(Integer.valueOf(objectList.get(0).get("id").toString()));
-        InternalUserPassword userPassword = new InternalUserPassword();
-        userPassword.setUser(user);
-        userPassword.setPassword("password");
-
-        userPasswordManager.create(userPassword);
+            jdbcTemplate.queryForList("SELECT * FROM tenant.user;");
 
         Jwt actual =
             simpleUserLogin.jwtProvider(
@@ -53,21 +45,21 @@ public class InternalUserLoginTest extends IntegrationTest {
     }
 
     @Test(expected = PasswordNotSetException.class)
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
+    @Sql(scripts = {"classpath:sql/truncateTenantSchema.sql"})
     public void givenUserPasswordNotSet_whenJwtProvider_shouldThrowException() {
         simpleUserLogin.jwtProvider("testing1@gmail.com", "password");
     }
 
     @Test(expected = PasswordIncorrectException.class)
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
+    @Sql(scripts = {"classpath:sql/truncateTenantSchema.sql"})
     public void givenWrongPassword_whenJwtProvider_shouldThrowException() {
-        seeder.internalUser(jdbcTemplate, 1);
+        seeder.tenantUser(jdbcTemplate, tenantId, 1);
         List<Map<String, Object>> objectList =
-            jdbcTemplate.queryForList("SELECT * FROM internal.user");
+            jdbcTemplate.queryForList("SELECT * FROM tenant.user");
 
-        InternalUser user = new InternalUser();
+        TenantUser user = new TenantUser();
         user.setId(Integer.valueOf(objectList.get(0).get("id").toString()));
-        InternalUserPassword userPassword = new InternalUserPassword();
+        TenantUserPassword userPassword = new TenantUserPassword();
         userPassword.setUser(user);
         userPassword.setPassword("password");
 
