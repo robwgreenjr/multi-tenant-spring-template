@@ -2,6 +2,7 @@ package template.tenants.repositories;
 
 import org.springframework.stereotype.Service;
 import template.database.models.Query;
+import template.database.models.QueryResult;
 import template.database.services.QueryBuilder;
 import template.tenants.entities.TenantUserEntity;
 
@@ -31,6 +32,11 @@ public class TenantUserRepositoryImpl
     }
 
     @Override
+    public Optional<TenantUserEntity> getByEmail(String email) {
+        return userRepository.getByEmail(email);
+    }
+
+    @Override
     public Optional<TenantUserEntity> getById(Integer id) {
         return userRepository.findById(id);
     }
@@ -41,7 +47,7 @@ public class TenantUserRepositoryImpl
     }
 
     @Override
-    public List<TenantUserEntity> getList(Query<Integer> query) {
+    public QueryResult<TenantUserEntity> getList(Query<Integer> query) {
         return queryBuilder.getList(TenantUserEntity.class, query);
     }
 

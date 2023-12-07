@@ -2,6 +2,7 @@ package template.internal.repositories;
 
 import org.springframework.stereotype.Service;
 import template.database.models.Query;
+import template.database.models.QueryResult;
 import template.database.services.QueryBuilder;
 import template.internal.entities.InternalUserEntity;
 
@@ -46,7 +47,7 @@ public class InternalUserRepositoryImpl
     }
 
     @Override
-    public List<InternalUserEntity> getList(Query<Integer> query) {
+    public QueryResult<InternalUserEntity> getList(Query<Integer> query) {
         return queryBuilder.getList(InternalUserEntity.class, query);
     }
 

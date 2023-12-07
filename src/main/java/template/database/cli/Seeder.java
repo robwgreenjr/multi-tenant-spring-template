@@ -88,6 +88,13 @@ public class Seeder {
     }
 
     public void defaultConfiguration(JdbcTemplate jdbcTemplate) {
+        try {
+            jdbcTemplate.update(
+                "TRUNCATE TABLE internal.configuration CASCADE;");
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+        
         String insertQuery =
             "INSERT INTO internal.configuration (key, value) VALUES (?, ?) ON CONFLICT DO NOTHING";
         try {
@@ -370,6 +377,52 @@ public class Seeder {
                 insertQuery =
                     "INSERT INTO internal.authentication_user_reset_password_token (user_id) VALUES (?)";
                 jdbcTemplate.update(insertQuery, singleObject.get(0).get("id"));
+            } catch (Exception exception) {
+                // We could fail from unique values and will need to try again
+                count++;
+
+                System.out.println(exception.getMessage());
+                continue;
+            }
+            successCount++;
+        }
+
+        return successCount;
+    }
+
+    public Integer tenantUserPasswordAndResetPasswordToken(
+        JdbcTemplate jdbcTemplate,
+        UUID tenantId,
+        Integer count) {
+        Faker faker = new Faker();
+
+        int successCount = 0;
+        for (int i = 0; i < count; i++) {
+            String firstName = faker.name().firstName();
+            String lastName = faker.name().lastName();
+            String email = faker.internet().emailAddress();
+            String phone = faker.phoneNumber().phoneNumber();
+
+            String insertQuery =
+                "INSERT INTO tenant.user (tenant_id, first_name, last_name, email, phone) VALUES (?, ?, ?, ?, ?)";
+            try {
+                jdbcTemplate.update(insertQuery, tenantId, firstName, lastName,
+                    email,
+                    phone);
+
+                String sql = "SELECT * FROM tenant.user WHERE email = ?";
+                List<Map<String, Object>> singleObject =
+                    jdbcTemplate.queryForList(sql, email);
+                insertQuery =
+                    "INSERT INTO tenant.authentication_user_password (tenant_id, user_id, password) VALUES (?, ?, ?)";
+                jdbcTemplate.update(insertQuery, tenantId,
+                    singleObject.get(0).get("id"),
+                    stringEncoder.encode("password"));
+
+                insertQuery =
+                    "INSERT INTO tenant.authentication_user_reset_password_token (tenant_id, user_id) VALUES (?, ?)";
+                jdbcTemplate.update(insertQuery, tenantId,
+                    singleObject.get(0).get("id"));
             } catch (Exception exception) {
                 // We could fail from unique values and will need to try again
                 count++;

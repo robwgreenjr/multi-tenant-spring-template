@@ -3,6 +3,7 @@ package template.authorization.repositories;
 import org.springframework.stereotype.Service;
 import template.authorization.entities.InternalRoleEntity;
 import template.database.models.Query;
+import template.database.models.QueryResult;
 import template.database.services.QueryBuilder;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public class InternalRoleRepositoryImpl implements InternalRoleRepository {
     }
 
     @Override
-    public List<InternalRoleEntity> getList(Query<Integer> query) {
+    public QueryResult<InternalRoleEntity> getList(Query<Integer> query) {
         return queryBuilder.getList(InternalRoleEntity.class, query);
     }
 

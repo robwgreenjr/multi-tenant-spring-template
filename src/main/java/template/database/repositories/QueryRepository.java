@@ -1,8 +1,8 @@
 package template.database.repositories;
 
 import template.database.models.Query;
+import template.database.models.QueryResult;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface QueryRepository<T, ID> {
@@ -10,7 +10,7 @@ public interface QueryRepository<T, ID> {
 
     Integer getCurrentPage(Integer count, Query<ID> query);
 
-    List<T> getList(Query<ID> query);
+    QueryResult<T> getList(Query<ID> query);
 
     T getNext(Query<ID> query);
 

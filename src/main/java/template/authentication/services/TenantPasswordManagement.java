@@ -2,9 +2,17 @@ package template.authentication.services;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import template.authentication.exceptions.PasswordIncorrectException;
+import template.authentication.exceptions.ResetPasswordTokenNotFoundException;
+import template.authentication.exceptions.UserPasswordNotFoundException;
 import template.authentication.models.TenantResetPasswordToken;
 import template.authentication.models.TenantUserPassword;
 import template.global.services.StringEncoder;
+import template.tenants.exceptions.TenantUserNotFoundException;
+import template.tenants.models.TenantUser;
+import template.tenants.services.TenantUserManager;
+
+import java.util.Optional;
 
 @Service("TenantPasswordManagement")
 public class TenantPasswordManagement
@@ -13,10 +21,12 @@ public class TenantPasswordManagement
     private final StringEncoder bCryptEncoder;
     private final ResetPasswordTokenManager<TenantResetPasswordToken>
         resetPasswordTokenManager;
+    private final TenantUserManager tenantUserManager;
 
     public TenantPasswordManagement(
         @Qualifier("TenantUserPasswordManager")
         UserPasswordManager<TenantUserPassword> userPasswordManager,
+        TenantUserManager tenantUserManager,
         @Qualifier("BCryptEncoder")
         StringEncoder bCryptEncoder,
         @Qualifier("TenantResetPasswordTokenManager")
@@ -24,92 +34,106 @@ public class TenantPasswordManagement
         this.userPasswordManager = userPasswordManager;
         this.bCryptEncoder = bCryptEncoder;
         this.resetPasswordTokenManager = resetPasswordTokenManager;
+        this.tenantUserManager = tenantUserManager;
     }
 
     @Override
-    public void change(TenantUserPassword userPasswordModel)
-        throws Exception {
-        userPasswordModel.validatePassword();
+    public void change(TenantUserPassword userPassword) {
+        userPassword.validatePassword();
 
-//        TenantUserPassword foundUserPasswordModel =
-//            userPasswordManager.findByUserEmail(
-//                userPasswordModel.getEmailConfirmation());
-//
-//        if (!bCryptEncoder.verify(userPasswordModel.getCurrentPassword(),
-//            foundUserPasswordModel.getPassword())) {
-//            throw new PasswordIncorrectException();
-//        }
-//
-//        setNewUserPassword(userPasswordModel, foundUserPasswordModel);
+        Optional<TenantUserPassword> foundUserPassword =
+            userPasswordManager.findByUserEmail(
+                userPassword.getEmailConfirmation());
 
-        updatePassword(userPasswordModel);
+        if (foundUserPassword.isEmpty()) {
+            throw new UserPasswordNotFoundException();
+        }
+
+        if (!bCryptEncoder.verify(userPassword.getCurrentPassword(),
+            foundUserPassword.get().getPassword())) {
+            throw new PasswordIncorrectException();
+        }
+
+        setNewUserPassword(userPassword, foundUserPassword.get());
+
+        updatePassword(userPassword);
     }
 
     /**
      * Should only be used by CLI, not for end users
      */
     @Override
-    public void changeFORCE(TenantUserPassword userPasswordModel)
-        throws Exception {
-        updatePassword(userPasswordModel);
+    public void changeFORCE(TenantUserPassword userPassword) {
+        updatePassword(userPassword);
     }
 
     @Override
-    public void forgot(TenantUserPassword userPasswordModel) {
-//        UserModel userModel = userManager.getByEmail(
-//            userPasswordModel.getEmailConfirmation());
+    public void forgot(TenantUserPassword userPassword) {
+        Optional<TenantUser> user =
+            tenantUserManager.findByEmail(userPassword.getEmailConfirmation());
 
-        TenantResetPasswordToken resetPasswordTokenModel =
+        if (user.isEmpty()) {
+            throw new TenantUserNotFoundException();
+        }
+
+        TenantResetPasswordToken resetPasswordToken =
             new TenantResetPasswordToken();
-//        resetPasswordTokenModel.setUser(userModel);
+        resetPasswordToken.setUser(user.get());
 
-        resetPasswordTokenManager.create(resetPasswordTokenModel);
+        resetPasswordTokenManager.create(resetPasswordToken);
     }
 
     @Override
-    public void reset(TenantUserPassword userPasswordModel) throws Exception {
-        userPasswordModel.validatePassword();
+    public void reset(TenantUserPassword userPassword) throws Exception {
+        userPassword.validatePassword();
 
-//        TenantResetPasswordToken resetPasswordTokenModel =
-//            resetPasswordTokenManager.findByToken(
-//                userPasswordModel.getToken());
-//
-//        TenantUserPassword foundUserPasswordModel;
-//        try {
-////            foundUserPasswordModel =
-////                userPasswordManager.findByUserEmail(
-////                    resetPasswordTokenModel.getUser().getEmail());
-//        } catch (UserPasswordNotFoundException userPasswordNotFoundException) {
-//            userPasswordModel.setUser(resetPasswordTokenModel.getUser());
-//
-//            foundUserPasswordModel =
-//                userPasswordManager.create(userPasswordModel);
-//        }
+        Optional<TenantResetPasswordToken> resetPasswordToken =
+            resetPasswordTokenManager.findByToken(
+                userPassword.getToken());
 
-//        setNewUserPassword(userPasswordModel, foundUserPasswordModel);
+        if (resetPasswordToken.isEmpty()) {
+            throw new ResetPasswordTokenNotFoundException();
+        }
 
-        updatePassword(userPasswordModel);
+        Optional<TenantUserPassword> foundUserPassword;
+        try {
+            foundUserPassword =
+                userPasswordManager.findByUserEmail(
+                    resetPasswordToken.get().getUser().getEmail());
+        } catch (UserPasswordNotFoundException userPasswordNotFoundException) {
+            userPassword.setUser(resetPasswordToken.get().getUser());
 
-        resetPasswordTokenManager.delete(userPasswordModel.getToken());
+            foundUserPassword =
+                Optional.of(userPasswordManager.create(userPassword));
+        }
+
+        if (foundUserPassword.isEmpty()) {
+            throw new UserPasswordNotFoundException();
+        }
+
+        setNewUserPassword(userPassword, foundUserPassword.get());
+
+        updatePassword(userPassword);
+
+        resetPasswordTokenManager.delete(userPassword.getToken());
     }
 
-    private void updatePassword(TenantUserPassword userPasswordModel)
-        throws Exception {
-        userPasswordModel.setPreviousPassword(
-            userPasswordModel.getCurrentPassword());
-        userPasswordModel.setPassword(
-            bCryptEncoder.encode(userPasswordModel.getPassword()));
+    private void updatePassword(TenantUserPassword userPassword) {
+        userPassword.setPreviousPassword(
+            userPassword.getCurrentPassword());
+        userPassword.setPassword(
+            bCryptEncoder.encode(userPassword.getPassword()));
 
-        userPasswordManager.update(userPasswordModel.getId(),
-            userPasswordModel);
+        userPasswordManager.update(userPassword.getId(),
+            userPassword);
     }
 
-    private void setNewUserPassword(TenantUserPassword userPasswordModel,
-                                    TenantUserPassword foundUserPasswordModel) {
-        userPasswordModel.setId(foundUserPasswordModel.getId());
-        userPasswordModel.setUser(foundUserPasswordModel.getUser());
-        userPasswordModel.setCurrentPassword(
-            foundUserPasswordModel.getPassword());
-        userPasswordModel.setCreatedOn(foundUserPasswordModel.getCreatedOn());
+    private void setNewUserPassword(TenantUserPassword userPassword,
+                                    TenantUserPassword foundUserPassword) {
+        userPassword.setId(foundUserPassword.getId());
+        userPassword.setUser(foundUserPassword.getUser());
+        userPassword.setCurrentPassword(
+            foundUserPassword.getPassword());
+        userPassword.setCreatedOn(foundUserPassword.getCreatedOn());
     }
 }

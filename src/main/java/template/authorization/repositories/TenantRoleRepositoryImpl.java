@@ -3,6 +3,7 @@ package template.authorization.repositories;
 import org.springframework.stereotype.Service;
 import template.authorization.entities.TenantRoleEntity;
 import template.database.models.Query;
+import template.database.models.QueryResult;
 import template.database.services.QueryBuilder;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public class TenantRoleRepositoryImpl implements TenantRoleRepository {
     }
 
     @Override
-    public List<TenantRoleEntity> getList(Query<Integer> query) {
+    public QueryResult<TenantRoleEntity> getList(Query<Integer> query) {
         return queryBuilder.getList(TenantRoleEntity.class, query);
     }
 

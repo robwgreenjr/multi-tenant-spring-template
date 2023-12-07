@@ -104,20 +104,11 @@ public class InternalRoleManagerImpl implements InternalRoleManager {
 
     @Override
     public QueryResult<InternalRole> getList(Query<Integer> query) {
-        List<InternalRoleEntity> entityList =
+        QueryResult<InternalRoleEntity> entityList =
             roleRepository.getList(query);
 
-        QueryResult<InternalRole> result = new QueryResult<>();
-        result.setData(roleMapper.entityToList(entityList));
-        result.getMeta().setPageCount(entityList.size());
-
-        if (query.getLimit() != null) {
-            result.getMeta().setLimit(query.getLimit());
-        }
-
-        result.getMeta().setCount(roleRepository.count(query));
-
-        return result;
+        return entityList.mapData(
+            roleMapper.entityToList(entityList.getData()));
     }
 
     @Override

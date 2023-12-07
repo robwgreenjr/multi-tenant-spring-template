@@ -101,20 +101,11 @@ public class InternalPermissionManagerImpl
 
     @Override
     public QueryResult<InternalPermission> getList(Query<Integer> query) {
-        List<InternalPermissionEntity> entityList =
+        QueryResult<InternalPermissionEntity> entityList =
             permissionRepository.getList(query);
 
-        QueryResult<InternalPermission> result = new QueryResult<>();
-        result.setData(permissionMapper.entityToList(entityList));
-        result.getMeta().setPageCount(entityList.size());
-
-        if (query.getLimit() != null) {
-            result.getMeta().setLimit(query.getLimit());
-        }
-
-        result.getMeta().setCount(permissionRepository.count(query));
-
-        return result;
+        return entityList.mapData(
+            permissionMapper.entityToList(entityList.getData()));
     }
 
     @Override

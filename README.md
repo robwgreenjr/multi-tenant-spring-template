@@ -74,14 +74,6 @@ sudo update-ca-certificates
 
 ### TODO:
 
-    - Redesign tenant database with tenant_id with all tables, using 2 schemas
-        - Setup Internal and Tenant stuff...
-            - Add events and needed tests
-                - authentication
-            - Internal Auth
-            - Tenant Auth
-            - Allow auth middleware to handle separate internal/tenant auth properly
-        - Get all test passing
     - Change tenant generation from creating a new database for new tenants to simply use new design
     - Add query parameter support for list of values, only for EQ, LIKE, and NE filters
     - Add any extra test for parameters/query builder/hypermedia

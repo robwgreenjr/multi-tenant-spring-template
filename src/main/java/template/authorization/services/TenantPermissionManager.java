@@ -10,7 +10,7 @@ import java.util.List;
 public interface TenantPermissionManager
     extends QueryManager<TenantPermission, Integer>,
     Manager<TenantPermission, Integer>,
-    ListManager<TenantPermission, Integer> {
+    ListManager<TenantPermission> {
     TenantPermission getById(Integer id);
 
     List<TenantPermission> getByIdList(List<Integer> idList);

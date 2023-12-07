@@ -127,22 +127,11 @@ public class TenantManagerImpl implements TenantManager {
 
     @Override
     public QueryResult<Tenant> getList(Query<UUID> query) {
-        Query<UUID> validquery = new Query<>(query);
+        QueryResult<TenantEntity> entityList =
+            tenantRepository.getList(query);
 
-        List<TenantEntity> tenantList =
-            tenantRepository.getList(validquery);
-
-        QueryResult<Tenant> result = new QueryResult<>();
-        result.setData(tenantMapper.entityToList(tenantList));
-        result.getMeta().setPageCount(tenantList.size());
-
-        if (query.getLimit() != null) {
-            result.getMeta().setLimit(query.getLimit());
-        }
-
-        result.getMeta().setCount(tenantRepository.count(validquery));
-
-        return result;
+        return entityList.mapData(
+            tenantMapper.entityToList(entityList.getData()));
     }
 
     @Override

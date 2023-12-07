@@ -72,21 +72,20 @@ public class TenantUserManagerImpl implements TenantUserManager {
     }
 
     @Override
+    public Optional<TenantUser> findByEmail(String email) {
+        Optional<TenantUserEntity> userEntity =
+            userRepository.getByEmail(email);
+
+        return userEntity.map(userMapper::entityToObject);
+    }
+
+    @Override
     public QueryResult<TenantUser> getList(Query<Integer> query) {
-        List<TenantUserEntity> entityList =
+        QueryResult<TenantUserEntity> entityList =
             userRepository.getList(query);
 
-        QueryResult<TenantUser> result = new QueryResult<>();
-        result.setData(userMapper.entityToList(entityList));
-        result.getMeta().setPageCount(entityList.size());
-
-        if (query.getLimit() != null) {
-            result.getMeta().setLimit(query.getLimit());
-        }
-
-        result.getMeta().setCount(userRepository.count(query));
-
-        return result;
+        return entityList.mapData(
+            userMapper.entityToList(entityList.getData()));
     }
 
     @Override

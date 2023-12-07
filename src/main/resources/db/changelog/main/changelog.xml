@@ -45,4 +45,8 @@
     <!--
         SEEDERS
     -->
+    <changeSet id="seed_configuration" author="Rob Green">
+        <sqlFile encoding="utf8"
+                 path="db/changelog/main/seed/configuration.sql"/>
+    </changeSet>
 </databaseChangeLog>

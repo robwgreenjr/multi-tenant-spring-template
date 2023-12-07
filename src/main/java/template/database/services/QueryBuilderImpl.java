@@ -12,6 +12,7 @@ import template.database.enums.QuerySort;
 import template.database.exceptions.InvalidDateFormatException;
 import template.database.models.ColumnFilter;
 import template.database.models.Query;
+import template.database.models.QueryResult;
 import template.global.utilities.StringParser;
 
 import java.lang.reflect.Field;
@@ -33,6 +34,23 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
         this.stringParser = stringParser;
     }
 
+    private QueryResult<T> buildQueryResult(Class<T> entity,
+                                            Query<S> query,
+                                            List<T> data) {
+        QueryResult<T> result = new QueryResult<>();
+        result.setData(data);
+        result.getMeta().setLimit(query.getLimit());
+        result.getMeta().setCount(getCount(entity, query));
+        result.getMeta().setCursor("id");
+        result.getMeta().setPage(
+            getCurrentPage(entity, query, result.getMeta().getCount()));
+        result.getMeta().setNext(getNextCursor(entity, query));
+        result.getMeta().setPrevious(getPreviousCursor(entity, query, data));
+        result.getMeta().setLimit(query.getLimit());
+
+        return result;
+    }
+
     @Override
     public T getSingle(Class<T> entity, Query<S> query) {
         CriteriaQuery<Object> select = buildQuery(entity, query);
@@ -41,7 +59,7 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
     }
 
     @Override
-    public List<T> getList(Class<T> entity, Query<S> query) {
+    public QueryResult<T> getList(Class<T> entity, Query<S> query) {
         List<T> entityList = new ArrayList<>();
 
         CriteriaQuery<Object> select = buildQuery(entity, query);
@@ -55,7 +73,7 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
             entityList.add((T) result);
         }
 
-        return entityList;
+        return buildQueryResult(entity, query, entityList);
     }
 
     @Override
@@ -184,7 +202,7 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
             Object fieldValue = fieldNameField.get(data.get(0));
 
             findPreviousCursor = (Integer) fieldValue;
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (Exception e) {
             // do nothing
         }
 

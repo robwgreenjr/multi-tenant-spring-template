@@ -99,20 +99,11 @@ public class TenantPermissionManagerImpl
 
     @Override
     public QueryResult<TenantPermission> getList(Query<Integer> query) {
-        List<TenantPermissionEntity> entityList =
+        QueryResult<TenantPermissionEntity> entityList =
             permissionRepository.getList(query);
 
-        QueryResult<TenantPermission> result = new QueryResult<>();
-        result.setData(permissionMapper.entityToList(entityList));
-        result.getMeta().setPageCount(entityList.size());
-
-        if (query.getLimit() != null) {
-            result.getMeta().setLimit(query.getLimit());
-        }
-
-        result.getMeta().setCount(permissionRepository.count(query));
-
-        return result;
+        return entityList.mapData(
+            permissionMapper.entityToList(entityList.getData()));
     }
 
     @Override

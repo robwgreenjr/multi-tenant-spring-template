@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface InternalRoleManager
     extends QueryManager<InternalRole, Integer>,
-    ListManager<InternalRole, Integer>,
+    ListManager<InternalRole>,
     Manager<InternalRole, Integer> {
 
     InternalRole getById(Integer id);

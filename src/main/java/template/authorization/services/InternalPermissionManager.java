@@ -10,7 +10,7 @@ import java.util.List;
 public interface InternalPermissionManager
     extends QueryManager<InternalPermission, Integer>,
     Manager<InternalPermission, Integer>,
-    ListManager<InternalPermission, Integer> {
+    ListManager<InternalPermission> {
     InternalPermission getById(Integer id);
 
     List<InternalPermission> getByIdList(List<Integer> idList);

@@ -12,4 +12,6 @@ public interface TenantUserRepository extends
     Repository<TenantUserEntity>,
     ListRepository<TenantUserEntity, Integer> {
     Optional<TenantUserEntity> getById(Integer id);
+
+    Optional<TenantUserEntity> getByEmail(String email);
 }

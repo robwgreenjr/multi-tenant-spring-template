@@ -3,6 +3,7 @@ package template.authorization.repositories;
 import org.springframework.stereotype.Service;
 import template.authorization.entities.InternalPermissionEntity;
 import template.database.models.Query;
+import template.database.models.QueryResult;
 import template.database.services.QueryBuilder;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class InternalPermissionRepositoryImpl
     }
 
     @Override
-    public List<InternalPermissionEntity> getList(Query<Integer> query) {
+    public QueryResult<InternalPermissionEntity> getList(Query<Integer> query) {
         return queryBuilder.getList(InternalPermissionEntity.class, query);
     }
 

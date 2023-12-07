@@ -10,26 +10,19 @@ import template.database.helpers.SingleTable;
 import template.database.models.Query;
 import template.database.models.QueryResult;
 import template.database.services.QueryBuilder;
-import template.global.services.QueryProvider;
 import template.global.utilities.ParameterProcessor;
-
-import java.util.List;
 
 @RestController
 @RequestMapping()
 public class TestController {
     private final ParameterProcessor<Integer> parameterSetter;
-    private final QueryProvider<SingleTable, Integer, SingleTableDto>
-        queryProvider;
     private final QueryBuilder<SingleTable, Integer> singleTableQueryBuilder;
     private final SingleTableMapper singleTableMapper;
 
     public TestController(ParameterProcessor<Integer> parameterSetter,
-                          QueryProvider<SingleTable, Integer, SingleTableDto> queryProvider,
                           QueryBuilder<SingleTable, Integer> singleTableQueryBuilder,
                           SingleTableMapper singleTableMapper) {
         this.parameterSetter = parameterSetter;
-        this.queryProvider = queryProvider;
         this.singleTableQueryBuilder = singleTableQueryBuilder;
         this.singleTableMapper = singleTableMapper;
     }
@@ -44,11 +37,11 @@ public class TestController {
         Query<Integer> query =
             parameterSetter.buildquery(request.getParameterMap());
 
-        List<SingleTable> result =
+        QueryResult<SingleTable> result =
             singleTableQueryBuilder.getList(SingleTable.class, query);
 
-        return queryProvider.buildQueryResult(SingleTable.class, query,
-            result, singleTableMapper.toSingleTableDtoList(result));
+        return result.mapData(
+            singleTableMapper.toSingleTableDtoList(result.getData()));
     }
 
     @GetMapping("endpoint-error")

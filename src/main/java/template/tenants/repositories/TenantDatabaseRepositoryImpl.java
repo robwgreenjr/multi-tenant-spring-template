@@ -2,11 +2,11 @@ package template.tenants.repositories;
 
 import org.springframework.stereotype.Repository;
 import template.database.models.Query;
+import template.database.models.QueryResult;
 import template.database.services.QueryBuilder;
 import template.tenants.entities.TenantDatabaseEntity;
 import template.tenants.entities.TenantEntity;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -47,7 +47,7 @@ public class TenantDatabaseRepositoryImpl implements TenantDatabaseRepository {
     }
 
     @Override
-    public List<TenantDatabaseEntity> getList(Query<Integer> query) {
+    public QueryResult<TenantDatabaseEntity> getList(Query<Integer> query) {
         return queryBuilder.getList(TenantDatabaseEntity.class, query);
     }
 

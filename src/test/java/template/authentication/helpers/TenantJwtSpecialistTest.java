@@ -5,19 +5,19 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import template.authentication.exceptions.InvalidJwtException;
-import template.helpers.InternalIntegrationTest;
-import template.internal.models.InternalUser;
+import template.helpers.IntegrationTest;
+import template.tenants.models.TenantUser;
 
 import static org.junit.Assert.assertNotNull;
 
-public class InternalJwtSpecialistTest extends InternalIntegrationTest {
+public class TenantJwtSpecialistTest extends IntegrationTest {
     @Autowired
-    private InternalJwtSpecialist simpleJwtSpecialist;
+    private TenantJwtSpecialist simpleJwtSpecialist;
 
     @Test
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
+    @Sql(scripts = {"classpath:sql/truncateTenantSchema.sql"})
     public void givenUserAndScopeList_whenGenerate_shouldReturnToken() {
-        InternalUser user = new InternalUser();
+        TenantUser user = new TenantUser();
         user.setEmail("testing@gmail.com");
 
         String token = simpleJwtSpecialist.generate(user, "scopeList");
@@ -26,9 +26,9 @@ public class InternalJwtSpecialistTest extends InternalIntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
+    @Sql(scripts = {"classpath:sql/truncateTenantSchema.sql"})
     public void givenToken_whenValidate_shouldReturnClaim() {
-        InternalUser user = new InternalUser();
+        TenantUser user = new TenantUser();
         user.setEmail("testing@gmail.com");
 
         String token = simpleJwtSpecialist.generate(user, "scopeList");
@@ -38,9 +38,9 @@ public class InternalJwtSpecialistTest extends InternalIntegrationTest {
     }
 
     @Test(expected = InvalidJwtException.class)
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
+    @Sql(scripts = {"classpath:sql/truncateTenantSchema.sql"})
     public void givenInvalidToken_whenValidate_shouldReturnClaim() {
-        InternalUser user = new InternalUser();
+        TenantUser user = new TenantUser();
         user.setEmail("testing@gmail.com");
 
         String token = simpleJwtSpecialist.generate(user, "scopeList");
@@ -50,9 +50,9 @@ public class InternalJwtSpecialistTest extends InternalIntegrationTest {
     }
 
     @Test(expected = InvalidJwtException.class)
-    @Sql(scripts = {"classpath:sql/truncateInternalSchema.sql"})
+    @Sql(scripts = {"classpath:sql/truncateTenantSchema.sql"})
     public void givenInvalidTokenType_whenValidate_shouldReturnClaim() {
-        InternalUser user = new InternalUser();
+        TenantUser user = new TenantUser();
         user.setEmail("testing@gmail.com");
 
         String token = simpleJwtSpecialist.generate(user, "scopeList");

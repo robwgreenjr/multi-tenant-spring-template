@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface InternalUserManager extends
     QueryManager<InternalUser, Integer>,
-    ListManager<InternalUser, Integer>,
+    ListManager<InternalUser>,
     Manager<InternalUser, Integer> {
     Optional<InternalUser> getByEmail(String email);
 }

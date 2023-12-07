@@ -81,20 +81,11 @@ public class InternalUserManagerImpl implements InternalUserManager {
 
     @Override
     public QueryResult<InternalUser> getList(Query<Integer> query) {
-        List<InternalUserEntity> entityList =
+        QueryResult<InternalUserEntity> entityList =
             userRepository.getList(query);
 
-        QueryResult<InternalUser> result = new QueryResult<>();
-        result.setData(userMapper.entityToList(entityList));
-        result.getMeta().setPageCount(entityList.size());
-
-        if (query.getLimit() != null) {
-            result.getMeta().setLimit(query.getLimit());
-        }
-
-        result.getMeta().setCount(userRepository.count(query));
-
-        return result;
+        return entityList.mapData(
+            userMapper.entityToList(entityList.getData()));
     }
 
     @Override

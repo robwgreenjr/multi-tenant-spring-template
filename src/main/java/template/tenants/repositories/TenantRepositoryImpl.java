@@ -2,10 +2,10 @@ package template.tenants.repositories;
 
 import org.springframework.stereotype.Repository;
 import template.database.models.Query;
+import template.database.models.QueryResult;
 import template.database.services.QueryBuilder;
 import template.tenants.entities.TenantEntity;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,7 +31,7 @@ public class TenantRepositoryImpl implements TenantRepository {
     }
 
     @Override
-    public List<TenantEntity> getList(Query<UUID> query) {
+    public QueryResult<TenantEntity> getList(Query<UUID> query) {
         return queryBuilder.getList(TenantEntity.class, query);
     }
 

@@ -22,10 +22,7 @@ import template.database.helpers.DoubleTable;
 import template.database.helpers.JoinTable;
 import template.database.helpers.SingleTable;
 import template.database.helpers.TripleTable;
-import template.database.models.ApplicationDataSource;
-import template.database.models.ColumnFilter;
-import template.database.models.DatabaseConnectionContext;
-import template.database.models.Query;
+import template.database.models.*;
 import template.helpers.TemplatePostgreSqlContainer;
 
 import javax.sql.DataSource;
@@ -62,10 +59,10 @@ public class QueryBuilderTest {
         "classpath:sql/database/queryBuilder.sql"})
     public void givenQuery_whenSingleTableEmpty_shouldReturnEmptyList() {
         Query<Integer> query = new Query<>();
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(0, actual.size());
+        assertEquals(0, actual.getData().size());
     }
 
     @Test
@@ -85,11 +82,11 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
-        assertEquals("test_2", actual.get(0).getStringColumn());
+        assertEquals(1, actual.getData().size());
+        assertEquals("test_2", actual.getData().get(0).getStringColumn());
     }
 
     @Test
@@ -109,12 +106,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals("test_1", actual.get(0).getStringColumn());
-        assertEquals("test_3", actual.get(1).getStringColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals("test_1", actual.getData().get(0).getStringColumn());
+        assertEquals("test_3", actual.getData().get(1).getStringColumn());
     }
 
     @Test
@@ -134,11 +131,11 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
-        assertEquals("test_2", actual.get(0).getStringColumn());
+        assertEquals(1, actual.getData().size());
+        assertEquals("test_2", actual.getData().get(0).getStringColumn());
     }
 
     @Test
@@ -158,12 +155,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals("test_2", actual.get(0).getStringColumn());
-        assertEquals("test_3", actual.get(1).getStringColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals("test_2", actual.getData().get(0).getStringColumn());
+        assertEquals("test_3", actual.getData().get(1).getStringColumn());
     }
 
     @Test
@@ -183,12 +180,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals("test_1", actual.get(0).getStringColumn());
-        assertEquals("test_2", actual.get(1).getStringColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals("test_1", actual.getData().get(0).getStringColumn());
+        assertEquals("test_2", actual.getData().get(1).getStringColumn());
     }
 
     @Test
@@ -208,12 +205,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals("test_2", actual.get(0).getStringColumn());
-        assertEquals("test_3", actual.get(1).getStringColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals("test_2", actual.getData().get(0).getStringColumn());
+        assertEquals("test_3", actual.getData().get(1).getStringColumn());
     }
 
     @Test
@@ -233,12 +230,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals("test_1", actual.get(0).getStringColumn());
-        assertEquals("test_2", actual.get(1).getStringColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals("test_1", actual.getData().get(0).getStringColumn());
+        assertEquals("test_2", actual.getData().get(1).getStringColumn());
     }
 
     @Test
@@ -258,12 +255,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
         assertEquals("this is a test for text number 1",
-            actual.get(0).getTextColumn());
+            actual.getData().get(0).getTextColumn());
     }
 
     @Test
@@ -283,14 +280,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
         assertEquals("this is a test for text number 2",
-            actual.get(0).getTextColumn());
+            actual.getData().get(0).getTextColumn());
         assertEquals("this is a test for text number 3",
-            actual.get(1).getTextColumn());
+            actual.getData().get(1).getTextColumn());
     }
 
     @Test
@@ -310,12 +307,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
         assertEquals("this is a test for text number 1",
-            actual.get(0).getTextColumn());
+            actual.getData().get(0).getTextColumn());
     }
 
     @Test
@@ -335,14 +332,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
         assertEquals("this is a test for text number 2",
-            actual.get(0).getTextColumn());
+            actual.getData().get(0).getTextColumn());
         assertEquals("this is a test for text number 3",
-            actual.get(1).getTextColumn());
+            actual.getData().get(1).getTextColumn());
     }
 
     @Test
@@ -362,14 +359,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
         assertEquals("this is a test for text number 1",
-            actual.get(0).getTextColumn());
+            actual.getData().get(0).getTextColumn());
         assertEquals("this is a test for text number 2",
-            actual.get(1).getTextColumn());
+            actual.getData().get(1).getTextColumn());
     }
 
     @Test
@@ -389,14 +386,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
         assertEquals("this is a test for text number 2",
-            actual.get(0).getTextColumn());
+            actual.getData().get(0).getTextColumn());
         assertEquals("this is a test for text number 3",
-            actual.get(1).getTextColumn());
+            actual.getData().get(1).getTextColumn());
     }
 
     @Test
@@ -416,14 +413,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
         assertEquals("this is a test for text number 1",
-            actual.get(0).getTextColumn());
+            actual.getData().get(0).getTextColumn());
         assertEquals("this is a test for text number 2",
-            actual.get(1).getTextColumn());
+            actual.getData().get(1).getTextColumn());
     }
 
     @Test
@@ -443,12 +440,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
         assertEquals(UUID.fromString("570c9397-1b91-4f46-9e91-8c8f030a01e0"),
-            actual.get(0).getUuidColumn());
+            actual.getData().get(0).getUuidColumn());
     }
 
     @Test
@@ -468,10 +465,10 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
     }
 
     @Test
@@ -491,10 +488,10 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
     }
 
     @Test
@@ -514,11 +511,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
-        assertEquals(Integer.valueOf(3), actual.get(0).getIntegerColumn());
+        assertEquals(1, actual.getData().size());
+        assertEquals(Integer.valueOf(3),
+            actual.getData().get(0).getIntegerColumn());
     }
 
     @Test
@@ -538,12 +536,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals(Integer.valueOf(2), actual.get(0).getIntegerColumn());
-        assertEquals(Integer.valueOf(3), actual.get(1).getIntegerColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals(Integer.valueOf(2),
+            actual.getData().get(0).getIntegerColumn());
+        assertEquals(Integer.valueOf(3),
+            actual.getData().get(1).getIntegerColumn());
     }
 
     @Test
@@ -563,11 +563,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
-        assertEquals(Integer.valueOf(3), actual.get(0).getIntegerColumn());
+        assertEquals(1, actual.getData().size());
+        assertEquals(Integer.valueOf(3),
+            actual.getData().get(0).getIntegerColumn());
     }
 
     @Test
@@ -587,12 +588,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals(Integer.valueOf(2), actual.get(0).getIntegerColumn());
-        assertEquals(Integer.valueOf(3), actual.get(1).getIntegerColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals(Integer.valueOf(2),
+            actual.getData().get(0).getIntegerColumn());
+        assertEquals(Integer.valueOf(3),
+            actual.getData().get(1).getIntegerColumn());
     }
 
     @Test
@@ -612,12 +615,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals(Integer.valueOf(1), actual.get(0).getIntegerColumn());
-        assertEquals(Integer.valueOf(2), actual.get(1).getIntegerColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals(Integer.valueOf(1),
+            actual.getData().get(0).getIntegerColumn());
+        assertEquals(Integer.valueOf(2),
+            actual.getData().get(1).getIntegerColumn());
     }
 
     @Test
@@ -637,12 +642,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals(Integer.valueOf(2), actual.get(0).getIntegerColumn());
-        assertEquals(Integer.valueOf(3), actual.get(1).getIntegerColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals(Integer.valueOf(2),
+            actual.getData().get(0).getIntegerColumn());
+        assertEquals(Integer.valueOf(3),
+            actual.getData().get(1).getIntegerColumn());
     }
 
     @Test
@@ -662,12 +669,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals(Integer.valueOf(1), actual.get(0).getIntegerColumn());
-        assertEquals(Integer.valueOf(2), actual.get(1).getIntegerColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals(Integer.valueOf(1),
+            actual.getData().get(0).getIntegerColumn());
+        assertEquals(Integer.valueOf(2),
+            actual.getData().get(1).getIntegerColumn());
     }
 
     @Test
@@ -687,11 +696,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
-        assertEquals(Double.valueOf(2.02), actual.get(0).getDoubleColumn());
+        assertEquals(1, actual.getData().size());
+        assertEquals(Double.valueOf(2.02),
+            actual.getData().get(0).getDoubleColumn());
     }
 
     @Test
@@ -711,12 +721,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals(Double.valueOf(2.02), actual.get(0).getDoubleColumn());
-        assertEquals(Double.valueOf(3.03), actual.get(1).getDoubleColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals(Double.valueOf(2.02),
+            actual.getData().get(0).getDoubleColumn());
+        assertEquals(Double.valueOf(3.03),
+            actual.getData().get(1).getDoubleColumn());
     }
 
     @Test
@@ -736,11 +748,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
-        assertEquals(Double.valueOf(2.02), actual.get(0).getDoubleColumn());
+        assertEquals(1, actual.getData().size());
+        assertEquals(Double.valueOf(2.02),
+            actual.getData().get(0).getDoubleColumn());
     }
 
     @Test
@@ -760,12 +773,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals(Double.valueOf(2.02), actual.get(0).getDoubleColumn());
-        assertEquals(Double.valueOf(3.03), actual.get(1).getDoubleColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals(Double.valueOf(2.02),
+            actual.getData().get(0).getDoubleColumn());
+        assertEquals(Double.valueOf(3.03),
+            actual.getData().get(1).getDoubleColumn());
     }
 
     @Test
@@ -785,12 +800,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals(Double.valueOf(1.01), actual.get(0).getDoubleColumn());
-        assertEquals(Double.valueOf(2.02), actual.get(1).getDoubleColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals(Double.valueOf(1.01),
+            actual.getData().get(0).getDoubleColumn());
+        assertEquals(Double.valueOf(2.02),
+            actual.getData().get(1).getDoubleColumn());
     }
 
     @Test
@@ -810,12 +827,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals(Double.valueOf(2.02), actual.get(0).getDoubleColumn());
-        assertEquals(Double.valueOf(3.03), actual.get(1).getDoubleColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals(Double.valueOf(2.02),
+            actual.getData().get(0).getDoubleColumn());
+        assertEquals(Double.valueOf(3.03),
+            actual.getData().get(1).getDoubleColumn());
     }
 
     @Test
@@ -835,12 +854,14 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals(Double.valueOf(1.01), actual.get(0).getDoubleColumn());
-        assertEquals(Double.valueOf(2.02), actual.get(1).getDoubleColumn());
+        assertEquals(2, actual.getData().size());
+        assertEquals(Double.valueOf(1.01),
+            actual.getData().get(0).getDoubleColumn());
+        assertEquals(Double.valueOf(2.02),
+            actual.getData().get(1).getDoubleColumn());
     }
 
     @Test
@@ -860,13 +881,13 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2021, zonedDateTime.getYear());
         assertEquals(1, zonedDateTime.getDayOfMonth());
@@ -890,12 +911,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2021, zonedDateTime.getYear());
         assertEquals(1, zonedDateTime.getDayOfMonth());
@@ -919,19 +940,19 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
         assertEquals(2, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2023, zonedDateTime.getYear());
         assertEquals(3, zonedDateTime.getMonthValue());
@@ -955,18 +976,18 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
         assertEquals(2, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2023, zonedDateTime.getYear());
         assertEquals(3, zonedDateTime.getMonthValue());
@@ -990,18 +1011,18 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2021, zonedDateTime.getYear());
         assertEquals(1, zonedDateTime.getMonthValue());
         assertEquals(1, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
@@ -1025,19 +1046,19 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
 
-        assertEquals(2, actual.size());
-        Instant instant = actual.get(0).getDateColumn();
+        assertEquals(2, actual.getData().size());
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
 
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
         assertEquals(2, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
 
         assertEquals(2023, zonedDateTime.getYear());
@@ -1062,19 +1083,19 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
 
-        assertEquals(2, actual.size());
-        Instant instant = actual.get(0).getDateColumn();
+        assertEquals(2, actual.getData().size());
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
 
         assertEquals(2021, zonedDateTime.getYear());
         assertEquals(1, zonedDateTime.getMonthValue());
         assertEquals(1, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
 
         assertEquals(2022, zonedDateTime.getYear());
@@ -1099,12 +1120,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
@@ -1128,18 +1149,18 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2021, zonedDateTime.getYear());
         assertEquals(1, zonedDateTime.getMonthValue());
         assertEquals(1, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2023, zonedDateTime.getYear());
         assertEquals(3, zonedDateTime.getMonthValue());
@@ -1163,12 +1184,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
@@ -1192,18 +1213,18 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
         assertEquals(2, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2023, zonedDateTime.getYear());
         assertEquals(3, zonedDateTime.getMonthValue());
@@ -1227,18 +1248,18 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2021, zonedDateTime.getYear());
         assertEquals(1, zonedDateTime.getMonthValue());
         assertEquals(1, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
@@ -1262,18 +1283,18 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        Instant instant = actual.get(0).getDateColumn();
+        assertEquals(2, actual.getData().size());
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
 
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
         assertEquals(2, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2023, zonedDateTime.getYear());
         assertEquals(3, zonedDateTime.getMonthValue());
@@ -1297,18 +1318,18 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2021, zonedDateTime.getYear());
         assertEquals(1, zonedDateTime.getMonthValue());
         assertEquals(1, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
@@ -1332,12 +1353,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2023, zonedDateTime.getYear());
         assertEquals(3, zonedDateTime.getMonthValue());
@@ -1361,18 +1382,18 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2021, zonedDateTime.getYear());
         assertEquals(1, zonedDateTime.getMonthValue());
         assertEquals(1, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
@@ -1396,12 +1417,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2023, zonedDateTime.getYear());
         assertEquals(3, zonedDateTime.getMonthValue());
@@ -1425,18 +1446,18 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
         assertEquals(2, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2023, zonedDateTime.getYear());
         assertEquals(3, zonedDateTime.getMonthValue());
@@ -1460,18 +1481,18 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2021, zonedDateTime.getYear());
         assertEquals(1, zonedDateTime.getMonthValue());
         assertEquals(1, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
@@ -1495,18 +1516,18 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
         assertEquals(2, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2023, zonedDateTime.getYear());
         assertEquals(3, zonedDateTime.getMonthValue());
@@ -1530,18 +1551,18 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
-        Instant instant = actual.get(0).getDateColumn();
+        assertEquals(2, actual.getData().size());
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
 
         assertEquals(2021, zonedDateTime.getYear());
         assertEquals(1, zonedDateTime.getMonthValue());
         assertEquals(1, zonedDateTime.getDayOfMonth());
 
-        instant = actual.get(1).getDateColumn();
+        instant = actual.getData().get(1).getDateColumn();
         zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2022, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
@@ -1565,12 +1586,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2023, zonedDateTime.getYear());
         assertEquals(1, zonedDateTime.getMonthValue());
@@ -1594,12 +1615,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2023, zonedDateTime.getYear());
         assertEquals(1, zonedDateTime.getMonthValue());
@@ -1623,12 +1644,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2023, zonedDateTime.getYear());
         assertEquals(1, zonedDateTime.getMonthValue());
@@ -1652,12 +1673,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(1, actual.size());
+        assertEquals(1, actual.getData().size());
 
-        Instant instant = actual.get(0).getDateColumn();
+        Instant instant = actual.getData().get(0).getDateColumn();
         ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
         assertEquals(2023, zonedDateTime.getYear());
         assertEquals(2, zonedDateTime.getMonthValue());
@@ -1681,10 +1702,10 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<SingleTable> actual =
+        QueryResult<SingleTable> actual =
             queryBuilder.getList(SingleTable.class, query);
 
-        assertEquals(2, actual.size());
+        assertEquals(2, actual.getData().size());
     }
 
     @Test
@@ -1704,11 +1725,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<DoubleTable> actual =
+        QueryResult<DoubleTable> actual =
             queryDoubleBuilder.getList(DoubleTable.class, query);
 
-        assertEquals(1, actual.size());
-        assertEquals("nested_test_1", actual.get(0).getStringColumn());
+        assertEquals(1, actual.getData().size());
+        assertEquals("nested_test_1",
+            actual.getData().get(0).getStringColumn());
     }
 
     @Test
@@ -1728,11 +1750,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<TripleTable> actual =
+        QueryResult<TripleTable> actual =
             queryTripleBuilder.getList(TripleTable.class, query);
 
-        assertEquals(1, actual.size());
-        assertEquals("nested_nested_test_1", actual.get(0).getStringColumn());
+        assertEquals(1, actual.getData().size());
+        assertEquals("nested_nested_test_1",
+            actual.getData().get(0).getStringColumn());
     }
 
     @Test
@@ -1752,11 +1775,11 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<JoinTable> actual =
+        QueryResult<JoinTable> actual =
             queryJoinBuilder.getList(JoinTable.class, query);
 
-        assertEquals(1, actual.size());
-        assertEquals("join_test_1", actual.get(0).getName());
+        assertEquals(1, actual.getData().size());
+        assertEquals("join_test_1", actual.getData().get(0).getName());
     }
 
     @Test
@@ -1785,12 +1808,12 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<JoinTable> actual =
+        QueryResult<JoinTable> actual =
             queryJoinBuilder.getList(JoinTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals("join_test_1", actual.get(0).getName());
-        assertEquals("join_test_2", actual.get(1).getName());
+        assertEquals(2, actual.getData().size());
+        assertEquals("join_test_1", actual.getData().get(0).getName());
+        assertEquals("join_test_2", actual.getData().get(1).getName());
     }
 
     @Test
@@ -1822,12 +1845,12 @@ public class QueryBuilderTest {
         String[] list = {"name"};
         sortList.put(QuerySort.DESC, list);
         query.setSortList(sortList);
-        List<JoinTable> actual =
+        QueryResult<JoinTable> actual =
             queryJoinBuilder.getList(JoinTable.class, query);
 
-        assertEquals(2, actual.size());
-        assertEquals("join_test_1", actual.get(1).getName());
-        assertEquals("join_test_2", actual.get(0).getName());
+        assertEquals(2, actual.getData().size());
+        assertEquals("join_test_1", actual.getData().get(1).getName());
+        assertEquals("join_test_2", actual.getData().get(0).getName());
     }
 
     @Test
@@ -1856,10 +1879,10 @@ public class QueryBuilderTest {
         filterList.add(columnFilterList);
         query.setFilterList(filterList);
 
-        List<JoinTable> actual =
+        QueryResult<JoinTable> actual =
             queryJoinBuilder.getList(JoinTable.class, query);
 
-        assertEquals(0, actual.size());
+        assertEquals(0, actual.getData().size());
     }
 
     @TestConfiguration

@@ -16,6 +16,14 @@ public class QueryResult<T> {
         this.data = data;
     }
 
+    public <D> QueryResult<D> mapData(List<D> data) {
+        QueryResult<D> mappedData = new QueryResult<>();
+        mappedData.setMeta(this.getMeta());
+        mappedData.setData(data);
+
+        return mappedData;
+    }
+
     public List<T> getData() {
         return data;
     }

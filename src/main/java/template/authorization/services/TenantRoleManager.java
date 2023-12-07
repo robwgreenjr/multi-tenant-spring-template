@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface TenantRoleManager
     extends QueryManager<TenantRole, Integer>,
-    ListManager<TenantRole, Integer>,
+    ListManager<TenantRole>,
     Manager<TenantRole, Integer> {
 
     TenantRole getById(Integer id);
