@@ -47,10 +47,7 @@ public class TenantUserLogin
         String token =
             simpleJwtSpecialist.generate(userPassword.getUser(), scopeList);
 
-        Jwt jwtModel = new Jwt();
-        jwtModel.setToken(token);
-
-        return jwtModel;
+        return new Jwt(token);
     }
 
     @Override

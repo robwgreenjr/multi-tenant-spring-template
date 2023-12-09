@@ -3,6 +3,13 @@ package template.authentication.models;
 public class Jwt {
     private String token;
 
+    public Jwt() {
+    }
+
+    public Jwt(String token) {
+        this.token = token;
+    }
+
     public String getToken() {
         return token;
     }

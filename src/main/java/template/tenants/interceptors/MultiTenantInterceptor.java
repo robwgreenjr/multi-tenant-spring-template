@@ -21,6 +21,7 @@ import template.tenants.models.TenantDatabase;
 import template.tenants.services.TenantDatabaseManager;
 import template.tenants.services.TenantManager;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class MultiTenantInterceptor implements HandlerInterceptor {
@@ -106,21 +107,21 @@ public class MultiTenantInterceptor implements HandlerInterceptor {
             }
         }
 
-        Tenant tenant;
+        Optional<Tenant> tenant;
         try {
             tenant = tenantManager.getById(tenantId);
         } catch (Exception exception) {
             return true;
         }
 
-        if (tenant == null) {
+        if (tenant.isEmpty()) {
             return true;
         }
 
-        TenantDatabase tenantDatabase =
-            tenantDatabaseManager.getByTenant(tenant);
+        Optional<TenantDatabase> tenantDatabase =
+            tenantDatabaseManager.getByTenant(tenant.get());
 
-        if (tenantDatabase == null) {
+        if (tenantDatabase.isEmpty()) {
             return true;
         }
 
@@ -128,13 +129,14 @@ public class MultiTenantInterceptor implements HandlerInterceptor {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName(environment.getProperty(
             GlobalVariable.DATABASE_DRIVER_CLASS_NAME));
-        dataSource.setJdbcUrl(tenantDatabase.getUrl());
+        dataSource.setJdbcUrl(tenantDatabase.get().getUrl());
         dataSource.setUsername(
-            cryptoEncoder.decode(tenantDatabase.getUsername()));
+            cryptoEncoder.decode(tenantDatabase.get().getUsername()));
         dataSource.setPassword(
-            cryptoEncoder.decode(tenantDatabase.getPassword()));
-        dataSource.setMinimumIdle(tenantDatabase.getMinimumIdle());
-        dataSource.setMaximumPoolSize(tenantDatabase.getMaximumPoolSize());
+            cryptoEncoder.decode(tenantDatabase.get().getPassword()));
+        dataSource.setMinimumIdle(tenantDatabase.get().getMinimumIdle());
+        dataSource.setMaximumPoolSize(
+            tenantDatabase.get().getMaximumPoolSize());
         tenantDataSource.setDataSource(dataSource);
 
         DatabaseConnectionContext.setCurrentDatabaseConnection(

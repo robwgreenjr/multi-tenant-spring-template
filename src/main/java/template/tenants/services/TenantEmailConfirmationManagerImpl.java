@@ -54,7 +54,7 @@ public class TenantEmailConfirmationManagerImpl
     }
 
     @Override
-    public TenantEmailConfirmation getByToken(String token) {
+    public Optional<TenantEmailConfirmation> getByToken(String token) {
         UUID uuid;
         try {
             uuid = UUID.fromString(token);
@@ -71,7 +71,7 @@ public class TenantEmailConfirmationManagerImpl
                 "Token not found.");
         }
 
-        return tenantEmailConfirmationMapper.entityToObject(
-            tenantEmailConfirmationEntity.get());
+        return Optional.of(tenantEmailConfirmationMapper.entityToObject(
+            tenantEmailConfirmationEntity.get()));
     }
 }

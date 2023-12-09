@@ -12,6 +12,7 @@ import template.tenants.models.Tenant;
 import template.tenants.models.TenantDatabase;
 import template.tenants.repositories.TenantDatabaseRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -60,10 +61,10 @@ public class TenantDatabaseManagerImpl implements TenantDatabaseManager {
     }
 
     @Override
-    public TenantDatabase getByTenant(Tenant tenant) {
-        TenantDatabaseEntity tenantDatabase =
+    public Optional<TenantDatabase> getByTenant(Tenant tenant) {
+        Optional<TenantDatabaseEntity> tenantDatabase =
             tenantDatabaseRepository.getByTenant(tenantMapper.toEntity(tenant));
 
-        return tenantDatabaseMapper.toTenantDatabase(tenantDatabase);
+        return tenantDatabase.map(tenantDatabaseMapper::toTenantDatabase);
     }
 }

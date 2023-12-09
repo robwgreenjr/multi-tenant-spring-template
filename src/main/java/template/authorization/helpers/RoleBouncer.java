@@ -4,10 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import template.authorization.exceptions.NotAuthorizedException;
-import template.authorization.models.InternalPermission;
-import template.authorization.models.InternalRole;
-import template.authorization.models.WhiteListProvider;
+import template.authorization.models.*;
 import template.authorization.services.InternalRoleManager;
+import template.authorization.services.TenantRoleManager;
 import template.authorization.utilities.RoleDelegator;
 import template.global.constants.EnvironmentVariable;
 import template.global.constants.GlobalVariable;
@@ -16,14 +15,17 @@ import java.util.List;
 
 @Service
 public class RoleBouncer implements AuthorizationBouncer {
-    private final InternalRoleManager roleManager;
+    private final InternalRoleManager internalRoleManager;
+    private final TenantRoleManager tenantRoleManager;
     private final RoleDelegator roleDelegator;
     private final Environment env;
 
-    public RoleBouncer(InternalRoleManager roleManager,
+    public RoleBouncer(InternalRoleManager internalRoleManager,
+                       TenantRoleManager tenantRoleManager,
                        RoleDelegator roleDelegator,
                        Environment env) {
-        this.roleManager = roleManager;
+        this.internalRoleManager = internalRoleManager;
+        this.tenantRoleManager = tenantRoleManager;
         this.roleDelegator = roleDelegator;
         this.env = env;
     }
@@ -45,30 +47,56 @@ public class RoleBouncer implements AuthorizationBouncer {
             if (request.getRequestURI().contains(white)) return;
         }
 
-        // Run through any potential authorization methods
-        List<InternalRole> roleModels;
+        if (request.getRequestURI().contains("/internal")) {
+            List<InternalRole> roles;
+            // Use provided user id to check if user has any roles
+            Integer userId = (Integer) request.getAttribute("user_id");
+            if (userId != null) {
+                roles = internalRoleManager.getListByUserId(userId);
 
-        // TODO: Handle different types of users internal and admin
-        // Use provided user id to check if user has any roles
-        Integer userId = (Integer) request.getAttribute("user_id");
-        if (userId != null) {
-            roleModels = roleManager.getListByUserId(userId);
+                if (verifyInternalPermission(scope, roles)) return;
+            }
 
-            if (verifyPermission(scope, roleModels)) return;
+            if (request.getRequestURI().equals("/internal/user/" + userId))
+                return;
+        } else {
+            List<TenantRole> roles;
+            Integer userId = (Integer) request.getAttribute("user_id");
+            if (userId != null) {
+                roles = tenantRoleManager.getListByUserId(userId);
+
+                if (verifyPermission(scope, roles)) return;
+            }
+
+            if (request.getRequestURI().equals("/user/" + userId))
+                return;
         }
-
-        if (request.getRequestURI().equals("/user/" + userId)) return;
 
         throw new NotAuthorizedException(scope);
     }
 
-    private boolean verifyPermission(String scope,
-                                     List<InternalRole> roleModelList) {
+    private boolean verifyInternalPermission(String scope,
+                                             List<InternalRole> internalRoleList) {
         boolean verified = false;
 
-        for (InternalRole roleModel : roleModelList) {
-            for (InternalPermission permissionModel : roleModel.getPermissions()) {
-                if (permissionModel.validateScope(scope)) {
+        for (InternalRole role : internalRoleList) {
+            for (InternalPermission permission : role.getPermissions()) {
+                if (permission.validateScope(scope)) {
+                    verified = true;
+                }
+            }
+        }
+
+        return verified;
+    }
+
+    private boolean verifyPermission(String scope,
+                                     List<TenantRole> roleList) {
+        boolean verified = false;
+
+        for (TenantRole role : roleList) {
+            for (TenantPermission permission : role.getPermissions()) {
+                if (permission.validateScope(scope)) {
                     verified = true;
                 }
             }

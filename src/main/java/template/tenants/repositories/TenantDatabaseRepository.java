@@ -11,6 +11,6 @@ public interface TenantDatabaseRepository
     extends QueryRepository<TenantDatabaseEntity, Integer>,
     Repository<TenantDatabaseEntity> {
     Optional<TenantDatabaseEntity> getById(Integer id);
-    
-    TenantDatabaseEntity getByTenant(TenantEntity tenant);
+
+    Optional<TenantDatabaseEntity> getByTenant(TenantEntity tenant);
 }

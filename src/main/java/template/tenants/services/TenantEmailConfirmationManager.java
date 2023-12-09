@@ -2,8 +2,11 @@ package template.tenants.services;
 
 import template.tenants.models.TenantEmailConfirmation;
 
-public interface TenantEmailConfirmationManager {
-    TenantEmailConfirmation create(TenantEmailConfirmation tenantEmailConfirmationModel);
+import java.util.Optional;
 
-    TenantEmailConfirmation getByToken(String token);
+public interface TenantEmailConfirmationManager {
+    TenantEmailConfirmation create(
+        TenantEmailConfirmation tenantEmailConfirmationModel);
+
+    Optional<TenantEmailConfirmation> getByToken(String token);
 }

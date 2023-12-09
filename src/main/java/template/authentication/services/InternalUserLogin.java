@@ -48,10 +48,7 @@ public class InternalUserLogin
         String token =
             simpleJwtSpecialist.generate(userPassword.getUser(), scopeList);
 
-        Jwt jwtModel = new Jwt();
-        jwtModel.setToken(token);
-
-        return jwtModel;
+        return new Jwt(token);
     }
 
     @Override

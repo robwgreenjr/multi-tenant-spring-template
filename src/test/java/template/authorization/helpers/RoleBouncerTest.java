@@ -7,10 +7,11 @@ import org.mockito.Mockito;
 import org.springframework.core.env.Environment;
 import org.springframework.mock.web.MockHttpServletRequest;
 import template.authorization.exceptions.NotAuthorizedException;
-import template.authorization.models.InternalPermission;
-import template.authorization.models.InternalRole;
+import template.authorization.models.TenantPermission;
+import template.authorization.models.TenantRole;
 import template.authorization.models.WhiteListProvider;
 import template.authorization.services.InternalRoleManager;
+import template.authorization.services.TenantRoleManager;
 import template.authorization.utilities.RoleDelegator;
 
 import java.util.ArrayList;
@@ -24,8 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 public class RoleBouncerTest {
-    private final InternalRoleManager roleManager =
+    private final InternalRoleManager internalRoleManager =
         Mockito.mock(InternalRoleManager.class);
+    private final TenantRoleManager roleManager =
+        Mockito.mock(TenantRoleManager.class);
     private final RoleDelegator roleDelegator =
         Mockito.mock(RoleDelegator.class);
     private final Environment environment = Mockito.mock(Environment.class);
@@ -33,7 +36,9 @@ public class RoleBouncerTest {
 
     @BeforeEach
     void initUseCase() {
-        roleBouncer = new RoleBouncer(roleManager, roleDelegator, environment);
+        roleBouncer =
+            new RoleBouncer(internalRoleManager, roleManager, roleDelegator,
+                environment);
     }
 
     @Test
@@ -69,15 +74,15 @@ public class RoleBouncerTest {
         httpServletRequest.setAttribute("user_id", 1);
         when(roleDelegator.buildScope(httpServletRequest)).thenReturn(
             "test.read");
-        InternalPermission permissionModel = new InternalPermission();
+        TenantPermission permissionModel = new TenantPermission();
         permissionModel.setName("test");
         permissionModel.setType("read");
-        Set<InternalPermission> permissionModelSet = new HashSet<>();
+        Set<TenantPermission> permissionModelSet = new HashSet<>();
         permissionModelSet.add(permissionModel);
 
-        InternalRole roleModel = new InternalRole();
+        TenantRole roleModel = new TenantRole();
         roleModel.setPermissions(permissionModelSet);
-        List<InternalRole> roleModelList = new ArrayList<>();
+        List<TenantRole> roleModelList = new ArrayList<>();
         roleModelList.add(roleModel);
         when(roleManager.getListByUserId(1)).thenReturn(roleModelList);
 

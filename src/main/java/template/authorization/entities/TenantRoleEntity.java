@@ -23,13 +23,13 @@ public class TenantRoleEntity {
     private String description;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "authorization_role_permission", schema = "internal",
+    @JoinTable(name = "authorization_role_permission", schema = "tenant",
         joinColumns = {@JoinColumn(name = "role_id")},
         inverseJoinColumns = {@JoinColumn(name = "permission_id")})
     private Set<TenantPermissionEntity> permissions = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "authorization_role_user", schema = "internal",
+    @JoinTable(name = "authorization_role_user", schema = "tenant",
         joinColumns = {@JoinColumn(name = "role_id")},
         inverseJoinColumns = {@JoinColumn(name = "user_id")})
     private Set<TenantUserEntity> users = new HashSet<>();

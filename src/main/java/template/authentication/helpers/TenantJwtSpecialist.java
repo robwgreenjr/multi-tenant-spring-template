@@ -10,24 +10,27 @@ import template.global.models.ConfigurationModel;
 import template.global.services.ConfigurationManager;
 import template.tenants.mappers.TenantUserMapper;
 import template.tenants.models.TenantUser;
+import template.tenants.resolvers.TenantIdentifierResolver;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
-import java.util.UUID;
 
 @Service("TenantJwtSpecialist")
 public class TenantJwtSpecialist implements JwtSpecialist<TenantUser> {
     static Integer zoneOffSet = -5;
     private final ConfigurationManager authenticationConfigurationManager;
     private final TenantUserMapper tenantUserMapper;
+    private final TenantIdentifierResolver currentTenant;
 
     public TenantJwtSpecialist(
         ConfigurationManager authenticationConfigurationManager,
-        TenantUserMapper tenantUserMapper) {
+        TenantUserMapper tenantUserMapper,
+        TenantIdentifierResolver currentTenant) {
         this.authenticationConfigurationManager =
             authenticationConfigurationManager;
         this.tenantUserMapper = tenantUserMapper;
+        this.currentTenant = currentTenant;
     }
 
     @Override
@@ -53,18 +56,11 @@ public class TenantJwtSpecialist implements JwtSpecialist<TenantUser> {
         String jwt;
 
         try {
-            UUID tenantId = null;
-            try {
-                // TODO: fix me...please
-                tenantId = UUID.randomUUID();
-            } catch (Exception ignore) {
-                // If there is an error then we aren't dealing with a proper tenant ID
-            }
-
             jwt = Jwts.builder().setSubject(user.getEmail())
                 .claim("userDetails", tenantUserMapper.toDto(user))
                 .claim("scopes", scopeList.isEmpty() ? "" : scopeList)
-                .claim("tenantId", tenantId == null ? "" : tenantId.toString())
+                .claim("tenantId",
+                    currentTenant.resolveCurrentTenantIdentifier())
                 .signWith(SignatureAlgorithm.HS256, jwtSecret.getValue())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(Date.from(

@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import template.tenants.entities.TenantDatabaseEntity;
 import template.tenants.entities.TenantEntity;
 
+import java.util.Optional;
+
 public interface ITenantDatabaseRepository
     extends JpaRepository<TenantDatabaseEntity, Integer>,
     JpaSpecificationExecutor<TenantDatabaseEntity> {
-    TenantDatabaseEntity findByTenant(TenantEntity tenant);
+    Optional<TenantDatabaseEntity> findByTenant(TenantEntity tenant);
 }

@@ -67,25 +67,25 @@ public class TenantManagerImpl implements TenantManager {
     }
 
     @Override
-    public Tenant getByEmail(String email) {
+    public Optional<Tenant> getByEmail(String email) {
         Optional<TenantEntity> tenant = tenantRepository.getByEmail(email);
 
         if (tenant.isEmpty()) {
             throw new TenantNotFoundException();
         }
 
-        return tenantMapper.entityToObject(tenant.get());
+        return Optional.of(tenantMapper.entityToObject(tenant.get()));
     }
 
     @Override
-    public Tenant getById(UUID id) {
+    public Optional<Tenant> getById(UUID id) {
         Optional<TenantEntity> tenant = tenantRepository.getById(id);
 
         if (tenant.isEmpty()) {
             throw new TenantNotFoundException();
         }
 
-        return tenantMapper.entityToObject(tenant.get());
+        return Optional.of(tenantMapper.entityToObject(tenant.get()));
     }
 
     @Override
@@ -114,7 +114,7 @@ public class TenantManagerImpl implements TenantManager {
     }
 
     @Override
-    public Tenant getBySubdomain(String subdomain) {
+    public Optional<Tenant> getBySubdomain(String subdomain) {
         Optional<TenantEntity> tenant =
             tenantRepository.getBySubdomain(subdomain);
 
@@ -122,7 +122,7 @@ public class TenantManagerImpl implements TenantManager {
             throw new TenantNotFoundException();
         }
 
-        return tenantMapper.entityToObject(tenant.get());
+        return Optional.of(tenantMapper.entityToObject(tenant.get()));
     }
 
     @Override

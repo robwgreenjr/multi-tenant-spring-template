@@ -37,7 +37,7 @@ public class TenantDatabaseRepositoryImpl implements TenantDatabaseRepository {
     }
 
     @Override
-    public TenantDatabaseEntity getByTenant(TenantEntity tenant) {
+    public Optional<TenantDatabaseEntity> getByTenant(TenantEntity tenant) {
         return tenantDatabaseRepository.findByTenant(tenant);
     }
 

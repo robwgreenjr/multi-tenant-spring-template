@@ -21,6 +21,7 @@ import template.tenants.services.TenantDatabaseManager;
 import template.tenants.services.TenantManager;
 
 import java.util.LinkedHashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service("InternalJwtDecipher")
@@ -112,27 +113,27 @@ public class InternalJwtDecipher implements AuthenticationProcessor {
             tenantId = UUID.fromString(claim.get("tenantId").toString());
         }
 
-        Tenant tenant;
+        Optional<Tenant> tenant;
         try {
             tenant = tenantManager.getById(tenantId);
         } catch (Exception exception) {
             return;
         }
 
-        if (tenant == null) {
+        if (tenant.isEmpty()) {
             return;
         }
 
-        currentTenant.setCurrentTenant(tenant.getId());
+        currentTenant.setCurrentTenant(tenant.get().getId());
 
-        TenantDatabase tenantDatabase;
+        Optional<TenantDatabase> tenantDatabase;
         try {
-            tenantDatabase = tenantDatabaseManager.getByTenant(tenant);
+            tenantDatabase = tenantDatabaseManager.getByTenant(tenant.get());
         } catch (Exception exception) {
             return;
         }
 
-        if (tenantDatabase == null) {
+        if (tenantDatabase.isEmpty()) {
             return;
         }
 
@@ -140,13 +141,14 @@ public class InternalJwtDecipher implements AuthenticationProcessor {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName(
             env.getProperty(GlobalVariable.DATABASE_DRIVER_CLASS_NAME));
-        dataSource.setJdbcUrl(tenantDatabase.getUrl());
+        dataSource.setJdbcUrl(tenantDatabase.get().getUrl());
         dataSource.setUsername(
-            cryptoEncoder.decode(tenantDatabase.getUsername()));
+            cryptoEncoder.decode(tenantDatabase.get().getUsername()));
         dataSource.setPassword(
-            cryptoEncoder.decode(tenantDatabase.getPassword()));
-        dataSource.setMinimumIdle(tenantDatabase.getMinimumIdle());
-        dataSource.setMaximumPoolSize(tenantDatabase.getMaximumPoolSize());
+            cryptoEncoder.decode(tenantDatabase.get().getPassword()));
+        dataSource.setMinimumIdle(tenantDatabase.get().getMinimumIdle());
+        dataSource.setMaximumPoolSize(
+            tenantDatabase.get().getMaximumPoolSize());
         tenantDataSource.setDataSource(dataSource);
 
         DatabaseConnectionContext.setCurrentDatabaseConnection(

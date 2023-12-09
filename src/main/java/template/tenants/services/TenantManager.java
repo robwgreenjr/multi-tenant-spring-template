@@ -5,14 +5,15 @@ import template.global.services.Manager;
 import template.global.services.QueryManager;
 import template.tenants.models.Tenant;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public interface TenantManager extends QueryManager<Tenant, UUID>,
     Manager<Tenant, UUID> {
-    Tenant getById(UUID id);
+    Optional<Tenant> getById(UUID id);
 
-    Tenant getByEmail(String email);
+    Optional<Tenant> getByEmail(String email);
 
-    Tenant getBySubdomain(String subdomain);
+    Optional<Tenant> getBySubdomain(String subdomain);
 }
