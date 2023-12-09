@@ -54,17 +54,15 @@ public class TenantEmailConfirmationManagerImpl
     }
 
     @Override
-    public Optional<TenantEmailConfirmation> getByToken(String token) {
-        UUID uuid;
-        try {
-            uuid = UUID.fromString(token);
-        } catch (Exception exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                "Invalid token provided.");
-        }
+    public void delete(TenantEmailConfirmation tenantEmailConfirmation) {
+        tenantEmailConfirmationRepository.delete(
+            tenantEmailConfirmationMapper.toEntity(tenantEmailConfirmation));
+    }
 
+    @Override
+    public Optional<TenantEmailConfirmation> getByToken(UUID token) {
         Optional<TenantEmailConfirmationEntity> tenantEmailConfirmationEntity =
-            tenantEmailConfirmationRepository.getByToken(uuid);
+            tenantEmailConfirmationRepository.getByToken(token);
 
         if (tenantEmailConfirmationEntity.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,

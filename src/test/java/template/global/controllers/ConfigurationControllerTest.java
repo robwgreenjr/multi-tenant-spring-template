@@ -33,7 +33,8 @@ public class ConfigurationControllerTest extends InternalIntegrationTest {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response =
-            restTemplate.exchange("/configuration/JWT_SECRET", HttpMethod.GET,
+            restTemplate.exchange("/internal/configuration/JWT_SECRET",
+                HttpMethod.GET,
                 entity,
                 String.class);
 
@@ -57,7 +58,7 @@ public class ConfigurationControllerTest extends InternalIntegrationTest {
 
         HttpHeaders headers = new HttpHeaders();
 
-        restTemplate.exchange("/configuration", HttpMethod.PATCH,
+        restTemplate.exchange("/internal/configuration", HttpMethod.PATCH,
             new HttpEntity<>(configuration, headers),
             String.class);
 

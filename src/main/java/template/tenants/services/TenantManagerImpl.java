@@ -38,6 +38,7 @@ public class TenantManagerImpl implements TenantManager {
             throw new InvalidTenantEmailException();
         }
 
+        // This is for template only. You may want to prevent free mail from being set.
         tenant.setSubdomainFromEmail();
 
         TenantEntity newTenant = tenantMapper.toEntity(tenant);

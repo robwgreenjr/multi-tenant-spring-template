@@ -17,7 +17,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("internal")
 public class TenantController {
-
     private final TenantManager tenantManager;
     private final TenantMapper tenantMapper;
     private final ParameterProcessor<UUID> parameterSetter;

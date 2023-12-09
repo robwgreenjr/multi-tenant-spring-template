@@ -1,14 +1,14 @@
 package template.global.controllers;
 
+import org.springframework.web.bind.annotation.*;
 import template.database.helpers.DatabaseExceptionHandler;
 import template.global.dtos.ConfigurationDto;
 import template.global.mappers.ConfigurationMapper;
 import template.global.models.ConfigurationModel;
 import template.global.services.ConfigurationManager;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("configuration")
+@RequestMapping("internal/configuration")
 public class ConfigurationController {
     private final ConfigurationManager configurationManager;
     private final ConfigurationMapper configurationMapper;
@@ -40,7 +40,8 @@ public class ConfigurationController {
 
     @PatchMapping()
     public ConfigurationDto update(@RequestBody
-                                   ConfigurationDto configurationDto) throws Exception {
+                                   ConfigurationDto configurationDto)
+        throws Exception {
         ConfigurationModel configurationModel =
             configurationMapper.configurationDtoToConfigurationModel(
                 configurationDto);

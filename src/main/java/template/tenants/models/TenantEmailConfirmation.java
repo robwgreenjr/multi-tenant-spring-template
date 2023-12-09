@@ -9,6 +9,13 @@ public class TenantEmailConfirmation {
     private Tenant tenant;
     private Instant createdOn;
 
+    public TenantEmailConfirmation(Tenant tenant) {
+        this.tenant = tenant;
+    }
+
+    public TenantEmailConfirmation() {
+    }
+
     public UUID getToken() {
         return token;
     }

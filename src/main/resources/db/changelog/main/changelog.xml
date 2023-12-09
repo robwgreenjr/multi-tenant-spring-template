@@ -49,4 +49,12 @@
         <sqlFile encoding="utf8"
                  path="db/changelog/main/seed/configuration.sql"/>
     </changeSet>
+    <changeSet id="seed_initial_permissions" author="Rob Green">
+        <sqlFile encoding="utf8"
+                 path="db/changelog/main/seed/initial_permissions.sql"/>
+    </changeSet>
+    <changeSet id="seed_initial_users" author="Rob Green">
+        <sqlFile encoding="utf8"
+                 path="db/changelog/main/seed/initial_users.sql"/>
+    </changeSet>
 </databaseChangeLog>
