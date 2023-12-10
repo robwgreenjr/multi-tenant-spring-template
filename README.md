@@ -1,5 +1,22 @@
 # Multi-Tenant Spring Template
 
+This is a template to show a generic multi-tenant spring project. Covering a lot
+of standard parts of building an application e.g. test suite, clean
+architecture,
+ORM, migrations, etc.
+
+If you were to apply this to a real multi-tenant project you may want to split
+the Internal & Tenant application code into separate repos, the combination of
+the two in one is simply to show an example.
+
+This project originally started out as a how-to setup a multi-tenant project
+when tenants are using completely separate databases. After that was achieved I
+went ahead and changed it to default to mixing tenants in the same database (
+tenant_id in each row).
+
+You could always use the tenant_id per row method and migrate later to having
+tenants in their own database or separate tenants within schemas.
+
 ## Project Structure
 
 ```
