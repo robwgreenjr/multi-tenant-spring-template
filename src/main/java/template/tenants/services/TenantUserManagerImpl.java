@@ -32,7 +32,6 @@ public class TenantUserManagerImpl implements TenantUserManager {
     @Override
     public TenantUser create(TenantUser user) {
         TenantUserEntity newEntity = userMapper.toEntity(user);
-
         userRepository.save(newEntity);
 
         TenantUser newUser = userMapper.entityToObject(newEntity);

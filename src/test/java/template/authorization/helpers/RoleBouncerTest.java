@@ -74,17 +74,17 @@ public class RoleBouncerTest {
         httpServletRequest.setAttribute("user_id", 1);
         when(roleDelegator.buildScope(httpServletRequest)).thenReturn(
             "test.read");
-        TenantPermission permissionModel = new TenantPermission();
-        permissionModel.setName("test");
-        permissionModel.setType("read");
-        Set<TenantPermission> permissionModelSet = new HashSet<>();
-        permissionModelSet.add(permissionModel);
+        TenantPermission permission = new TenantPermission();
+        permission.setName("test");
+        permission.setType("read");
+        Set<TenantPermission> permissionSet = new HashSet<>();
+        permissionSet.add(permission);
 
-        TenantRole roleModel = new TenantRole();
-        roleModel.setPermissions(permissionModelSet);
-        List<TenantRole> roleModelList = new ArrayList<>();
-        roleModelList.add(roleModel);
-        when(roleManager.getListByUserId(1)).thenReturn(roleModelList);
+        TenantRole role = new TenantRole();
+        role.setPermissions(permissionSet);
+        List<TenantRole> roleList = new ArrayList<>();
+        roleList.add(role);
+        when(roleManager.getListByUserId(1)).thenReturn(roleList);
 
         assertDoesNotThrow(() -> roleBouncer.authorize(httpServletRequest));
     }

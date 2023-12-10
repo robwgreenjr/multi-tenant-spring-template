@@ -68,23 +68,23 @@ public class TenantPermissionController {
     public ResponseEntity<TenantPermissionDto> save(
         @RequestBody TenantPermissionDto permissionDto)
         throws Exception {
-        TenantPermission permissionModel =
+        TenantPermission permission =
             permissionMapper.dtoToObject(permissionDto);
 
-        permissionModel = permissionManager.create(permissionModel);
+        permission = permissionManager.create(permission);
 
-        permissionDto = permissionMapper.toDto(permissionModel);
+        permissionDto = permissionMapper.toDto(permission);
         return ResponseEntity.status(HttpStatus.CREATED).body(permissionDto);
     }
 
     @PostMapping("permissions")
     public ResponseEntity<List<TenantPermissionDto>> saveAll(
         @RequestBody List<TenantPermissionDto> permissionDtoList) {
-        List<TenantPermission> permissionModelList =
+        List<TenantPermission> permissionList =
             permissionMapper.dtoToList(permissionDtoList);
 
         List<TenantPermission> result =
-            permissionManager.createAll(permissionModelList);
+            permissionManager.createAll(permissionList);
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(permissionMapper.toDtoList(result));
@@ -94,11 +94,11 @@ public class TenantPermissionController {
     public List<TenantPermissionDto> updateAll(
         @RequestBody List<TenantPermissionDto> permissionDtoList)
         throws Exception {
-        List<TenantPermission> permissionModelList =
+        List<TenantPermission> permissionList =
             permissionMapper.dtoToList(permissionDtoList);
 
         List<TenantPermission> result =
-            permissionManager.updateAll(permissionModelList);
+            permissionManager.updateAll(permissionList);
 
         return permissionMapper.toDtoList(result);
     }
@@ -108,13 +108,12 @@ public class TenantPermissionController {
         @RequestBody TenantPermissionDto permissionDto,
         @PathVariable Integer id)
         throws Exception {
-        TenantPermission permissionModel =
+        TenantPermission permission =
             permissionMapper.dtoToObject(permissionDto);
 
-        permissionModel = permissionManager.update(id, permissionModel);
+        permission = permissionManager.update(id, permission);
 
-        permissionDto = permissionMapper.toDto(
-            permissionModel);
+        permissionDto = permissionMapper.toDto(permission);
         return ResponseEntity.status(HttpStatus.OK).body(permissionDto);
     }
 
@@ -123,12 +122,12 @@ public class TenantPermissionController {
         @RequestBody TenantPermissionDto permissionDto,
         @PathVariable Integer id)
         throws Exception {
-        TenantPermission permissionModel =
+        TenantPermission permission =
             permissionMapper.dtoToObject(permissionDto);
 
-        permissionModel = permissionManager.updatePartial(id, permissionModel);
+        permission = permissionManager.updatePartial(id, permission);
 
-        permissionDto = permissionMapper.toDto(permissionModel);
+        permissionDto = permissionMapper.toDto(permission);
         return ResponseEntity.status(HttpStatus.OK).body(permissionDto);
     }
 

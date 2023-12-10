@@ -1,4 +1,4 @@
-package template.authentication.controllers;
+package template.tenants.controllers;
 
 import org.json.JSONObject;
 import org.junit.Test;
@@ -14,8 +14,7 @@ import template.helpers.IntegrationTest;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 public class TenantRegistrationControllerTest extends IntegrationTest {
     @Autowired
@@ -50,6 +49,7 @@ public class TenantRegistrationControllerTest extends IntegrationTest {
         data.put("email", "tester.company@testme.io");
         data.put("subdomain", "testme");
 
+        headers.set("tenant-id", null);
         restTemplate.exchange("/tenant/registration",
             HttpMethod.POST,
             new HttpEntity<>(data.toString(), headers),
@@ -149,6 +149,8 @@ public class TenantRegistrationControllerTest extends IntegrationTest {
         data.put("email", "owner@testme.io");
         data.put("firstName", "Owner");
 
+        headers.set("tenant-id",
+            tenantConfirmationList.get(0).get("tenant_id").toString());
         restTemplate.exchange("/tenant/registration/confirmation",
             HttpMethod.POST,
             new HttpEntity<>(data.toString(), headers),
@@ -158,13 +160,13 @@ public class TenantRegistrationControllerTest extends IntegrationTest {
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_role WHERE tenant_id = ?;",
                 tenantList.get(0).get("id"));
-        assertNotEquals(0, tenantRoleList.size());
+        assertFalse(tenantRoleList.isEmpty());
 
         List<Map<String, Object>> tenantPermissionList =
             jdbcTemplate.queryForList(
                 "SELECT * FROM tenant.authorization_permission WHERE tenant_id = ?;",
                 tenantList.get(0).get("id"));
-        assertNotEquals(0, tenantPermissionList.size());
+        assertTrue(tenantPermissionList.size() >= 10);
 
         List<Map<String, Object>> tenantUserList =
             jdbcTemplate.queryForList(
@@ -176,5 +178,44 @@ public class TenantRegistrationControllerTest extends IntegrationTest {
                 "SELECT * FROM tenant.authorization_role_user WHERE user_id = ?;",
                 tenantUserList.get(0).get("id"));
         assertEquals(1, tenantRoleUserList.size());
+    }
+
+    @Test
+    @Sql(scripts = {"classpath:sql/truncateAllSchemas.sql"})
+    public void givenNoErrors_whenRegistrationConfirmed_shouldDeleteConfirmation() {
+        JSONObject data = new JSONObject();
+        data.put("companyName", "Test Company");
+        data.put("email", "tester.company@testme.io");
+        data.put("subdomain", "testme");
+
+        restTemplate.exchange("/tenant/registration",
+            HttpMethod.POST,
+            new HttpEntity<>(data.toString(), headers),
+            String.class);
+
+        List<Map<String, Object>> tenantList =
+            jdbcTemplate.queryForList(
+                "SELECT * FROM internal.tenant WHERE subdomain = ?;", "testme");
+
+        List<Map<String, Object>> tenantConfirmationList =
+            jdbcTemplate.queryForList(
+                "SELECT * FROM internal.tenant_email_confirmation WHERE tenant_id = ?;",
+                tenantList.get(0).get("id"));
+
+        data = new JSONObject();
+        data.put("token", tenantConfirmationList.get(0).get("token"));
+        data.put("email", "owner@testme.io");
+        data.put("firstName", "Owner");
+
+        restTemplate.exchange("/tenant/registration/confirmation",
+            HttpMethod.POST,
+            new HttpEntity<>(data.toString(), headers),
+            String.class);
+
+        tenantConfirmationList =
+            jdbcTemplate.queryForList(
+                "SELECT * FROM internal.tenant_email_confirmation WHERE tenant_id = ?;",
+                tenantList.get(0).get("id"));
+        assertTrue(tenantConfirmationList.isEmpty());
     }
 }

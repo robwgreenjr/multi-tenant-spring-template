@@ -81,7 +81,7 @@ public class MultiTenantInterceptor implements HandlerInterceptor {
             EnvironmentVariable.LOCAL)) {
             String tenantIdHeader = request.getHeader("tenant-id");
 
-            if (tenantIdHeader != null) {
+            if (tenantIdHeader != null && !tenantIdHeader.isEmpty()) {
                 tenantId = UUID.fromString(tenantIdHeader);
             }
         }

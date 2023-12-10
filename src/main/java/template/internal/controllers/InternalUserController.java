@@ -72,23 +72,23 @@ public class InternalUserController {
     public ResponseEntity<InternalUserDto> save(
         @RequestBody InternalUserDto userDto)
         throws Exception {
-        InternalUser userModel =
+        InternalUser user =
             userMapper.dtoToObject(userDto);
 
-        userModel = userManager.create(userModel);
+        user = userManager.create(user);
 
-        userDto = userMapper.toDto(userModel);
+        userDto = userMapper.toDto(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
     }
 
     @PostMapping("users")
     public ResponseEntity<List<InternalUserDto>> saveAll(
         @RequestBody List<InternalUserDto> userDtoList) {
-        List<InternalUser> userModelList =
+        List<InternalUser> userList =
             userMapper.dtoToList(userDtoList);
 
         List<InternalUser> result =
-            userManager.createAll(userModelList);
+            userManager.createAll(userList);
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(userMapper.toDtoList(result));
@@ -99,24 +99,24 @@ public class InternalUserController {
         @RequestBody InternalUserDto userDto,
         @PathVariable Integer id)
         throws Exception {
-        InternalUser userModel =
+        InternalUser user =
             userMapper.dtoToObject(userDto);
 
-        userModel = userManager.update(id, userModel);
+        user = userManager.update(id, user);
 
         userDto = userMapper.toDto(
-            userModel);
+            user);
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }
 
     @PutMapping("users")
     public List<InternalUserDto> updateAll(
         @RequestBody List<InternalUserDto> userDtoList) {
-        List<InternalUser> userModelList =
+        List<InternalUser> userList =
             userMapper.dtoToList(userDtoList);
 
         List<InternalUser> result =
-            userManager.updateAll(userModelList);
+            userManager.updateAll(userList);
 
         return userMapper.toDtoList(result);
     }
@@ -126,12 +126,12 @@ public class InternalUserController {
         @RequestBody InternalUserDto userDto,
         @PathVariable Integer id)
         throws Exception {
-        InternalUser userModel =
+        InternalUser user =
             userMapper.dtoToObject(userDto);
 
-        userModel = userManager.updatePartial(id, userModel);
+        user = userManager.updatePartial(id, user);
 
-        userDto = userMapper.toDto(userModel);
+        userDto = userMapper.toDto(user);
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }
 }

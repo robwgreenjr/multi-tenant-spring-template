@@ -58,7 +58,8 @@ public class TenantJwtDecipher implements AuthenticationProcessor {
         currentTenant.resetTenant();
 
         String tenantIdHeader = request.getHeader("tenant-id");
-        if (tenantIdHeader != null && !currentTenant.isTenantSet()) {
+        if (tenantIdHeader != null && !tenantIdHeader.isEmpty() &&
+            !currentTenant.isTenantSet()) {
             currentTenant.setCurrentTenant(UUID.fromString(tenantIdHeader));
         }
 

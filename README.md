@@ -74,7 +74,6 @@ sudo update-ca-certificates
 
 ### TODO:
 
-    - Change tenant generation from creating a new database for new tenants to simply use new design
     - Add query parameter support for list of values, only for EQ, LIKE, and NE filters
     - Add any extra test for parameters/query builder/hypermedia
 

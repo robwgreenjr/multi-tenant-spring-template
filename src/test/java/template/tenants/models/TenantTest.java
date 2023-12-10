@@ -3,7 +3,7 @@ package template.tenants.models;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TenantModelTest {
+public class TenantTest {
     @Test
     public void givenNoSubdomain_whenSetSubdomainFromEmail_shouldSetSubdomainFromEmail() {
         Tenant actual = new Tenant();

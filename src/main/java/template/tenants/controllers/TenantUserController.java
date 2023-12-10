@@ -42,8 +42,7 @@ public class TenantUserController {
             parameterSetter.buildquery(request.getParameterMap());
         query.setPrimaryId(id);
 
-        QueryResult<TenantUser> result =
-            userManager.getSingle(query);
+        QueryResult<TenantUser> result = userManager.getSingle(query);
 
         QueryResult<TenantUserDto> response = new QueryResult<>();
         response.setData(userMapper.toDtoList(result.getData()));
@@ -58,8 +57,7 @@ public class TenantUserController {
         Query<Integer> query =
             parameterSetter.buildquery(request.getParameterMap());
 
-        QueryResult<TenantUser> result =
-            userManager.getList(query);
+        QueryResult<TenantUser> result = userManager.getList(query);
 
         QueryResult<TenantUserDto> response = new QueryResult<>();
         response.setData(userMapper.toDtoList(result.getData()));
@@ -70,25 +68,22 @@ public class TenantUserController {
 
     @PostMapping("user")
     public ResponseEntity<TenantUserDto> save(
-        @RequestBody TenantUserDto userDto)
-        throws Exception {
-        TenantUser userModel =
+        @RequestBody TenantUserDto userDto) {
+        TenantUser user =
             userMapper.dtoToObject(userDto);
 
-        userModel = userManager.create(userModel);
+        user = userManager.create(user);
 
-        userDto = userMapper.toDto(userModel);
+        userDto = userMapper.toDto(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
     }
 
     @PostMapping("users")
     public ResponseEntity<List<TenantUserDto>> saveAll(
         @RequestBody List<TenantUserDto> userDtoList) {
-        List<TenantUser> userModelList =
-            userMapper.dtoToList(userDtoList);
+        List<TenantUser> userList = userMapper.dtoToList(userDtoList);
 
-        List<TenantUser> result =
-            userManager.createAll(userModelList);
+        List<TenantUser> result = userManager.createAll(userList);
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(userMapper.toDtoList(result));
@@ -97,25 +92,21 @@ public class TenantUserController {
     @PutMapping("user/{id}")
     public ResponseEntity<TenantUserDto> update(
         @RequestBody TenantUserDto userDto,
-        @PathVariable Integer id)
-        throws Exception {
-        TenantUser userModel =
-            userMapper.dtoToObject(userDto);
+        @PathVariable Integer id) {
+        TenantUser user = userMapper.dtoToObject(userDto);
 
-        userModel = userManager.update(id, userModel);
+        user = userManager.update(id, user);
 
-        userDto = userMapper.toDto(userModel);
+        userDto = userMapper.toDto(user);
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }
 
     @PutMapping("users")
     public List<TenantUserDto> updateAll(
         @RequestBody List<TenantUserDto> userDtoList) {
-        List<TenantUser> userModelList =
-            userMapper.dtoToList(userDtoList);
+        List<TenantUser> userList = userMapper.dtoToList(userDtoList);
 
-        List<TenantUser> result =
-            userManager.updateAll(userModelList);
+        List<TenantUser> result = userManager.updateAll(userList);
 
         return userMapper.toDtoList(result);
     }
@@ -123,14 +114,12 @@ public class TenantUserController {
     @PatchMapping("user/{id}")
     public ResponseEntity<TenantUserDto> updatePartial(
         @RequestBody TenantUserDto userDto,
-        @PathVariable Integer id)
-        throws Exception {
-        TenantUser userModel =
-            userMapper.dtoToObject(userDto);
+        @PathVariable Integer id) {
+        TenantUser user = userMapper.dtoToObject(userDto);
 
-        userModel = userManager.updatePartial(id, userModel);
-
-        userDto = userMapper.toDto(userModel);
+        user = userManager.updatePartial(id, user);
+        
+        userDto = userMapper.toDto(user);
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }
 }

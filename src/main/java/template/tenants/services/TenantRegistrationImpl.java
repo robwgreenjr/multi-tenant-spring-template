@@ -2,10 +2,12 @@ package template.tenants.services;
 
 import org.springframework.stereotype.Service;
 import template.tenants.exceptions.TenantEmailConfirmationNotFoundException;
+import template.tenants.helpers.TenantActivation;
 import template.tenants.mappers.TenantActivationConfirmationMapper;
 import template.tenants.models.Tenant;
 import template.tenants.models.TenantActivationConfirmation;
 import template.tenants.models.TenantEmailConfirmation;
+import template.tenants.models.TenantUser;
 
 import java.util.Optional;
 
@@ -16,16 +18,20 @@ public class TenantRegistrationImpl implements TenantRegistration {
     private final TenantUserManager tenantUserManager;
     private final TenantActivationConfirmationMapper
         tenantActivationConfirmationMapper;
+    private final TenantActivation tenantActivation;
+
 
     public TenantRegistrationImpl(TenantManager tenantManager,
                                   TenantEmailConfirmationManager tenantEmailConfirmationManager,
                                   TenantUserManager tenantUserManager,
-                                  TenantActivationConfirmationMapper tenantActivationConfirmationMapper) {
+                                  TenantActivationConfirmationMapper tenantActivationConfirmationMapper,
+                                  TenantActivation tenantActivation) {
         this.tenantManager = tenantManager;
         this.tenantEmailConfirmationManager = tenantEmailConfirmationManager;
         this.tenantUserManager = tenantUserManager;
         this.tenantActivationConfirmationMapper =
             tenantActivationConfirmationMapper;
+        this.tenantActivation = tenantActivation;
     }
 
 
@@ -47,10 +53,12 @@ public class TenantRegistrationImpl implements TenantRegistration {
             throw new TenantEmailConfirmationNotFoundException();
         }
 
-        tenantUserManager.create(
+        TenantUser tenantUser = tenantUserManager.create(
             tenantActivationConfirmationMapper.toTenantUser(
                 tenantActivationConfirmation));
 
-//        tenantEmailConfirmationManager.delete(tenantEmailConfirmation.get());
+        tenantActivation.setInitialAuthorization(tenantUser);
+
+        tenantEmailConfirmationManager.delete(tenantEmailConfirmation.get());
     }
 }

@@ -95,11 +95,11 @@ public class InternalJwtControllerTest extends InternalIntegrationTest {
         List<Map<String, Object>> objectList =
             jdbcTemplate.queryForList("SELECT * FROM internal.user");
 
-        Jwt jwtModel =
+        Jwt jwt =
             simpleUserLogin.jwtProvider(
                 objectList.get(0).get("email").toString(), "password");
 
-        headers.setBearerAuth(jwtModel.getToken());
+        headers.setBearerAuth(jwt.getToken());
 
         ResponseEntity<String> response =
             restTemplate.exchange("/internal/authentication/jwt",
