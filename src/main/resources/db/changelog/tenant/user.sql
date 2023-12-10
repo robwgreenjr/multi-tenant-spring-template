@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS tenant.user
     phone      VARCHAR(25)  NULL,
     created_on TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_on TIMESTAMP WITH TIME ZONE,
-    PRIMARY KEY (email),
-    UNIQUE (phone),
+    PRIMARY KEY (tenant_id, email),
+    UNIQUE (phone, tenant_id),
     UNIQUE (id)
 );

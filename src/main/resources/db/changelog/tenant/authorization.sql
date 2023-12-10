@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS tenant.authorization_role
     description TEXT                     NULL,
     created_on  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_on  TIMESTAMP WITH TIME ZONE,
-    PRIMARY KEY (name),
+    PRIMARY KEY (tenant_id, name),
     UNIQUE (id)
 );
 
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS tenant.authorization_permission
     description TEXT                     NULL,
     created_on  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_on  TIMESTAMP WITH TIME ZONE,
-    PRIMARY KEY (name, type),
+    PRIMARY KEY (tenant_id, name, type),
     UNIQUE (id)
 );
 
