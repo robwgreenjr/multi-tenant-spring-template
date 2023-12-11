@@ -141,7 +141,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>template.ApiApplication</mainClass>
+                    <mainClass>template.TemplateApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

@@ -10,38 +10,47 @@ import java.util.List;
 
 public class Query<ID> {
     public static final Integer MAX_LIMIT = 200;
-    private List<List<ColumnFilter>> filterList;
+    private List<ColumnFilterList> filterList;
     private HashMap<QuerySort, String[]> sortList;
     private Integer limit;
 
     public Query() {
-        this.filterList = new ArrayList<>();
-        this.sortList = new HashMap<>();
-        this.limit = getLimit();
+        filterList = new ArrayList<>();
+        sortList = new HashMap<>();
+        limit = getLimit();
     }
 
     public Query(Query<ID> query) {
-        List<List<ColumnFilter>> copiedFilterList = new ArrayList<>();
-        for (List<ColumnFilter> columnFilterList : query.getFilterList()) {
-            copiedFilterList.add(new ArrayList<>(columnFilterList));
+        List<ColumnFilterList> copiedFilterList = new ArrayList<>();
+        for (ColumnFilterList columnFilterList : query.getFilterList()) {
+            ColumnFilterList copiedColumnFilterList = new ColumnFilterList();
+            List<ColumnFilter> copiedColumnFilters = new ArrayList<>();
+            copiedColumnFilterList.setFilters(copiedColumnFilters);
+
+            for (ColumnFilter columnFilter : columnFilterList.getFilters()) {
+                copiedColumnFilterList.getFilters().add(columnFilter);
+            }
+
+            copiedFilterList.add(copiedColumnFilterList);
         }
 
-        this.filterList = copiedFilterList;
-        this.sortList = new HashMap<>(query.getSortList());
-        this.limit = query.getLimit();
+        filterList = copiedFilterList;
+        sortList = new HashMap<>(query.getSortList());
+        limit = query.getLimit();
     }
 
     public Query(Query<ID> query, HashMap<QuerySort, String[]> sortList) {
-        this.filterList = query.getFilterList();
+        filterList = query.getFilterList();
         this.sortList = sortList;
-        this.limit = query.getLimit();
+        limit = query.getLimit();
     }
 
-    public List<List<ColumnFilter>> getFilterList() {
+    public List<ColumnFilterList> getFilterList() {
         return filterList;
     }
 
-    public void setFilterList(List<List<ColumnFilter>> filterList) {
+    public void setFilterList(
+        List<ColumnFilterList> filterList) {
         this.filterList = filterList;
     }
 
@@ -79,35 +88,39 @@ public class Query<ID> {
             filterList = new ArrayList<>();
         }
 
-        List<ColumnFilter> columnFilterList = new ArrayList<>();
+        ColumnFilterList columnFilterList = new ColumnFilterList();
+
+        List<ColumnFilter> columnFilters = new ArrayList<>();
         ColumnFilter columnFilter = new ColumnFilter();
         columnFilter.setConjunctive(QueryConjunctive.AND);
         columnFilter.setFilter(QueryFilter.EQ);
         columnFilter.setProperty("id");
         columnFilter.setValue(id.toString());
-
-        columnFilterList.add(columnFilter);
+        columnFilters.add(columnFilter);
+        columnFilterList.setFilters(columnFilters);
 
         filterList.add(filterList.size(), columnFilterList);
     }
 
     public void removeIdCursor() {
-        for (List<ColumnFilter> filters : this.filterList) {
-            filters.removeIf(
+        for (ColumnFilterList columnFilterList : filterList) {
+            columnFilterList.getFilters().removeIf(
                 columnFilter -> columnFilter.getProperty().equals("id"));
         }
 
-        this.filterList.removeIf(List::isEmpty);
+        filterList.removeIf(
+            columnFilterList -> columnFilterList.getFilters().isEmpty());
     }
 
     public void removeCursor() {
-        for (List<ColumnFilter> filters : this.filterList) {
-            filters.removeIf(
+        for (ColumnFilterList columnFilterList : filterList) {
+            columnFilterList.getFilters().removeIf(
                 columnFilter -> columnFilter.getFilter()
                     .equals(QueryFilter.CURSOR));
         }
 
-        this.filterList.removeIf(List::isEmpty);
+        filterList.removeIf(
+            columnFilterList -> columnFilterList.getFilters().isEmpty());
     }
 
     public void setLessThan(String property, ID id) {
@@ -115,14 +128,17 @@ public class Query<ID> {
             filterList = new ArrayList<>();
         }
 
-        List<ColumnFilter> columnFilterList = new ArrayList<>();
+        ColumnFilterList columnFilterList = new ColumnFilterList();
+
+        List<ColumnFilter> columnFilters = new ArrayList<>();
         ColumnFilter columnFilter = new ColumnFilter();
         columnFilter.setConjunctive(QueryConjunctive.AND);
         columnFilter.setFilter(QueryFilter.LT);
         columnFilter.setProperty(property);
         columnFilter.setValue(id.toString());
 
-        columnFilterList.add(columnFilter);
+        columnFilters.add(columnFilter);
+        columnFilterList.setFilters(columnFilters);
 
         filterList.add(filterList.size(), columnFilterList);
     }
@@ -130,8 +146,8 @@ public class Query<ID> {
     public Boolean isCursorSet() {
         boolean isCursorSet = false;
 
-        for (List<ColumnFilter> filters : this.filterList) {
-            for (ColumnFilter filter : filters) {
+        for (ColumnFilterList columnFilterList : filterList) {
+            for (ColumnFilter filter : columnFilterList.getFilters()) {
                 if (filter.getFilter().equals(QueryFilter.CURSOR)) {
                     isCursorSet = true;
 

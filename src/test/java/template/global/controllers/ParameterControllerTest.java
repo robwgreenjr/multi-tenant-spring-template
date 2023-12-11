@@ -68,7 +68,8 @@ public class ParameterControllerTest {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(
-            "/single-tables?stringColumn[like]=test", HttpMethod.GET,
+            "/single-tables?stringColumn[like]=test",
+            HttpMethod.GET,
             entity, String.class);
         JSONObject result = new JSONObject(response.getBody());
         JSONArray dataArray = (JSONArray) result.get("data");
@@ -192,6 +193,26 @@ public class ParameterControllerTest {
         JSONArray dataArray = (JSONArray) result.get("data");
 
         assertEquals(13, dataArray.length());
+    }
+
+    @Test
+    @Sql(scripts = {"classpath:sql/dropTables.sql",
+        "classpath:sql/database/queryBuilder.sql"})
+    public void givenMultipleFiltersWithOr_shouldReturnCorrectData()
+        throws JSONException {
+        HttpHeaders headers = new HttpHeaders();
+
+        DatabaseSeeder databaseSeeder = new DatabaseSeeder();
+        databaseSeeder.single(jdbcTemplate, 100, "test", 15, "another", 45);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(
+            "/single-tables?stringColumn[like]=test[or]textColumn[like]=another",
+            HttpMethod.GET, entity, String.class);
+        JSONObject result = new JSONObject(response.getBody());
+        JSONArray dataArray = (JSONArray) result.get("data");
+
+        assertEquals(60, dataArray.length());
     }
 
     @TestConfiguration

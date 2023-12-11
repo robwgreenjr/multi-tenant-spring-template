@@ -2,12 +2,12 @@ TRUNCATE TABLE internal.authorization_permission CASCADE;
 TRUNCATE TABLE internal.authorization_role CASCADE;
 
 INSERT INTO internal.authorization_permission
-VALUES (DEFAULT, 'internal/authorization', 'page',
+VALUES (DEFAULT, 'authorization', 'page',
         'All page access to edit authorization data.')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO internal.authorization_permission
-VALUES (DEFAULT, 'internal/users', 'page',
+VALUES (DEFAULT, 'users', 'page',
         'Allow page access to edit user data.')
 ON CONFLICT DO NOTHING;
 

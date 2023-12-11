@@ -60,4 +60,44 @@ public class DatabaseSeeder {
             }
         }
     }
+
+    public void single(JdbcTemplate jdbcTemplate, Integer count,
+                       String commonValue, int numberOfCommonValues,
+                       String secondCommonValue,
+                       int numberOfSecondCommonValues) {
+        Faker faker = new Faker();
+
+        for (int i = 0; i < count; i++) {
+            String stringColumn = faker.name().firstName();
+            String textColumn = faker.chuckNorris().fact();
+
+            if (numberOfCommonValues > i) {
+                stringColumn += commonValue;
+            } else {
+                stringColumn = stringColumn.replace(commonValue, "");
+            }
+
+            if (numberOfCommonValues <= i &&
+                numberOfSecondCommonValues > (i - numberOfCommonValues)) {
+                textColumn += secondCommonValue;
+            } else {
+                textColumn = stringColumn.replace(secondCommonValue, "");
+            }
+
+            Integer integerColumn = faker.number().randomDigit();
+            Double doubleColumn = faker.number().randomDouble(4, 1, 1000);
+            Timestamp dateColumn = faker.date().birthday();
+
+            String insertQuery =
+                "INSERT INTO single_table (string_column, integer_column, double_column, text_column, date_column, uuid_column) VALUES (?, ?, ?, ?, ?, ?)";
+            try {
+                jdbcTemplate.update(insertQuery, stringColumn, integerColumn,
+                    doubleColumn,
+                    textColumn, dateColumn, UUID.randomUUID());
+            } catch (Exception exception) {
+                // We could fail from unique values and will need to try again
+                count++;
+            }
+        }
+    }
 }

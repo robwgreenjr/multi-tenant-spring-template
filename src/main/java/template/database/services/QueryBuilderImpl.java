@@ -11,6 +11,7 @@ import template.database.enums.QueryConjunctive;
 import template.database.enums.QuerySort;
 import template.database.exceptions.InvalidDateFormatException;
 import template.database.models.ColumnFilter;
+import template.database.models.ColumnFilterList;
 import template.database.models.Query;
 import template.database.models.QueryResult;
 import template.global.utilities.StringParser;
@@ -261,8 +262,8 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
                                                 Query<S> query,
                                                 Root<T> table) {
         List<Predicate> predicates = new ArrayList<>();
-        for (List<ColumnFilter> columnFilterList : query.getFilterList()) {
-            for (ColumnFilter columnFilter : columnFilterList) {
+        for (ColumnFilterList columnFilterList : query.getFilterList()) {
+            for (ColumnFilter columnFilter : columnFilterList.getFilters()) {
                 if (columnFilter.getProperty().contains(".")) {
                     String[] nestedProperties =
                         columnFilter.getProperty().split("\\.");
@@ -283,10 +284,8 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
 
             if (predicates.isEmpty()) continue;
 
-            if (columnFilterList.get(0).getConjunctive() ==
-                QueryConjunctive.AND) {
-                select.where(
-                    criteriaBuilder.and(predicates.toArray(new Predicate[]{})));
+            if (columnFilterList.getConjunctive() == QueryConjunctive.AND) {
+                select.where(predicates.toArray(new Predicate[]{}));
 
                 continue;
             }

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import template.database.enums.QueryConjunctive;
 import template.database.enums.QueryFilter;
 import template.database.enums.QuerySort;
-import template.database.models.ColumnFilter;
+import template.database.models.ColumnFilterList;
 import template.database.models.Query;
 
 import java.util.HashMap;
@@ -94,17 +94,17 @@ public class ParameterSetterTest {
         queryParameters.put("email", list);
 
         Query actual = parameterSetter.buildquery(queryParameters);
-        List<List<ColumnFilter>> filterList = actual.getFilterList();
+        List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
         Assertions.assertEquals(QueryConjunctive.AND,
-            filterList.get(0).get(0).getConjunctive());
+            filterList.get(0).getFilters().get(0).getConjunctive());
         Assertions.assertEquals(QueryFilter.EQ,
-            filterList.get(0).get(0).getFilter());
+            filterList.get(0).getFilters().get(0).getFilter());
         Assertions.assertEquals("testing@gmail.com",
-            filterList.get(0).get(0).getValue());
+            filterList.get(0).getFilters().get(0).getValue());
         Assertions.assertEquals("email",
-            filterList.get(0).get(0).getProperty());
+            filterList.get(0).getFilters().get(0).getProperty());
     }
 
     @Test
@@ -116,25 +116,26 @@ public class ParameterSetterTest {
         queryParameters.put("firstName", listTwo);
 
         Query actual = parameterSetter.buildquery(queryParameters);
-        List<List<ColumnFilter>> filterList = actual.getFilterList();
+        List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
         Assertions.assertEquals(QueryConjunctive.AND,
-            filterList.get(0).get(0).getConjunctive());
+            filterList.get(0).getFilters().get(0).getConjunctive());
         Assertions.assertEquals(QueryFilter.EQ,
-            filterList.get(0).get(0).getFilter());
-        Assertions.assertEquals("Tester", filterList.get(0).get(0).getValue());
+            filterList.get(0).getFilters().get(0).getFilter());
+        Assertions.assertEquals("Tester",
+            filterList.get(0).getFilters().get(0).getValue());
         Assertions.assertEquals("firstName",
-            filterList.get(0).get(0).getProperty());
+            filterList.get(0).getFilters().get(0).getProperty());
 
         Assertions.assertEquals(QueryConjunctive.AND,
-            filterList.get(1).get(0).getConjunctive());
+            filterList.get(1).getFilters().get(0).getConjunctive());
         Assertions.assertEquals(QueryFilter.EQ,
-            filterList.get(1).get(0).getFilter());
+            filterList.get(1).getFilters().get(0).getFilter());
         Assertions.assertEquals("testing@gmail.com",
-            filterList.get(1).get(0).getValue());
+            filterList.get(1).getFilters().get(0).getValue());
         Assertions.assertEquals("email",
-            filterList.get(1).get(0).getProperty());
+            filterList.get(1).getFilters().get(0).getProperty());
     }
 
     @Test
@@ -144,26 +145,26 @@ public class ParameterSetterTest {
         queryParameters.put("email", list);
 
         Query actual = parameterSetter.buildquery(queryParameters);
-        List<List<ColumnFilter>> filterList = actual.getFilterList();
+        List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
         Assertions.assertEquals(QueryConjunctive.AND,
-            filterList.get(0).get(0).getConjunctive());
+            filterList.get(0).getFilters().get(0).getConjunctive());
         Assertions.assertEquals(QueryFilter.EQ,
-            filterList.get(0).get(0).getFilter());
+            filterList.get(0).getFilters().get(0).getFilter());
         Assertions.assertEquals("testing@gmail.com",
-            filterList.get(0).get(0).getValue());
+            filterList.get(0).getFilters().get(0).getValue());
         Assertions.assertEquals("email",
-            filterList.get(0).get(0).getProperty());
+            filterList.get(0).getFilters().get(0).getProperty());
 
         Assertions.assertEquals(QueryConjunctive.OR,
-            filterList.get(0).get(1).getConjunctive());
+            filterList.get(0).getFilters().get(1).getConjunctive());
         Assertions.assertEquals(QueryFilter.EQ,
-            filterList.get(0).get(1).getFilter());
+            filterList.get(0).getFilters().get(1).getFilter());
         Assertions.assertEquals("another@gmail.com",
-            filterList.get(0).get(1).getValue());
+            filterList.get(0).getFilters().get(1).getValue());
         Assertions.assertEquals("email",
-            filterList.get(0).get(1).getProperty());
+            filterList.get(0).getFilters().get(1).getProperty());
     }
 
     @Test
@@ -173,17 +174,17 @@ public class ParameterSetterTest {
         queryParameters.put("email[lte]", list);
 
         Query actual = parameterSetter.buildquery(queryParameters);
-        List<List<ColumnFilter>> filterList = actual.getFilterList();
+        List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
         Assertions.assertEquals(QueryConjunctive.AND,
-            filterList.get(0).get(0).getConjunctive());
+            filterList.get(0).getFilters().get(0).getConjunctive());
         Assertions.assertEquals(QueryFilter.LTE,
-            filterList.get(0).get(0).getFilter());
+            filterList.get(0).getFilters().get(0).getFilter());
         Assertions.assertEquals("testing@gmail.com",
-            filterList.get(0).get(0).getValue());
+            filterList.get(0).getFilters().get(0).getValue());
         Assertions.assertEquals("email",
-            filterList.get(0).get(0).getProperty());
+            filterList.get(0).getFilters().get(0).getProperty());
     }
 
     @Test
@@ -193,17 +194,17 @@ public class ParameterSetterTest {
         queryParameters.put("email[gte]", list);
 
         Query actual = parameterSetter.buildquery(queryParameters);
-        List<List<ColumnFilter>> filterList = actual.getFilterList();
+        List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
         Assertions.assertEquals(QueryConjunctive.AND,
-            filterList.get(0).get(0).getConjunctive());
+            filterList.get(0).getFilters().get(0).getConjunctive());
         Assertions.assertEquals(QueryFilter.GTE,
-            filterList.get(0).get(0).getFilter());
+            filterList.get(0).getFilters().get(0).getFilter());
         Assertions.assertEquals("testing@gmail.com",
-            filterList.get(0).get(0).getValue());
+            filterList.get(0).getFilters().get(0).getValue());
         Assertions.assertEquals("email",
-            filterList.get(0).get(0).getProperty());
+            filterList.get(0).getFilters().get(0).getProperty());
     }
 
     @Test
@@ -216,32 +217,35 @@ public class ParameterSetterTest {
         queryParameters.put("firstName", listTwo);
 
         Query actual = parameterSetter.buildquery(queryParameters);
-        List<List<ColumnFilter>> filterList = actual.getFilterList();
+        List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
         Assertions.assertEquals(QueryConjunctive.AND,
-            filterList.get(0).get(0).getConjunctive());
+            filterList.get(0).getFilters().get(0).getConjunctive());
         Assertions.assertEquals(QueryFilter.EQ,
-            filterList.get(0).get(0).getFilter());
-        Assertions.assertEquals("Tester", filterList.get(0).get(0).getValue());
+            filterList.get(0).getFilters().get(0).getFilter());
+        Assertions.assertEquals("Tester",
+            filterList.get(0).getFilters().get(0).getValue());
         Assertions.assertEquals("firstName",
-            filterList.get(0).get(0).getProperty());
+            filterList.get(0).getFilters().get(0).getProperty());
 
         Assertions.assertEquals(QueryConjunctive.OR,
-            filterList.get(1).get(1).getConjunctive());
+            filterList.get(1).getFilters().get(1).getConjunctive());
         Assertions.assertEquals(QueryFilter.LTE,
-            filterList.get(1).get(1).getFilter());
-        Assertions.assertEquals("25", filterList.get(1).get(1).getValue());
-        Assertions.assertEquals("age", filterList.get(1).get(1).getProperty());
+            filterList.get(1).getFilters().get(1).getFilter());
+        Assertions.assertEquals("25",
+            filterList.get(1).getFilters().get(1).getValue());
+        Assertions.assertEquals("age",
+            filterList.get(1).getFilters().get(1).getProperty());
 
         Assertions.assertEquals(QueryConjunctive.AND,
-            filterList.get(1).get(0).getConjunctive());
+            filterList.get(1).getFilters().get(0).getConjunctive());
         Assertions.assertEquals(QueryFilter.GTE,
-            filterList.get(1).get(0).getFilter());
+            filterList.get(1).getFilters().get(0).getFilter());
         Assertions.assertEquals("testing@gmail.com",
-            filterList.get(1).get(0).getValue());
+            filterList.get(1).getFilters().get(0).getValue());
         Assertions.assertEquals("email",
-            filterList.get(1).get(0).getProperty());
+            filterList.get(1).getFilters().get(0).getProperty());
     }
 
     @Test
@@ -252,57 +256,61 @@ public class ParameterSetterTest {
         queryParameters.put("email[gte]", list);
 
         Query actual = parameterSetter.buildquery(queryParameters);
-        List<List<ColumnFilter>> filterList = actual.getFilterList();
+        List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
         Assertions.assertEquals(QueryConjunctive.AND,
-            filterList.get(0).get(0).getConjunctive());
+            filterList.get(0).getFilters().get(0).getConjunctive());
         Assertions.assertEquals(QueryFilter.GTE,
-            filterList.get(0).get(0).getFilter());
+            filterList.get(0).getFilters().get(0).getFilter());
         Assertions.assertEquals("testing@gmail.com",
-            filterList.get(0).get(0).getValue());
+            filterList.get(0).getFilters().get(0).getValue());
         Assertions.assertEquals("email",
-            filterList.get(0).get(0).getProperty());
+            filterList.get(0).getFilters().get(0).getProperty());
 
         Assertions.assertEquals(QueryConjunctive.OR,
-            filterList.get(0).get(1).getConjunctive());
+            filterList.get(0).getFilters().get(1).getConjunctive());
         Assertions.assertEquals(QueryFilter.LTE,
-            filterList.get(0).get(1).getFilter());
-        Assertions.assertEquals("25", filterList.get(0).get(1).getValue());
-        Assertions.assertEquals("age", filterList.get(0).get(1).getProperty());
+            filterList.get(0).getFilters().get(1).getFilter());
+        Assertions.assertEquals("25",
+            filterList.get(0).getFilters().get(1).getValue());
+        Assertions.assertEquals("age",
+            filterList.get(0).getFilters().get(1).getProperty());
 
         Assertions.assertEquals(QueryConjunctive.AND,
-            filterList.get(0).get(2).getConjunctive());
+            filterList.get(0).getFilters().get(2).getConjunctive());
         Assertions.assertEquals(QueryFilter.GTE,
-            filterList.get(0).get(2).getFilter());
-        Assertions.assertEquals("tester", filterList.get(0).get(2).getValue());
+            filterList.get(0).getFilters().get(2).getFilter());
+        Assertions.assertEquals("tester",
+            filterList.get(0).getFilters().get(2).getValue());
         Assertions.assertEquals("firstName",
-            filterList.get(0).get(2).getProperty());
+            filterList.get(0).getFilters().get(2).getProperty());
 
         Assertions.assertEquals(QueryConjunctive.AND,
-            filterList.get(0).get(3).getConjunctive());
+            filterList.get(0).getFilters().get(3).getConjunctive());
         Assertions.assertEquals(QueryFilter.EQ,
-            filterList.get(0).get(3).getFilter());
-        Assertions.assertEquals("blue", filterList.get(0).get(3).getValue());
+            filterList.get(0).getFilters().get(3).getFilter());
+        Assertions.assertEquals("blue",
+            filterList.get(0).getFilters().get(3).getValue());
         Assertions.assertEquals("lastName",
-            filterList.get(0).get(3).getProperty());
+            filterList.get(0).getFilters().get(3).getProperty());
 
         Assertions.assertEquals(QueryConjunctive.OR,
-            filterList.get(0).get(4).getConjunctive());
+            filterList.get(0).getFilters().get(4).getConjunctive());
         Assertions.assertEquals(QueryFilter.LTE,
-            filterList.get(0).get(4).getFilter());
+            filterList.get(0).getFilters().get(4).getFilter());
         Assertions.assertEquals("04-21-2010",
-            filterList.get(0).get(4).getValue());
+            filterList.get(0).getFilters().get(4).getValue());
         Assertions.assertEquals("birthday",
-            filterList.get(0).get(4).getProperty());
+            filterList.get(0).getFilters().get(4).getProperty());
 
         Assertions.assertEquals(QueryConjunctive.AND,
-            filterList.get(0).get(5).getConjunctive());
+            filterList.get(0).getFilters().get(5).getConjunctive());
         Assertions.assertEquals(QueryFilter.EQ,
-            filterList.get(0).get(5).getFilter());
+            filterList.get(0).getFilters().get(5).getFilter());
         Assertions.assertEquals("01-04-2022",
-            filterList.get(0).get(5).getValue());
+            filterList.get(0).getFilters().get(5).getValue());
         Assertions.assertEquals("createdOn",
-            filterList.get(0).get(5).getProperty());
+            filterList.get(0).getFilters().get(5).getProperty());
     }
 }

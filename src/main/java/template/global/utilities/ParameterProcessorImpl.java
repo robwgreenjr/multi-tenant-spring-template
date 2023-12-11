@@ -7,6 +7,7 @@ import template.database.enums.QueryConjunctive;
 import template.database.enums.QueryFilter;
 import template.database.enums.QuerySort;
 import template.database.models.ColumnFilter;
+import template.database.models.ColumnFilterList;
 import template.database.models.Query;
 
 import java.net.URLDecoder;
@@ -54,25 +55,29 @@ public class ParameterProcessorImpl<T> implements ParameterProcessor<T> {
 
     private void buildFilter(Query<T> query,
                              Map<String, String[]> queryParams) {
-        List<List<ColumnFilter>> filterList = new ArrayList<>();
+        List<ColumnFilterList> columnFilterLists = new ArrayList<>();
 
         queryParams.forEach((key, value) -> {
             key = URLDecoder.decode(key, StandardCharsets.UTF_8);
             if (key.equals("sort_by") || key.equals("limit")) return;
 
-            List<ColumnFilter> columnFilterList = new ArrayList<>();
-            extractFilter(columnFilterList, key);
+            for (String val : value) {
+                ColumnFilterList columnFilterList = new ColumnFilterList();
+                if (key.contains("[" + QueryConjunctive.OR + "]")) {
+                    columnFilterList.setConjunctive(QueryConjunctive.OR);
+                    key = key.replace("[" + QueryConjunctive.OR + "]", "");
+                } else if (key.contains("[" + QueryConjunctive.AND + "]")) {
+                    key = key.replace("[" + QueryConjunctive.AND + "]", "");
+                }
 
-            if (value.length > 0) {
-                // If parameter ends up having multiple values e.g. someone sets same parameter more than once
-                // we will only honor the last set parameter
-                extractValue(columnFilterList, value[value.length - 1]);
+                extractFilter(columnFilterList.getFilters(), key);
+                extractValue(columnFilterList.getFilters(), val);
+
+                columnFilterLists.add(columnFilterList);
             }
-
-            filterList.add(filterList.size(), columnFilterList);
         });
 
-        query.setFilterList(filterList);
+        query.setFilterList(columnFilterLists);
     }
 
     private void buildSort(Query<T> query,

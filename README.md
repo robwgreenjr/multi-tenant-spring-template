@@ -89,6 +89,8 @@ sudo chmod 644 /usr/local/share/ca-certificates/minica.crt
 sudo update-ca-certificates
 ```
 
+## CLI Commands
+
 ### TODO:
 
     - Add query parameter support for list of values, only for EQ, LIKE, and NE filters
