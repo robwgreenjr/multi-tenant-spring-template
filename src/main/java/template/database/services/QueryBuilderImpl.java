@@ -262,6 +262,8 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
                                                 Query<S> query,
                                                 Root<T> table) {
         List<Predicate> predicates = new ArrayList<>();
+
+        int listIndex = 0;
         for (ColumnFilterList columnFilterList : query.getFilterList()) {
             for (ColumnFilter columnFilter : columnFilterList.getFilters()) {
                 if (columnFilter.getProperty().contains(".")) {
@@ -284,14 +286,18 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
 
             if (predicates.isEmpty()) continue;
 
-            if (columnFilterList.getConjunctive() == QueryConjunctive.AND) {
-                select.where(predicates.toArray(new Predicate[]{}));
+            // For first filter list we add it with an OR conjunctive
+            listIndex++;
+            if (listIndex == 1 ||
+                columnFilterList.getConjunctive() != QueryConjunctive.AND) {
+                select.where(
+                    criteriaBuilder.or(predicates.toArray(new Predicate[]{})));
 
                 continue;
             }
 
             select.where(
-                criteriaBuilder.or(predicates.toArray(new Predicate[]{})));
+                criteriaBuilder.and(predicates.toArray(new Predicate[]{})));
         }
     }
 

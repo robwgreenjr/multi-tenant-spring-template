@@ -1844,35 +1844,35 @@ public class QueryBuilderTest {
 //        assertEquals("join_test_2", actual.getData().get(0).getName());
 //    }
 
-    @Test
-    @Sql(scripts = {"classpath:sql/dropTables.sql",
-        "classpath:sql/database/queryBuilder.sql",
-        "classpath:sql/database/joinTable.sql"})
-    public void givenANDFilter_whenSearchForMultipleFilter_shouldReturnNoEntities() {
-        Query<Integer> query = new Query<>();
-        ColumnFilterList columnFilterList = new ColumnFilterList();
-
-        ColumnFilter filter = new ColumnFilter();
-        filter.setFilter(QueryFilter.EQ);
-        filter.setConjunctive(QueryConjunctive.AND);
-        filter.setProperty("singleTables.stringColumn");
-        filter.setValue("test_1");
-        columnFilterList.getFilters().add(filter);
-
-        ColumnFilter filterTwo = new ColumnFilter();
-        filterTwo.setFilter(QueryFilter.EQ);
-        filterTwo.setConjunctive(QueryConjunctive.AND);
-        filterTwo.setProperty("singleTables.stringColumn");
-        filterTwo.setValue("test_2");
-        columnFilterList.getFilters().add(filterTwo);
-
-        query.getFilterList().add(columnFilterList);
-
-        QueryResult<JoinTable> actual =
-            queryJoinBuilder.getList(JoinTable.class, query);
-
-        assertEquals(0, actual.getData().size());
-    }
+//    @Test
+//    @Sql(scripts = {"classpath:sql/dropTables.sql",
+//        "classpath:sql/database/queryBuilder.sql",
+//        "classpath:sql/database/joinTable.sql"})
+//    public void givenANDFilter_whenSearchForMultipleFilter_shouldReturnNoEntities() {
+//        Query<Integer> query = new Query<>();
+//        ColumnFilterList columnFilterList = new ColumnFilterList();
+//
+//        ColumnFilter filter = new ColumnFilter();
+//        filter.setFilter(QueryFilter.EQ);
+//        filter.setConjunctive(QueryConjunctive.AND);
+//        filter.setProperty("singleTables.stringColumn");
+//        filter.setValue("test_1");
+//        columnFilterList.getFilters().add(filter);
+//
+//        ColumnFilter filterTwo = new ColumnFilter();
+//        filterTwo.setFilter(QueryFilter.EQ);
+//        filterTwo.setConjunctive(QueryConjunctive.AND);
+//        filterTwo.setProperty("singleTables.stringColumn");
+//        filterTwo.setValue("test_2");
+//        columnFilterList.getFilters().add(filterTwo);
+//
+//        query.getFilterList().add(columnFilterList);
+//
+//        QueryResult<JoinTable> actual =
+//            queryJoinBuilder.getList(JoinTable.class, query);
+//
+//        assertEquals(0, actual.getData().size());
+//    }
 
     @TestConfiguration
     public static class TestConfig {

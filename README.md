@@ -94,6 +94,7 @@ sudo update-ca-certificates
 ### TODO:
 
     - Add query parameter support for list of values, only for EQ, LIKE, and NE filters
+    - Add support for nested relation queries
     - Add any extra test for parameters/query builder/hypermedia
 
     - Update README with needed project details
