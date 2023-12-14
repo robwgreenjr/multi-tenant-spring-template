@@ -163,10 +163,12 @@ public class DatabaseSeeder {
             String textColumn = faker.chuckNorris().fact();
             Timestamp dateColumn = faker.date().birthday();
 
+            String deleteStringColumn = "";
             if (numberOfCommonValues > i) {
                 stringColumn += commonValue;
             } else {
                 stringColumn = stringColumn.replace(commonValue, "");
+                deleteStringColumn = stringColumn;
             }
 
             String insertQuery =
@@ -214,6 +216,13 @@ public class DatabaseSeeder {
                     doubleColumn,
                     textColumn, dateColumn, UUID.randomUUID());
             } catch (Exception exception) {
+                if (!deleteStringColumn.isEmpty()) {
+                    insertQuery =
+                        "DELETE FROM single_table WHERE string_column = ?";
+
+                    jdbcTemplate.update(insertQuery, deleteStringColumn);
+                }
+
                 // We could fail from unique values and will need to try again
                 count++;
             }

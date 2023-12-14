@@ -1,6 +1,5 @@
 package template.database.helpers;
 
-import template.global.dtos.ErrorDto;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceException;
@@ -11,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import template.global.dtos.ErrorDto;
 
 import java.util.Optional;
 
@@ -62,13 +62,29 @@ public class DefaultDatabaseExceptionHandler
 
     private Optional<ResponseEntity<ErrorDto>> dataColumnDoesntExistException(
         IllegalArgumentException exception) {
-        String invalidColumn =
-            exception.getMessage().split("\\[")[1].split("\\]")[0];
+        String[] determineMessage = exception.getMessage().split("\\[");
+        String invalidColumn = "";
+
+        if (determineMessage.length > 1) {
+            invalidColumn = determineMessage[1].split("\\]")[0];
+        }
+
+        determineMessage = exception.getMessage().split("'");
+        if (determineMessage.length > 1) {
+            invalidColumn = determineMessage[1];
+        }
+
+        if (invalidColumn.isEmpty()) {
+            return Optional.of(
+                new ResponseEntity<>(new ErrorDto(HttpStatus.BAD_REQUEST,
+                    "Property '" + invalidColumn +
+                        "' doesn't exist on requested resource."),
+                    HttpStatus.BAD_REQUEST));
+        }
 
         return Optional.of(
             new ResponseEntity<>(new ErrorDto(HttpStatus.BAD_REQUEST,
-                "Property '" + invalidColumn +
-                    "' doesn't exist on requested resource."),
+                "An invalid column reference was provided"),
                 HttpStatus.BAD_REQUEST));
     }
 

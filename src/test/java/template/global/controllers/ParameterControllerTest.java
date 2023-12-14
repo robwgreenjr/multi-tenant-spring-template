@@ -255,6 +255,24 @@ public class ParameterControllerTest {
         assertEquals(15, dataArray.length());
     }
 
+    @Test
+    @Sql(scripts = {"classpath:sql/dropTables.sql",
+        "classpath:sql/database/queryBuilder.sql"})
+    public void givenInvalidTable_shouldReturn400()
+        throws JSONException {
+        HttpHeaders headers = new HttpHeaders();
+
+        DatabaseSeeder databaseSeeder = new DatabaseSeeder();
+        databaseSeeder.tripleTable(jdbcTemplate, 100, "test", 15);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(
+            "/triple-tables?doubleTable.invalidTable.stringColumn[like]=test",
+            HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
     @TestConfiguration
     public static class TestConfig {
         @Bean
