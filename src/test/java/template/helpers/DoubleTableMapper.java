@@ -1,7 +1,6 @@
-package template.hypermedia.helpers;
+package template.helpers;
 
 import org.mapstruct.Mapper;
-import template.database.helpers.DoubleTable;
 
 import java.time.Instant;
 import java.util.List;

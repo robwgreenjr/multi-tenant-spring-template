@@ -1,10 +1,9 @@
-package template.hypermedia.helpers;
+package template.helpers;
 
 import java.util.UUID;
 
-public class DoubleTableDto {
+public class SingleTableDto {
     public Integer id;
-    public SingleTableDto singleTable;
     public String stringColumn;
     public Integer integerColumn;
     public Double doubleColumn;

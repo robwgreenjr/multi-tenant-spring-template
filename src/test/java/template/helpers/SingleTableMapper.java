@@ -1,6 +1,5 @@
-package template.hypermedia.helpers;
+package template.helpers;
 
-import template.database.helpers.SingleTable;
 import org.mapstruct.Mapper;
 
 import java.time.Instant;

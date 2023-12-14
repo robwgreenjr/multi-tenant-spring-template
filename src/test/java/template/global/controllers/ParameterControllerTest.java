@@ -235,6 +235,26 @@ public class ParameterControllerTest {
         assertEquals(15, dataArray.length());
     }
 
+    @Test
+    @Sql(scripts = {"classpath:sql/dropTables.sql",
+        "classpath:sql/database/queryBuilder.sql"})
+    public void givenThirdNestedDataExists_whenFilterOnThirdNestedData_shouldReturnData()
+        throws JSONException {
+        HttpHeaders headers = new HttpHeaders();
+
+        DatabaseSeeder databaseSeeder = new DatabaseSeeder();
+        databaseSeeder.tripleTable(jdbcTemplate, 100, "test", 15);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(
+            "/triple-tables?doubleTable.singleTable.stringColumn[like]=test",
+            HttpMethod.GET, entity, String.class);
+        JSONObject result = new JSONObject(response.getBody());
+        JSONArray dataArray = (JSONArray) result.get("data");
+
+        assertEquals(15, dataArray.length());
+    }
+
     @TestConfiguration
     public static class TestConfig {
         @Bean

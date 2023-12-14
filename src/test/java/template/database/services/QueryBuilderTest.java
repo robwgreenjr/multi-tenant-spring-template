@@ -17,12 +17,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
 import template.database.enums.QueryConjunctive;
 import template.database.enums.QueryFilter;
-import template.database.helpers.DoubleTable;
-import template.database.helpers.JoinTable;
-import template.database.helpers.SingleTable;
-import template.database.helpers.TripleTable;
 import template.database.models.*;
-import template.helpers.TemplatePostgreSqlContainer;
+import template.helpers.*;
 
 import javax.sql.DataSource;
 

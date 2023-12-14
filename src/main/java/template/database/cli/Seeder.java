@@ -94,7 +94,7 @@ public class Seeder {
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }
-        
+
         String insertQuery =
             "INSERT INTO internal.configuration (key, value) VALUES (?, ?) ON CONFLICT DO NOTHING";
         try {
@@ -515,48 +515,42 @@ public class Seeder {
     public UUID createMainTenant(JdbcTemplate jdbcTemplate) {
         Faker faker = new Faker();
 
-        String companyName = faker.company().name();
-        String companyPhone = faker.phoneNumber().phoneNumber();
-        String companyEmail = faker.internet().emailAddress();
-        String companySubdomain = faker.internet().domainName();
-
         String insertQuery =
             "INSERT INTO internal.tenant (company_name, email, phone, subdomain) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING";
-        try {
-            jdbcTemplate.update(insertQuery, companyName, companyPhone,
-                companyEmail,
-                companySubdomain);
-        } catch (Exception exception) {
-            companyName = faker.company().name();
-            companyPhone = faker.phoneNumber().phoneNumber();
-            companyEmail = faker.internet().emailAddress();
-            companySubdomain = faker.internet().domainName();
-
-            try {
-                jdbcTemplate.update(insertQuery, companyName, companyPhone,
-                    companyEmail,
-                    companySubdomain);
-            } catch (Exception exceptionTwo) {
-                companyName = faker.company().name();
-                companyPhone = faker.phoneNumber().phoneNumber();
-                companyEmail = faker.internet().emailAddress();
-                companySubdomain = faker.internet().domainName();
-
-                try {
-                    jdbcTemplate.update(insertQuery, companyName, companyPhone,
-                        companyEmail,
-                        companySubdomain);
-                } catch (Exception exceptionThree) {
-                    System.out.println(exception.getMessage());
-                }
-            }
-        }
+        String companyName =
+            insertDataWithRetry(faker, jdbcTemplate, insertQuery, 1000);
 
         String sql = "SELECT * FROM internal.tenant WHERE company_name = ?";
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(sql, companyName);
 
         return (UUID) singleObject.get(0).get("id");
+    }
+
+    private String insertDataWithRetry(Faker faker, JdbcTemplate jdbcTemplate,
+                                       String insertQuery, int maxRetries) {
+        return insertDataWithRetry(faker, jdbcTemplate, insertQuery, maxRetries,
+            0);
+    }
+
+    private String insertDataWithRetry(Faker faker, JdbcTemplate jdbcTemplate,
+                                       String insertQuery, int maxRetries,
+                                       int retryCount) {
+        String companyName = faker.company().name();
+        try {
+            jdbcTemplate.update(insertQuery, companyName,
+                faker.phoneNumber().phoneNumber(),
+                faker.internet().emailAddress(), faker.internet().domainName());
+        } catch (Exception exception) {
+            if (retryCount < maxRetries) {
+                insertDataWithRetry(faker, jdbcTemplate, insertQuery,
+                    maxRetries, retryCount + 1);
+            } else {
+                System.out.println(exception.getMessage());
+            }
+        }
+
+        return companyName;
     }
 
 

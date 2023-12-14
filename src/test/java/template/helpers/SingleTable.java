@@ -1,4 +1,4 @@
-package template.database.helpers;
+package template.helpers;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.Generated;
