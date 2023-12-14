@@ -215,6 +215,26 @@ public class ParameterControllerTest {
         assertEquals(60, dataArray.length());
     }
 
+    @Test
+    @Sql(scripts = {"classpath:sql/dropTables.sql",
+        "classpath:sql/database/queryBuilder.sql"})
+    public void givenSecondNestedDataExists_whenFilterOnSecondNestedData_shouldReturnData()
+        throws JSONException {
+        HttpHeaders headers = new HttpHeaders();
+
+        DatabaseSeeder databaseSeeder = new DatabaseSeeder();
+        databaseSeeder.doubleTable(jdbcTemplate, 100, "test", 15);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(
+            "/double-tables?singleTable.stringColumn[like]=test",
+            HttpMethod.GET, entity, String.class);
+        JSONObject result = new JSONObject(response.getBody());
+        JSONArray dataArray = (JSONArray) result.get("data");
+
+        assertEquals(15, dataArray.length());
+    }
+
     @TestConfiguration
     public static class TestConfig {
         @Bean

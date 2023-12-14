@@ -35,23 +35,6 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
         this.stringParser = stringParser;
     }
 
-    private QueryResult<T> buildQueryResult(Class<T> entity,
-                                            Query<S> query,
-                                            List<T> data) {
-        QueryResult<T> result = new QueryResult<>();
-        result.setData(data);
-        result.getMeta().setLimit(query.getLimit());
-        result.getMeta().setCount(getCount(entity, query));
-        result.getMeta().setCursor("id");
-        result.getMeta().setPage(
-            getCurrentPage(entity, query, result.getMeta().getCount()));
-        result.getMeta().setNext(getNextCursor(entity, query));
-        result.getMeta().setPrevious(getPreviousCursor(entity, query, data));
-        result.getMeta().setLimit(query.getLimit());
-
-        return result;
-    }
-
     @Override
     public T getSingle(Class<T> entity, Query<S> query) {
         CriteriaQuery<Object> select = buildQuery(entity, query);
@@ -257,72 +240,13 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
         return previousCursor;
     }
 
-    private <R> void buildCriteriaBuilderSelect(CriteriaBuilder criteriaBuilder,
-                                                CriteriaQuery<R> select,
-                                                Query<S> query,
-                                                Root<T> table) {
-        List<Predicate> predicates = new ArrayList<>();
-
-        int listIndex = 0;
-        for (ColumnFilterList columnFilterList : query.getFilterList()) {
-            for (ColumnFilter columnFilter : columnFilterList.getFilters()) {
-                if (columnFilter.getProperty().contains(".")) {
-                    String[] nestedProperties =
-                        columnFilter.getProperty().split("\\.");
-
-                    Path<?> path = table;
-                    for (String nestedProperty : nestedProperties) {
-                        path = path.get(nestedProperty);
-                    }
-
-                    predicates.add(
-                        criteriaBuilder.equal(path, columnFilter.getValue()));
-
-                    continue;
-                }
-
-                addPredicate(predicates, criteriaBuilder, table, columnFilter);
-            }
-
-            if (predicates.isEmpty()) continue;
-
-            // For first filter list we add it with an OR conjunctive
-            listIndex++;
-            if (listIndex == 1 ||
-                columnFilterList.getConjunctive() != QueryConjunctive.AND) {
-                select.where(
-                    criteriaBuilder.or(predicates.toArray(new Predicate[]{})));
-
-                continue;
-            }
-
-            select.where(
-                criteriaBuilder.and(predicates.toArray(new Predicate[]{})));
-        }
-    }
-
-    private CriteriaQuery<Object> buildQuery(Class<T> entity,
-                                             Query<S> query) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
-
-        Root<T> table = criteriaQuery.from(entity);
-        CriteriaQuery<Object> select = criteriaQuery.select(table);
-
-        buildSortCriteria(criteriaBuilder, criteriaQuery, query, table);
-
-        buildCriteriaBuilderSelect(criteriaBuilder, select, query, table);
-
-        return select;
-    }
-
     /**
-     * Will determine what column type is and build
+     * Will determine what the column type is and build
      * filter query based off type and provided filter
      */
     private void addPredicate(List<Predicate> predicates,
                               CriteriaBuilder criteriaBuilder,
-                              Root<T> table, ColumnFilter columnFilter) {
+                              Path<?> table, ColumnFilter columnFilter) {
         Path<Object> columnPath = table.get(columnFilter.getProperty());
         Class<?> columnType = columnPath.getJavaType();
 
@@ -1282,6 +1206,56 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
         }
     }
 
+    private <R> void buildCriteriaBuilderSelect(CriteriaBuilder criteriaBuilder,
+                                                CriteriaQuery<R> select,
+                                                Query<S> query,
+                                                Root<T> table) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        int listIndex = 0;
+        for (ColumnFilterList columnFilterList : query.getFilterList()) {
+            for (ColumnFilter columnFilter : columnFilterList.getFilters()) {
+                Path<?> path = table;
+
+                if (columnFilter.getProperty().contains(".")) {
+                    String[] nestedProperties =
+                        columnFilter.getProperty().split("\\.");
+
+                    Join<?, ?> join = null;
+                    for (int i = 0; i < nestedProperties.length; i++) {
+                        // the last property should never be a foreign key
+                        if (nestedProperties.length == i + 1) break;
+
+                        join =
+                            createOrGetJoin(table, join, nestedProperties[i]);
+                        path = join;
+                    }
+
+                    columnFilter.setProperty(
+                        nestedProperties[nestedProperties.length - 1]);
+                    columnFilter.setValue(columnFilter.getValue());
+                }
+
+                addPredicate(predicates, criteriaBuilder, path, columnFilter);
+            }
+
+            if (predicates.isEmpty()) continue;
+
+            // For first filter list we add it with an OR conjunctive
+            listIndex++;
+            if (listIndex == 1 ||
+                columnFilterList.getConjunctive() != QueryConjunctive.AND) {
+                select.where(
+                    criteriaBuilder.or(predicates.toArray(new Predicate[]{})));
+
+                continue;
+            }
+
+            select.where(
+                criteriaBuilder.and(predicates.toArray(new Predicate[]{})));
+        }
+    }
+
     private void buildSortCriteria(CriteriaBuilder criteriaBuilder,
                                    CriteriaQuery<Object> criteriaQuery,
                                    Query<S> query,
@@ -1302,6 +1276,47 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
                 criteriaQuery.orderBy(
                     criteriaBuilder.desc(table.get(descSort)));
             }
+        }
+    }
+
+    private CriteriaQuery<Object> buildQuery(Class<T> entity,
+                                             Query<S> query) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
+
+        Root<T> table = criteriaQuery.from(entity);
+        CriteriaQuery<Object> select = criteriaQuery.select(table);
+
+        buildSortCriteria(criteriaBuilder, criteriaQuery, query, table);
+
+        buildCriteriaBuilderSelect(criteriaBuilder, select, query, table);
+
+        return select;
+    }
+
+    private QueryResult<T> buildQueryResult(Class<T> entity,
+                                            Query<S> query,
+                                            List<T> data) {
+        QueryResult<T> result = new QueryResult<>();
+        result.setData(data);
+        result.getMeta().setLimit(query.getLimit());
+        result.getMeta().setCount(getCount(entity, query));
+        result.getMeta().setCursor("id");
+        result.getMeta().setPage(
+            getCurrentPage(entity, query, result.getMeta().getCount()));
+        result.getMeta().setNext(getNextCursor(entity, query));
+        result.getMeta().setPrevious(getPreviousCursor(entity, query, data));
+        result.getMeta().setLimit(query.getLimit());
+
+        return result;
+    }
+
+    private Join<?, ?> createOrGetJoin(Root<T> table, Join<?, ?> join,
+                                       String joinProperty) {
+        if (join == null) {
+            return table.join(joinProperty, JoinType.LEFT);
+        } else {
+            return join.join(joinProperty, JoinType.LEFT);
         }
     }
 }
