@@ -152,6 +152,24 @@ public class MetaControllerTest {
     @Test
     @Sql(scripts = {"classpath:sql/dropTables.sql",
         "classpath:sql/database/queryBuilder.sql"})
+    public void givenNoData_whenCallingQueryEndpoint_shouldReturnZeroPage()
+        throws JSONException {
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response =
+            restTemplate.exchange("/single-tables", HttpMethod.GET, entity,
+                String.class);
+
+        JSONObject result = new JSONObject(response.getBody());
+        JSONObject metaData = (JSONObject) result.get("meta");
+
+        assertEquals(0, metaData.get("page"));
+    }
+
+    @Test
+    @Sql(scripts = {"classpath:sql/dropTables.sql",
+        "classpath:sql/database/queryBuilder.sql"})
     public void whenCallingQueryEndpoint_shouldReturnPage()
         throws JSONException {
         HttpHeaders headers = new HttpHeaders();

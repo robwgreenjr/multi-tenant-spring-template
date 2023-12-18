@@ -84,6 +84,10 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
                                   Integer count) {
         Query<S> currentPagequery = new Query<>(query);
 
+        if (count == 0) {
+            return count;
+        }
+
         // If a cursor wasn't used then we know we are on first page
         if (!currentPagequery.isCursorSet()) {
             return 1;
