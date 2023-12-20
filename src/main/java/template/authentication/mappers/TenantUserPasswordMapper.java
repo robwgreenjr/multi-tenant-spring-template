@@ -10,6 +10,7 @@ import template.authentication.models.TenantUserPassword;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public interface TenantUserPasswordMapper {
@@ -43,4 +44,20 @@ public interface TenantUserPasswordMapper {
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void update(@MappingTarget TenantUserPasswordEntity userPasswordEntity,
                 TenantUserPassword userPassword);
+
+    default UUID map(String string) {
+        if (string == null) {
+            return null;
+        }
+
+        return UUID.fromString(string);
+    }
+
+    default String map(UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
+
+        return uuid.toString();
+    }
 }

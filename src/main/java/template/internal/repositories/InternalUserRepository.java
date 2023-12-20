@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface InternalUserRepository extends
     QueryRepository<InternalUserEntity, Integer>,
     Repository<InternalUserEntity>,
-    ListRepository<InternalUserEntity, Integer> {
+    ListRepository<InternalUserEntity> {
     Optional<InternalUserEntity> getByEmail(String email);
 
     Optional<InternalUserEntity> getById(Integer id);

@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface TenantPermissionRepository
     extends QueryRepository<TenantPermissionEntity, Integer>,
     Repository<TenantPermissionEntity>,
-    ListRepository<TenantPermissionEntity, Integer> {
+    ListRepository<TenantPermissionEntity> {
     Optional<TenantPermissionEntity> getById(Integer id);
 
     List<TenantPermissionEntity> getByIdList(List<Integer> ids);

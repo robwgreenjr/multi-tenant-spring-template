@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface TenantRoleRepository
     extends QueryRepository<TenantRoleEntity, Integer>,
-    ListRepository<TenantRoleEntity, Integer>,
+    ListRepository<TenantRoleEntity>,
     Repository<TenantRoleEntity> {
     List<TenantRoleEntity> getByIdList(List<Integer> ids);
 

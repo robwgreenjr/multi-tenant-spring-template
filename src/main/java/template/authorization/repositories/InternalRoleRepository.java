@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface InternalRoleRepository
     extends QueryRepository<InternalRoleEntity, Integer>,
-    ListRepository<InternalRoleEntity, Integer>,
+    ListRepository<InternalRoleEntity>,
     Repository<InternalRoleEntity> {
     List<InternalRoleEntity> getByIdList(List<Integer> ids);
 

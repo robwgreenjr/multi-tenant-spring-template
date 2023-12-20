@@ -10,6 +10,7 @@ import template.authentication.models.InternalUserPassword;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public interface InternalUserPasswordMapper {
@@ -43,5 +44,21 @@ public interface InternalUserPasswordMapper {
     default Instant map(LocalDateTime localDateTime) {
         return localDateTime == null ? null :
             localDateTime.toInstant(ZoneOffset.UTC);
+    }
+
+    default UUID map(String string) {
+        if (string == null) {
+            return null;
+        }
+
+        return UUID.fromString(string);
+    }
+
+    default String map(UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
+
+        return uuid.toString();
     }
 }

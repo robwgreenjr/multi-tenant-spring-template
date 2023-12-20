@@ -5,7 +5,7 @@ import template.tenants.dtos.TenantUserDto;
 import java.util.Set;
 
 public class TenantRoleDto {
-    public Integer id;
+    public String id;
     public String name;
     public String description;
     public Set<InternalPermissionDto> permissions;

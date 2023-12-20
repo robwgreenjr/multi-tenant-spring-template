@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface InternalPermissionRepository
     extends QueryRepository<InternalPermissionEntity, Integer>,
     Repository<InternalPermissionEntity>,
-    ListRepository<InternalPermissionEntity, Integer> {
+    ListRepository<InternalPermissionEntity> {
     Optional<InternalPermissionEntity> getById(Integer id);
 
     List<InternalPermissionEntity> getByIdList(List<Integer> ids);

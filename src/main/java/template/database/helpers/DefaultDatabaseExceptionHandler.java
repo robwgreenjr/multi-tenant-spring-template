@@ -9,7 +9,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import template.global.dtos.ErrorDto;
 
 import java.util.Optional;
@@ -46,15 +45,6 @@ public class DefaultDatabaseExceptionHandler
         if (exception instanceof IllegalArgumentException) {
             return dataColumnDoesntExistException(
                 (IllegalArgumentException) exception);
-        }
-
-        if (exception instanceof ResponseStatusException) {
-            return Optional.of(
-                new ResponseEntity<>(
-                    new ErrorDto(
-                        (HttpStatus) ((ResponseStatusException) exception).getStatusCode(),
-                        ((ResponseStatusException) exception).getReason()),
-                    ((ResponseStatusException) exception).getStatusCode()));
         }
 
         return Optional.empty();

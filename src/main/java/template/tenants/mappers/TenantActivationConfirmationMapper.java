@@ -19,10 +19,18 @@ public interface TenantActivationConfirmationMapper {
         TenantActivationConfirmation tenantActivationConfirmation);
 
     default UUID map(String string) {
+        if (string == null) {
+            return null;
+        }
+
         return UUID.fromString(string);
     }
 
     default String map(UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
+
         return uuid.toString();
     }
 }

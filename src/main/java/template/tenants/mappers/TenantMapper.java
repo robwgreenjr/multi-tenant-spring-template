@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public interface TenantMapper {
@@ -49,5 +50,21 @@ public interface TenantMapper {
     default Instant map(LocalDateTime localDateTime) {
         return localDateTime == null ? null :
             localDateTime.toInstant(ZoneOffset.UTC);
+    }
+
+    default UUID mapUUID(String string) {
+        if (string == null) {
+            return null;
+        }
+
+        return UUID.fromString(string);
+    }
+
+    default String map(UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
+
+        return uuid.toString();
     }
 }

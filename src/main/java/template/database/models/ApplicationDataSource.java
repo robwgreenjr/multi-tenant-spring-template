@@ -34,8 +34,9 @@ public class ApplicationDataSource {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ApplicationDataSource that = (ApplicationDataSource) o;
-        return Objects.equals(lastConnectionTime, that.lastConnectionTime) &&
-            Objects.equals(dataSource, that.dataSource);
+        return
+            Objects.equals(lastConnectionTime, that.lastConnectionTime) &&
+                Objects.equals(dataSource, that.dataSource);
     }
 
     @Override
@@ -45,7 +46,7 @@ public class ApplicationDataSource {
 
     @Override
     public String toString() {
-        return "TenantDataSource{" +
+        return "ApplicationDataSource{" +
             "lastConnectionTime=" + lastConnectionTime +
             ", dataSource=" + dataSource +
             '}';
