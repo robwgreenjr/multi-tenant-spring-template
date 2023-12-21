@@ -66,8 +66,20 @@ public class ParameterProcessorImpl<T> implements ParameterProcessor<T> {
                 if (key.contains("[" + QueryConjunctive.OR + "]")) {
                     columnFilterList.setConjunctive(QueryConjunctive.OR);
                     key = key.replace("[" + QueryConjunctive.OR + "]", "");
+                } else if (key.contains(
+                    "[" + QueryConjunctive.OR.toString().toLowerCase() + "]")) {
+                    columnFilterList.setConjunctive(QueryConjunctive.OR);
+                    key = key.replace(
+                        "[" + QueryConjunctive.OR.toString().toLowerCase() +
+                            "]", "");
                 } else if (key.contains("[" + QueryConjunctive.AND + "]")) {
                     key = key.replace("[" + QueryConjunctive.AND + "]", "");
+                } else if (key.contains(
+                    "[" + QueryConjunctive.AND.toString().toLowerCase() +
+                        "]")) {
+                    key = key.replace(
+                        "[" + QueryConjunctive.AND.toString().toLowerCase() +
+                            "]", "");
                 }
 
                 extractFilter(columnFilterList.getFilters(), key);
