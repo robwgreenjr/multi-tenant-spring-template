@@ -1380,27 +1380,29 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
         for (var i = 0; i < filters.size(); i++) {
             if (i == 0) continue;
 
-            if (filters.size() == (i + 1) ||
+            if (!(filters.size() == (i + 1) ||
                 filters.get(i + 1).getConjunctive() !=
-                    filters.get(i).getConjunctive()) {
-
-                int lastIndex =
-                    findLastElementForFilterGrouping(filters, i);
-                if (filters.get(i).getConjunctive() ==
-                    QueryConjunctive.AND) {
-                    reorganizedPredicates.add(criteriaBuilder.and(
-                        Arrays.copyOfRange(
-                            predicates.toArray(new Predicate[]{}),
-                            lastIndex,
-                            i + 1)));
-                } else {
-                    reorganizedPredicates.add(criteriaBuilder.or(
-                        Arrays.copyOfRange(
-                            predicates.toArray(new Predicate[]{}),
-                            lastIndex,
-                            i + 1)));
-                }
+                    filters.get(i).getConjunctive())) {
+                continue;
             }
+
+            int lastIndex =
+                findLastElementForFilterGrouping(filters, i);
+            if (filters.get(i).getConjunctive() ==
+                QueryConjunctive.AND) {
+                reorganizedPredicates.add(criteriaBuilder.and(
+                    Arrays.copyOfRange(
+                        predicates.toArray(new Predicate[]{}),
+                        lastIndex,
+                        i + 1)));
+                continue;
+            }
+
+            reorganizedPredicates.add(criteriaBuilder.or(
+                Arrays.copyOfRange(
+                    predicates.toArray(new Predicate[]{}),
+                    lastIndex,
+                    i + 1)));
         }
 
         return reorganizedPredicates;
@@ -1420,27 +1422,29 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
         for (var i = 0; i < predicates.size(); i++) {
             if (i == 0) continue;
 
-            if (predicates.size() == (i + 1) ||
+            if (!(predicates.size() == (i + 1) ||
                 !predicates.get(i + 1).getOperator().name()
-                    .equals(predicates.get(i).getOperator().name())) {
-
-                int lastIndex =
-                    findLastElementForPredicateGrouping(predicates, i);
-                if (predicates.get(i).getOperator().name()
-                    .equals(QueryConjunctive.AND.toString().toUpperCase())) {
-                    reorganizedPredicates.add(criteriaBuilder.and(
-                        Arrays.copyOfRange(
-                            predicates.toArray(new Predicate[]{}),
-                            lastIndex,
-                            i + 1)));
-                } else {
-                    reorganizedPredicates.add(criteriaBuilder.or(
-                        Arrays.copyOfRange(
-                            predicates.toArray(new Predicate[]{}),
-                            lastIndex,
-                            i + 1)));
-                }
+                    .equals(predicates.get(i).getOperator().name()))) {
+                continue;
             }
+
+            int lastIndex =
+                findLastElementForPredicateGrouping(predicates, i);
+            if (predicates.get(i).getOperator().name()
+                .equals(QueryConjunctive.AND.toString().toUpperCase())) {
+                reorganizedPredicates.add(criteriaBuilder.and(
+                    Arrays.copyOfRange(
+                        predicates.toArray(new Predicate[]{}),
+                        lastIndex,
+                        i + 1)));
+                continue;
+            }
+            
+            reorganizedPredicates.add(criteriaBuilder.or(
+                Arrays.copyOfRange(
+                    predicates.toArray(new Predicate[]{}),
+                    lastIndex,
+                    i + 1)));
         }
 
         return criteriaBuilder.and(
