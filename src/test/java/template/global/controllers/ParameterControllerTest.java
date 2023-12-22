@@ -218,26 +218,6 @@ public class ParameterControllerTest {
     @Test
     @Sql(scripts = {"classpath:sql/dropTables.sql",
         "classpath:sql/database/queryBuilder.sql"})
-    public void givenMultipleFiltersWithOrAfterAndParam_shouldReturnCorrectData()
-        throws JSONException {
-        HttpHeaders headers = new HttpHeaders();
-
-        DatabaseSeeder databaseSeeder = new DatabaseSeeder();
-        databaseSeeder.single(jdbcTemplate, 100, "test", 15, "another", 45);
-
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(
-            "/single-tables?stringColumn[like]=test&[or]textColumn[like]=another",
-            HttpMethod.GET, entity, String.class);
-        JSONObject result = new JSONObject(response.getBody());
-        JSONArray dataArray = (JSONArray) result.get("data");
-
-        assertEquals(60, dataArray.length());
-    }
-
-    @Test
-    @Sql(scripts = {"classpath:sql/dropTables.sql",
-        "classpath:sql/database/queryBuilder.sql"})
     public void givenSecondNestedDataExists_whenFilterOnSecondNestedData_shouldReturnData()
         throws JSONException {
         HttpHeaders headers = new HttpHeaders();

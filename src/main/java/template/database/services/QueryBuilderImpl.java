@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -1214,10 +1215,10 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
                                                 CriteriaQuery<R> select,
                                                 Query<S> query,
                                                 Root<T> table) {
-        List<Predicate> predicates = new ArrayList<>();
+        List<Predicate> finalPredicates = new ArrayList<>();
 
-        int listIndex = 0;
         for (ColumnFilterList columnFilterList : query.getFilterList()) {
+            List<Predicate> predicates = new ArrayList<>();
             for (ColumnFilter columnFilter : columnFilterList.getFilters()) {
                 Path<?> path = table;
 
@@ -1245,19 +1246,31 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
 
             if (predicates.isEmpty()) continue;
 
-            // For first filter list we add it with an OR conjunctive
-            listIndex++;
-            if (listIndex == 1 ||
-                columnFilterList.getConjunctive() != QueryConjunctive.AND) {
-                select.where(
-                    criteriaBuilder.or(predicates.toArray(new Predicate[]{})));
+            // Determine how to combine the different conjunctives
+            List<Predicate> reorganizedPredicates = new ArrayList<>();
+            List<ColumnFilter> filters = columnFilterList.getFilters();
+            if (filters.size() <= 1) {
+                reorganizedPredicates.add(
+                    criteriaBuilder.and(predicates.toArray(new Predicate[]{})));
+            } else {
+                reorganizedPredicates =
+                    reorganizePredicatesByGroupingConjunctives(criteriaBuilder,
+                        predicates, filters);
+            }
+
+            if (columnFilterList.getConjunctive() == QueryConjunctive.OR) {
+                finalPredicates.add(criteriaBuilder.or(
+                    reorganizedPredicates.toArray(new Predicate[]{})));
 
                 continue;
             }
 
-            select.where(
-                criteriaBuilder.and(predicates.toArray(new Predicate[]{})));
+            finalPredicates.add(criteriaBuilder.and(
+                reorganizedPredicates.toArray(new Predicate[]{})));
         }
+
+        select.where(
+            reorganizeFinalPredicates(criteriaBuilder, finalPredicates));
     }
 
     private void buildSortCriteria(CriteriaBuilder criteriaBuilder,
@@ -1319,8 +1332,118 @@ public class QueryBuilderImpl<T, S> implements QueryBuilder<T, S> {
                                        String joinProperty) {
         if (join == null) {
             return table.join(joinProperty, JoinType.LEFT);
-        } else {
-            return join.join(joinProperty, JoinType.LEFT);
         }
+
+        return join.join(joinProperty, JoinType.LEFT);
+    }
+
+    private int findLastElementForFilterGrouping(List<ColumnFilter> filters,
+                                                 int currentIndex) {
+        int lastIndex = 0;
+        QueryConjunctive currentConjunctive =
+            filters.get(currentIndex).getConjunctive();
+
+        for (var i = currentIndex - 1; i > 0; i--) {
+            if (currentConjunctive != filters.get(i).getConjunctive()) {
+                lastIndex = i;
+                break;
+            }
+        }
+
+        return lastIndex;
+    }
+
+    private int findLastElementForPredicateGrouping(List<Predicate> predicates,
+                                                    int currentIndex) {
+        int lastIndex = 0;
+        String currentConjunctive =
+            predicates.get(currentIndex).getOperator().name();
+
+        for (var i = currentIndex - 1; i > 0; i--) {
+            if (!currentConjunctive.equals(
+                predicates.get(i).getOperator().name())) {
+                lastIndex = i;
+                break;
+            }
+        }
+
+        return lastIndex;
+    }
+
+    private List<Predicate> reorganizePredicatesByGroupingConjunctives(
+        CriteriaBuilder criteriaBuilder,
+        List<Predicate> predicates,
+        List<ColumnFilter> filters
+    ) {
+        List<Predicate> reorganizedPredicates = new ArrayList<>();
+
+        for (var i = 0; i < filters.size(); i++) {
+            if (i == 0) continue;
+
+            if (filters.size() == (i + 1) ||
+                filters.get(i + 1).getConjunctive() !=
+                    filters.get(i).getConjunctive()) {
+
+                int lastIndex =
+                    findLastElementForFilterGrouping(filters, i);
+                if (filters.get(i).getConjunctive() ==
+                    QueryConjunctive.AND) {
+                    reorganizedPredicates.add(criteriaBuilder.and(
+                        Arrays.copyOfRange(
+                            predicates.toArray(new Predicate[]{}),
+                            lastIndex,
+                            i + 1)));
+                } else {
+                    reorganizedPredicates.add(criteriaBuilder.or(
+                        Arrays.copyOfRange(
+                            predicates.toArray(new Predicate[]{}),
+                            lastIndex,
+                            i + 1)));
+                }
+            }
+        }
+
+        return reorganizedPredicates;
+    }
+
+    private Predicate reorganizeFinalPredicates(
+        CriteriaBuilder criteriaBuilder,
+        List<Predicate> predicates
+    ) {
+        List<Predicate> reorganizedPredicates = new ArrayList<>();
+
+        if (predicates.size() == 1) {
+            return criteriaBuilder.and(
+                predicates.toArray(new Predicate[]{}));
+        }
+
+        for (var i = 0; i < predicates.size(); i++) {
+            if (i == 0) continue;
+
+            if (predicates.size() == (i + 1) ||
+                !predicates.get(i + 1).getOperator().name()
+                    .equals(predicates.get(i).getOperator().name())) {
+
+                int lastIndex =
+                    findLastElementForPredicateGrouping(predicates, i);
+                if (predicates.get(i).getOperator().name()
+                    .equals(QueryConjunctive.AND.toString().toUpperCase())) {
+                    reorganizedPredicates.add(criteriaBuilder.and(
+                        Arrays.copyOfRange(
+                            predicates.toArray(new Predicate[]{}),
+                            lastIndex,
+                            i + 1)));
+                } else {
+                    reorganizedPredicates.add(criteriaBuilder.or(
+                        Arrays.copyOfRange(
+                            predicates.toArray(new Predicate[]{}),
+                            lastIndex,
+                            i + 1)));
+                }
+            }
+        }
+
+        return criteriaBuilder.and(
+            reorganizedPredicates.toArray(new Predicate[]{}));
     }
 }

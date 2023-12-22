@@ -25,7 +25,7 @@ public class ParameterProcessorImpl<T> implements ParameterProcessor<T> {
         buildFilter(query, queryParams);
         buildSort(query, queryParams);
         buildPagination(query, queryParams);
-
+        
         return query;
     }
 
