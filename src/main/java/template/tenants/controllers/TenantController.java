@@ -32,7 +32,7 @@ public class TenantController {
     @GetMapping("tenants")
     public QueryResult<TenantDto> findAll(HttpServletRequest request) {
         Query<UUID> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
 
         QueryResult<Tenant> result = tenantManager.getList(query);
 
@@ -47,7 +47,7 @@ public class TenantController {
     public QueryResult<TenantDto> find(@PathVariable UUID id,
                                        HttpServletRequest request) {
         Query<UUID> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
         query.setPrimaryId(id);
 
         QueryResult<Tenant> result = tenantManager.getSingle(query);

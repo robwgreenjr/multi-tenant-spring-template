@@ -39,7 +39,7 @@ public class TenantUserController {
     public QueryResult<TenantUserDto> find(@PathVariable Integer id,
                                            HttpServletRequest request) {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
         query.setPrimaryId(id);
 
         QueryResult<TenantUser> result = userManager.getSingle(query);
@@ -55,7 +55,7 @@ public class TenantUserController {
     public QueryResult<TenantUserDto> findList(
         HttpServletRequest request) {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
 
         QueryResult<TenantUser> result = userManager.getList(query);
 
@@ -118,7 +118,7 @@ public class TenantUserController {
         TenantUser user = userMapper.dtoToObject(userDto);
 
         user = userManager.updatePartial(id, user);
-        
+
         userDto = userMapper.toDto(user);
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }

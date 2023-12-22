@@ -33,7 +33,7 @@ public class TenantRoleController {
     public QueryResult<TenantRoleDto> getList(HttpServletRequest request)
         throws Exception {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
 
         QueryResult<TenantRole> result = roleManager.getList(query);
 
@@ -48,7 +48,7 @@ public class TenantRoleController {
     public QueryResult<TenantRoleDto> find(@PathVariable Integer id,
                                            HttpServletRequest request) {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
         query.setPrimaryId(id);
 
         QueryResult<TenantRole> result = roleManager.getSingle(query);

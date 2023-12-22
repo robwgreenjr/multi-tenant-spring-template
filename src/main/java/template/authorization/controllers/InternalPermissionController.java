@@ -35,7 +35,7 @@ public class InternalPermissionController {
         HttpServletRequest request)
         throws Exception {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
 
         QueryResult<InternalPermission> result =
             permissionManager.getList(query);
@@ -51,7 +51,7 @@ public class InternalPermissionController {
     public QueryResult<InternalPermissionDto> find(@PathVariable Integer id,
                                                    HttpServletRequest request) {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
         query.setPrimaryId(id);
 
         QueryResult<InternalPermission> result =

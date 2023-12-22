@@ -39,7 +39,7 @@ public class InternalUserController {
     public QueryResult<InternalUserDto> find(@PathVariable Integer id,
                                              HttpServletRequest request) {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
         query.setPrimaryId(id);
 
         QueryResult<InternalUser> result =
@@ -56,7 +56,7 @@ public class InternalUserController {
     public QueryResult<InternalUserDto> findList(
         HttpServletRequest request) {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
 
         QueryResult<InternalUser> result =
             userManager.getList(query);

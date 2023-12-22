@@ -93,6 +93,7 @@ sudo update-ca-certificates
 
 ### TODO:
 
+    - Make sure filter query results are accurate with normal SQL
     - Add query parameter support for list of values, only for EQ, LIKE, and NE filters
     - Add any extra test for parameters/query builder/hypermedia
 

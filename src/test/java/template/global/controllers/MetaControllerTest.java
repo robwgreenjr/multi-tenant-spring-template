@@ -234,6 +234,26 @@ public class MetaControllerTest {
     @Test
     @Sql(scripts = {"classpath:sql/dropTables.sql",
         "classpath:sql/database/queryBuilder.sql"})
+    public void givenMultipleFilters_whenCallingQueryEndpoint_shouldReturnCorrectCount()
+        throws JSONException {
+        HttpHeaders headers = new HttpHeaders();
+
+        DatabaseSeeder databaseSeeder = new DatabaseSeeder();
+        databaseSeeder.single(jdbcTemplate, 100, "test", 15, "another", 45);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(
+            "/single-tables?stringColumn[like]=test&[or]textColumn[like]=another",
+            HttpMethod.GET, entity, String.class);
+        JSONObject result = new JSONObject(response.getBody());
+        JSONObject metaData = (JSONObject) result.get("meta");
+
+        assertEquals(60, metaData.get("count"));
+    }
+
+    @Test
+    @Sql(scripts = {"classpath:sql/dropTables.sql",
+        "classpath:sql/database/queryBuilder.sql"})
     public void whenCallingQueryEndpoint_shouldReturnTotalCount()
         throws JSONException {
         HttpHeaders headers = new HttpHeaders();

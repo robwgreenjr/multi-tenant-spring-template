@@ -363,8 +363,8 @@ public class InternalRoleControllerTest extends InternalIntegrationTest {
 
         List<Map<String, Object>> singleObject =
             jdbcTemplate.queryForList(
-                "SELECT * FROM internal.authorization_role WHERE name = '" +
-                    objectList.get(0).get("name") + "'");
+                "SELECT * FROM internal.authorization_role WHERE name = ?",
+                objectList.get(0).get("name"));
         assertEquals(0, singleObject.size());
     }
 }

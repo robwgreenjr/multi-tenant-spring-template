@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class ParameterProcessorImpl<T> implements ParameterProcessor<T> {
 
     @Override
-    public Query<T> buildquery(Map<String, String[]> queryParams) {
+    public Query<T> buildQuery(Map<String, String[]> queryParams) {
         Query<T> query = new Query<>();
 
         buildFilter(query, queryParams);

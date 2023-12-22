@@ -33,7 +33,7 @@ public class InternalRoleController {
     public QueryResult<InternalRoleDto> getList(HttpServletRequest request)
         throws Exception {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
 
         QueryResult<InternalRole> result = roleManager.getList(query);
 
@@ -48,7 +48,7 @@ public class InternalRoleController {
     public QueryResult<InternalRoleDto> find(@PathVariable Integer id,
                                              HttpServletRequest request) {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
         query.setPrimaryId(id);
 
         QueryResult<InternalRole> result = roleManager.getSingle(query);

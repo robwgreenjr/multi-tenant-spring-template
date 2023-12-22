@@ -26,6 +26,8 @@ public class Query<ID> {
             ColumnFilterList copiedColumnFilterList = new ColumnFilterList();
             List<ColumnFilter> copiedColumnFilters = new ArrayList<>();
             copiedColumnFilterList.setFilters(copiedColumnFilters);
+            copiedColumnFilterList.setConjunctive(
+                columnFilterList.getConjunctive());
 
             for (ColumnFilter columnFilter : columnFilterList.getFilters()) {
                 copiedColumnFilterList.getFilters().add(columnFilter);

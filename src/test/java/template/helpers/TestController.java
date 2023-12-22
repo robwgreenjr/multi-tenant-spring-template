@@ -46,7 +46,7 @@ public class TestController {
     public QueryResult<SingleTableDto> findAllSingleTables(
         HttpServletRequest request) {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
 
         QueryResult<SingleTable> result =
             singleTableQueryBuilder.getList(SingleTable.class, query);
@@ -59,7 +59,7 @@ public class TestController {
     public QueryResult<DoubleTableDto> findAllDoubleTables(
         HttpServletRequest request) {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
 
         QueryResult<DoubleTable> result =
             doubleTableQueryBuilder.getList(DoubleTable.class, query);
@@ -72,7 +72,7 @@ public class TestController {
     public QueryResult<TripleTableDto> findAllTripleTables(
         HttpServletRequest request) {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
 
         QueryResult<TripleTable> result =
             tripleTableQueryBuilder.getList(TripleTable.class, query);

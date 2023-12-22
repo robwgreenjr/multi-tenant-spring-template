@@ -35,7 +35,7 @@ public class TenantPermissionController {
         HttpServletRequest request)
         throws Exception {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
 
         QueryResult<TenantPermission> result =
             permissionManager.getList(query);
@@ -51,7 +51,7 @@ public class TenantPermissionController {
     public QueryResult<TenantPermissionDto> find(@PathVariable Integer id,
                                                  HttpServletRequest request) {
         Query<Integer> query =
-            parameterSetter.buildquery(request.getParameterMap());
+            parameterSetter.buildQuery(request.getParameterMap());
         query.setPrimaryId(id);
 
         QueryResult<TenantPermission> result =

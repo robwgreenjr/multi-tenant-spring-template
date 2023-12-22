@@ -22,7 +22,7 @@ public class ParameterSetterTest {
         String[] list = {"asc(name)"};
         queryParameters.put("sort_by", list);
 
-        Query actual = parameterSetter.buildquery(queryParameters);
+        Query actual = parameterSetter.buildQuery(queryParameters);
         HashMap<QuerySort, String[]> sortList = actual.getSortList();
 
         Assertions.assertNotNull(sortList);
@@ -36,7 +36,7 @@ public class ParameterSetterTest {
         String[] list = {"asc(name),desc(age)"};
         queryParameters.put("sort_by", list);
 
-        Query actual = parameterSetter.buildquery(queryParameters);
+        Query actual = parameterSetter.buildQuery(queryParameters);
         HashMap<QuerySort, String[]> sortList = actual.getSortList();
 
         Assertions.assertNotNull(sortList);
@@ -52,7 +52,7 @@ public class ParameterSetterTest {
         String[] list = {"asc(name,age,birthday)"};
         queryParameters.put("sort_by", list);
 
-        Query actual = parameterSetter.buildquery(queryParameters);
+        Query actual = parameterSetter.buildQuery(queryParameters);
         HashMap<QuerySort, String[]> sortList = actual.getSortList();
 
         Assertions.assertNotNull(sortList);
@@ -66,7 +66,7 @@ public class ParameterSetterTest {
         String[] list = {"desc(name,age,birthday)"};
         queryParameters.put("sort_by", list);
 
-        Query actual = parameterSetter.buildquery(queryParameters);
+        Query actual = parameterSetter.buildQuery(queryParameters);
         HashMap<QuerySort, String[]> sortList = actual.getSortList();
 
         Assertions.assertNotNull(sortList);
@@ -80,7 +80,7 @@ public class ParameterSetterTest {
         String[] list = {"100"};
         queryParameters.put("limit", list);
 
-        Query actual = parameterSetter.buildquery(queryParameters);
+        Query actual = parameterSetter.buildQuery(queryParameters);
         Integer limit = actual.getLimit();
 
         Assertions.assertNotNull(limit);
@@ -93,7 +93,7 @@ public class ParameterSetterTest {
         String[] list = {"testing@gmail.com"};
         queryParameters.put("email", list);
 
-        Query actual = parameterSetter.buildquery(queryParameters);
+        Query actual = parameterSetter.buildQuery(queryParameters);
         List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
@@ -115,7 +115,7 @@ public class ParameterSetterTest {
         String[] listTwo = {"Tester"};
         queryParameters.put("firstName", listTwo);
 
-        Query actual = parameterSetter.buildquery(queryParameters);
+        Query actual = parameterSetter.buildQuery(queryParameters);
         List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
@@ -144,7 +144,7 @@ public class ParameterSetterTest {
         String[] list = {"testing@gmail.com[or]email=another@gmail.com"};
         queryParameters.put("email", list);
 
-        Query actual = parameterSetter.buildquery(queryParameters);
+        Query actual = parameterSetter.buildQuery(queryParameters);
         List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
@@ -173,7 +173,7 @@ public class ParameterSetterTest {
         String[] list = {"testing@gmail.com"};
         queryParameters.put("email[lte]", list);
 
-        Query actual = parameterSetter.buildquery(queryParameters);
+        Query actual = parameterSetter.buildQuery(queryParameters);
         List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
@@ -193,7 +193,7 @@ public class ParameterSetterTest {
         String[] list = {"testing@gmail.com"};
         queryParameters.put("email[gte]", list);
 
-        Query actual = parameterSetter.buildquery(queryParameters);
+        Query actual = parameterSetter.buildQuery(queryParameters);
         List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
@@ -216,7 +216,7 @@ public class ParameterSetterTest {
         String[] listTwo = {"Tester"};
         queryParameters.put("firstName", listTwo);
 
-        Query actual = parameterSetter.buildquery(queryParameters);
+        Query actual = parameterSetter.buildQuery(queryParameters);
         List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
@@ -255,7 +255,7 @@ public class ParameterSetterTest {
             {"testing@gmail.com[or]age[lte]=25[and]firstName[gte]=tester[and]lastName=blue[or]birthday[lte]=04-21-2010[and]createdOn=01-04-2022"};
         queryParameters.put("email[gte]", list);
 
-        Query actual = parameterSetter.buildquery(queryParameters);
+        Query actual = parameterSetter.buildQuery(queryParameters);
         List<ColumnFilterList> filterList = actual.getFilterList();
 
         Assertions.assertNotNull(filterList);
