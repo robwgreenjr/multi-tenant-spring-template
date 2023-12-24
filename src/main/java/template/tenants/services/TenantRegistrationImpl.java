@@ -53,9 +53,9 @@ public class TenantRegistrationImpl implements TenantRegistration {
             throw new TenantEmailConfirmationNotFoundException();
         }
 
-        TenantUser tenantUser = tenantUserManager.create(
-            tenantActivationConfirmationMapper.toTenantUser(
-                tenantActivationConfirmation));
+        TenantUser newTenant = tenantActivationConfirmationMapper.toTenantUser(
+            tenantActivationConfirmation);
+        TenantUser tenantUser = tenantUserManager.create(newTenant);
 
         tenantActivation.setInitialAuthorization(tenantUser);
 
